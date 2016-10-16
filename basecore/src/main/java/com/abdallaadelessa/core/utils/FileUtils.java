@@ -6,7 +6,9 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -60,6 +62,21 @@ public class FileUtils {
     }
 
     // ------------->
+
+    /**
+     * Encode URl UTF-8
+     *
+     * @param originalUrl
+     * @return
+     * @throws UnsupportedEncodingException
+     */
+
+    public static String encodeURL(String originalUrl) throws UnsupportedEncodingException {
+        int lastSlashIndexLarge = originalUrl.lastIndexOf('/');
+        String encodedUrl = originalUrl.substring(0, lastSlashIndexLarge + 1) + URLEncoder.encode(originalUrl.substring(lastSlashIndexLarge + 1, originalUrl.length()), "UTF-8");
+        String completeUrl = encodedUrl.replace("+", "%20");
+        return completeUrl;
+    }
 
     public static String getFileNameFromUrl(String url) {
         String fileName = null;

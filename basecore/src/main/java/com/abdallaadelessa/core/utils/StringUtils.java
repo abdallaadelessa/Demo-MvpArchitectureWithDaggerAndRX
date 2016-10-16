@@ -2,27 +2,13 @@ package com.abdallaadelessa.core.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.security.MessageDigest;
+import java.util.Arrays;
 
 /**
  * Created by Abdalla on 16/10/2016.
  */
 
 public class StringUtils {
-    /**
-     * Encode URl UTF-8
-     *
-     * @param originalUrl
-     * @return
-     * @throws UnsupportedEncodingException
-     */
-
-    public static String encodeURL(String originalUrl) throws UnsupportedEncodingException {
-        int lastSlashIndexLarge = originalUrl.lastIndexOf('/');
-        String encodedUrl = originalUrl.substring(0, lastSlashIndexLarge + 1) + URLEncoder.encode(originalUrl.substring(lastSlashIndexLarge + 1, originalUrl.length()), "UTF-8");
-        String completeUrl = encodedUrl.replace("+", "%20");
-        return completeUrl;
-    }
 
     public static String removeQuotes(String text) {
         return text.replaceAll("^\"|\"$", "");
@@ -33,23 +19,18 @@ public class StringUtils {
         return text;
     }
 
-    public static String computeHash(String input) throws Exception {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        digest.reset();
+    public static String removeWhiteSpaces(String text) {
 
-        byte[] byteData = digest.digest(input.getBytes());
-        return bytesToHex(byteData);
-
+        return text.replaceAll("\\s", "");
     }
 
-    public static String bytesToHex(byte[] bytes) {
-        char[] hexArray = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-        char[] hexChars = new char[bytes.length * 2];
-        for (int j = 0; j < bytes.length; j++) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+    public static String convertTextToAsterisks(String text) {
+        String hiddenText = "";
+        if (!ValidationUtils.isStringEmpty(text)) {
+            char[] pad = new char[text.length()];
+            Arrays.fill(pad, '*');
+            hiddenText = new StringBuilder().append(pad).toString();
         }
-        return new String(hexChars);
+        return hiddenText;
     }
 }
