@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:name="com.abdallaadelessa.core.app.BaseCoreApp"
         android:theme="@style/AppTheme">
-        <activity android:name="com.abdallaadelessa.demo.main.MainActivity">
+        <activity android:name=".view.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -2,26 +2,29 @@ package com.abdallaadelessa.core.app;
 
 import android.app.Application;
 
-import com.abdallaadelessa.core.module.appModule.BaseCoreAppModule;
 import com.abdallaadelessa.demo.BuildConfig;
 
 import java.io.File;
 
 public class BaseCoreApp extends Application {
-    private static AppComponent appComponent;
+    private static BaseCoreApp mInstance;
+    private AppComponent appComponent;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        appComponent = DaggerAppComponent.builder()
-                .baseCoreAppModule(new BaseCoreAppModule(this))
-                .build();
+        mInstance = this;
+        appComponent = DaggerAppComponent.builder().build();
     }
 
     // ------------------->
 
+    public static BaseCoreApp getInstance() {
+        return mInstance;
+    }
+
     public static AppComponent getAppComponent() {
-        return appComponent;
+        return getInstance().appComponent;
     }
 
     // -------------------> Build Config Fields

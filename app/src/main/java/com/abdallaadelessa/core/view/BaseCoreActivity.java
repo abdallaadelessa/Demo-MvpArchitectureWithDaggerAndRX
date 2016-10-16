@@ -40,7 +40,7 @@ public abstract class BaseCoreActivity<p extends BaseCorePresenter> extends AppC
     }
 
     public int getLayoutRes() {
-        return R.layout.activity_main;
+        return R.layout.activity_with_content;
     }
 
     // --------------->
