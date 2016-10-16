@@ -1,0 +1,35 @@
+<resources>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">@dimen/margin_medium</dimen>
+    <dimen name="activity_vertical_margin">@dimen/margin_medium</dimen>
+
+    <!-- Padding -->
+    <dimen name="padding_small">2dp</dimen>
+    <dimen name="padding_medium">5dp</dimen>
+    <dimen name="padding_large">10dp</dimen>
+    <dimen name="padding_xlarge">15dp</dimen>
+    <dimen name="padding_2xlarge">20dp</dimen>
+    <dimen name="padding_3xlarge">30dp</dimen>
+
+    <!-- Margin -->
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_medium">16dp</dimen>
+    <dimen name="margin_large">24dp</dimen>
+    <dimen name="margin_xlarge">32dp</dimen>
+    <dimen name="margin_2xlarge">46dp</dimen>
+    <dimen name="margin_3xlarge">52dp</dimen>
+
+    <!-- Fonts -->
+    <dimen name="font_small">10sp</dimen>
+    <dimen name="font_medium">14sp</dimen>
+    <dimen name="font_large">16sp</dimen>
+    <dimen name="font_xlarge">18sp</dimen>
+    <dimen name="font_2xlarge">24sp</dimen>
+    <dimen name="font_3xlarge">32sp</dimen>
+    <dimen name="font_4xlarge">40sp</dimen>
+    <dimen name="font_5xlarge">48sp</dimen>
+    <dimen name="font_6xlarge">56sp</dimen>
+    <dimen name="font_7xlarge">64sp</dimen>
+    <dimen name="font_8xlarge">72sp</dimen>
+</resources>

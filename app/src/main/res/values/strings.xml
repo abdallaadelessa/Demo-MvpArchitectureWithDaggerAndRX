@@ -1,11 +1,3 @@
 <resources>
-    <string name="app_name">Demo-MvpArchitectureWithDaggerAndRX</string>
-    <string name="txt_no_content">No Content</string>
-    <string name="txt_no_internet_connection">No Internet Connection</string>
-    <string name="txt_not_trusted_certificate">Something went wrong !</string>
-    <string name="txt_timeout">Timeout Error</string>
-    <string name="txt_unknown_error_occured">Something went wrong !</string>
-    <string name="txt_server_error">Server Error, Please try again later</string>
-    <string name="txt_retry">retry</string>
-    <string name="txt_error">An Error Occurred</string>
+    <string name="app_name">App</string>
 </resources>

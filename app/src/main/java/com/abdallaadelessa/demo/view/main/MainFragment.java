@@ -1,22 +1,30 @@
 package com.abdallaadelessa.demo.view.main;
 
-import android.widget.Button;
+import android.view.View;
+import android.widget.EditText;
 
-import com.abdallaadelessa.core.app.BaseCoreApp;
+import com.abdallaadelessa.core.utils.UIUtils;
 import com.abdallaadelessa.core.view.BaseCoreFragment;
 import com.abdallaadelessa.demo.R;
+import com.abdallaadelessa.demo.view.main.dagger.DaggerMainComponent;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.functions.Action1;
+import butterknife.Unbinder;
 
 /**
  * Created by Abdalla on 13/10/2016.
  */
 
-public class MainFragment extends BaseCoreFragment<MainPresenter> {
-    @BindView(R.id.button)
-    Button button;
+public class MainFragment extends BaseCoreFragment<MainPresenter> implements IMainView {
+    @BindView(R.id.editText)
+    EditText editText;
+
+    @Override
+    protected int getLayoutRes() {
+        return R.layout.fragment_main;
+    }
 
     @Override
     protected void injectComponent() {
@@ -24,35 +32,25 @@ public class MainFragment extends BaseCoreFragment<MainPresenter> {
     }
 
     @Override
-    protected int getLayoutRes() {
-        return R.layout.fragment_main;
+    protected Unbinder initUI(View view) {
+        super.initUI(view);
+        Unbinder unbinder = ButterKnife.bind(this, view);
+        if (isPresenterAttached()) getPresenter().loadViewData();
+        return unbinder;
     }
 
     // ------------>
 
-    public void showMessage(String title) {
-        BaseCoreApp.getAppComponent().getHttpRequestBuilder()
-                .url("https://www.kayak.com/h/mobileapis/directory/airlines")
-                .tag("Test")
-                .GET()
-                .<String>build().subscribe(new Action1<String>() {
-            @Override
-            public void call(String s) {
-                BaseCoreApp.getAppComponent().getLogger().log("Success");
-            }
-        }, new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
-                BaseCoreApp.getAppComponent().getLogger().log("Failure");
-            }
-        });
+    @Override
+    public void showToast(String title) {
+        UIUtils.showToast(getActivity(), title);
     }
 
     // ------------>
 
     @OnClick(R.id.button)
     public void onClick() {
-        getPresenter().loadViewData();
+        if (isPresenterAttached()) getPresenter().displayData(editText.getText().toString());
     }
 }
 
