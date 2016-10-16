@@ -1,16 +1,14 @@
 package com.abdallaadelessa.demo.view.main;
 
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.abdallaadelessa.core.app.BaseCoreApp;
-import com.abdallaadelessa.core.model.MessageError;
 import com.abdallaadelessa.core.view.BaseCoreFragment;
 import com.abdallaadelessa.demo.R;
-import com.abdallaadelessa.demo.view.managers.ViewErrorHandler;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.functions.Action1;
 
 /**
  * Created by Abdalla on 13/10/2016.
@@ -33,10 +31,21 @@ public class MainFragment extends BaseCoreFragment<MainPresenter> {
     // ------------>
 
     public void showMessage(String title) {
-        ViewErrorHandler.handleError(getActivity(),new MessageError("Error"));
-        Toast toast = BaseCoreApp.getAppComponent().getToast();
-        toast.setText("Message : " + title);
-        toast.show();
+        BaseCoreApp.getAppComponent().getHttpRequestBuilder()
+                .url("https://www.kayak.com/h/mobileapis/directory/airlines")
+                .tag("Test")
+                .GET()
+                .<String>build().subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                BaseCoreApp.getAppComponent().getLogger().log("Success");
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                BaseCoreApp.getAppComponent().getLogger().log("Failure");
+            }
+        });
     }
 
     // ------------>

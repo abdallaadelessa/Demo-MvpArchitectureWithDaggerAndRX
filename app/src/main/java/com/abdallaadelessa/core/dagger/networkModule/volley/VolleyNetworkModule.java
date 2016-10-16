@@ -19,7 +19,7 @@ import dagger.Provides;
 /**
  * Created by abdullah on 12/10/16.
  */
-@Module(includes = BaseCoreModule.class)
+@Module
 public class VolleyNetworkModule {
     private static final boolean ENABLE_LOGS = !BaseCoreApp.isReleaseBuildType();
 

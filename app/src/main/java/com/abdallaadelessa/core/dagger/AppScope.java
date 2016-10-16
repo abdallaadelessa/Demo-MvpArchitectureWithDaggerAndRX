@@ -1,4 +1,4 @@
-package com.abdallaadelessa.core.app;
+package com.abdallaadelessa.core.dagger;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -10,5 +10,5 @@ import javax.inject.Scope;
  */
 @Scope
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ApplicationScope {
+public @interface AppScope {
 }

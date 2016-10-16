@@ -17,8 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
-import javax.inject.Inject;
-
 import rx.Observable;
 
 /**
@@ -38,16 +36,11 @@ public class HttpRequestBuilder {
     private static final float DEFAULT_BACKOFF_MULT = DefaultRetryPolicy.DEFAULT_BACKOFF_MULT;
     private static final DefaultRetryPolicy DEFAULT_RETRY_POLICY = new DefaultRetryPolicy(DEFAULT_SOCKET_TIMEOUT, DEFAULT_MAX_RETRIES, DEFAULT_BACKOFF_MULT);
     // ------------------------->
-    @Inject
-    BaseAppLogger baseAppLogger;
-    @Inject
-    Gson gson;
-    @Inject
-    RequestQueue requestQueue;
-    @Inject
-    WeakReference<Context> contextWeakReference;
-    @Inject
-    java.util.concurrent.ExecutorService executorService;
+    private BaseAppLogger baseAppLogger;
+    private Gson gson;
+    private RequestQueue requestQueue;
+    private WeakReference<Context> contextWeakReference;
+    private ExecutorService executorService;
     // ------------------------->
     private String tag;
     private String url;
@@ -61,8 +54,15 @@ public class HttpRequestBuilder {
     private boolean cancelIfRunning;
     private boolean cancelOnUnSubscribe;
 
-    public static HttpRequestBuilder builder() {
-        return new HttpRequestBuilder();
+    public static HttpRequestBuilder builder(Context context, RequestQueue requestQueue, ExecutorService executorService
+            , Gson gson, BaseAppLogger baseAppLogger) {
+        HttpRequestBuilder httpRequestBuilder = new HttpRequestBuilder();
+        httpRequestBuilder.contextWeakReference = new WeakReference<Context>(context);
+        httpRequestBuilder.requestQueue = requestQueue;
+        httpRequestBuilder.executorService = executorService;
+        httpRequestBuilder.gson = gson;
+        httpRequestBuilder.baseAppLogger = baseAppLogger;
+        return httpRequestBuilder;
     }
 
     private HttpRequestBuilder() {

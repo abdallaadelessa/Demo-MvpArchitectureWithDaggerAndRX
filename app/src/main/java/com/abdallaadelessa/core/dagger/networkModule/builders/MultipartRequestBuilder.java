@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import rx.Observable;
 
 /**
@@ -20,18 +18,19 @@ import rx.Observable;
 public class MultipartRequestBuilder {
     public static final String DEFAULT_MIME_TYPE = "image/jpeg";
     // ------------------------->
-    @Inject
-    BaseAppLogger baseAppLogger;
-    @Inject
-    Gson gson;
+    private BaseAppLogger baseAppLogger;
+    private Gson gson;
     // ------------------------->
     private String url;
     private Type type;
     private Map<String, String> parameters;
     private ArrayList<MultiPartFile> files;
 
-    public static MultipartRequestBuilder builder() {
-        return new MultipartRequestBuilder();
+    public static MultipartRequestBuilder builder(Gson gson, BaseAppLogger baseAppLogger) {
+        MultipartRequestBuilder multipartRequestBuilder = new MultipartRequestBuilder();
+        multipartRequestBuilder.gson = gson;
+        multipartRequestBuilder.baseAppLogger = baseAppLogger;
+        return multipartRequestBuilder;
     }
 
     private MultipartRequestBuilder() {

@@ -2,6 +2,8 @@ package com.abdallaadelessa.core.app;
 
 import android.app.Application;
 
+import com.abdallaadelessa.core.dagger.AppComponent;
+import com.abdallaadelessa.core.dagger.DaggerAppComponent;
 import com.abdallaadelessa.demo.BuildConfig;
 
 import java.io.File;
