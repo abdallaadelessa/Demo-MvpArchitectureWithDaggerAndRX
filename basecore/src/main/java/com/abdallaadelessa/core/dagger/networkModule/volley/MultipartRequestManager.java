@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.abdallaadelessa.core.model.MessageError;
 import com.abdallaadelessa.core.dagger.networkModule.builders.MultipartRequestBuilder;
+import com.abdallaadelessa.core.utils.StringUtils;
 import com.abdallaadelessa.core.utils.ValidationUtils;
 import com.android.volley.error.NetworkError;
 
@@ -73,7 +74,7 @@ public class MultipartRequestManager<T> {
                     OkHttpClient client = new OkHttpClient().newBuilder().readTimeout(TIMEOUT_IN_SECONDS, TimeUnit.SECONDS).writeTimeout(TIMEOUT_IN_SECONDS, TimeUnit.SECONDS).build();
                     Response response = client.newCall(request).execute();
                     String responseStr = response.body().string();
-                    subscriber.onNext(VolleyRequestManager.<T>parseJson(responseStr, multipartRequestBuilder.getGson(), type));
+                    subscriber.onNext(StringUtils.<T>parseJson(responseStr, multipartRequestBuilder.getGson(), type));
                     subscriber.onCompleted();
                 } catch (Throwable e) {
                     if (e instanceof SocketException) {

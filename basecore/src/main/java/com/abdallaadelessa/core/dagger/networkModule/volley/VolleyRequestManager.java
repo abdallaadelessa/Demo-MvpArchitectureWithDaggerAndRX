@@ -8,8 +8,8 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import com.abdallaadelessa.core.dagger.networkModule.builders.HttpRequest;
 import com.abdallaadelessa.core.model.MessageError;
-import com.abdallaadelessa.core.dagger.networkModule.builders.HttpRequestBuilder;
 import com.abdallaadelessa.core.utils.ValidationUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -22,14 +22,7 @@ import com.android.volley.error.ServerError;
 import com.android.volley.error.TimeoutError;
 import com.android.volley.error.VolleyError;
 import com.android.volley.request.StringRequest;
-import com.google.gson.Gson;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import java.lang.reflect.Type;
 import java.util.Map;
 
 import rx.Observable;
@@ -43,30 +36,24 @@ public class VolleyRequestManager<T> {
 
     // --------------------->
 
-    public Observable<T> createObservableFrom(final HttpRequestBuilder httpRequestBuilder) {
+    public Observable<T> createObservableFrom(final HttpRequest httpRequest) {
         final Observable<T> observable = Observable.create(new Observable.OnSubscribe<T>() {
             @Override
             public void call(final Subscriber<? super T> subscriber) {
                 if (subscriber.isUnsubscribed()) return;
-                // Validate
-                String error = validateBuilder(httpRequestBuilder);
-                if (!ValidationUtils.isStringEmpty(error)) {
-                    subscriber.onError(new MessageError(error));
-                    return;
-                }
                 // Cancel All By Tag
-                canCancelIfRunning(httpRequestBuilder);
-                Context context = httpRequestBuilder.getContextWeakReference() != null ? httpRequestBuilder.getContextWeakReference().get() : null;
-                RequestQueue requestQueue = httpRequestBuilder.getRequestQueue();
-                final String tag = httpRequestBuilder.getTag();
-                final String url = httpRequestBuilder.getUrl();
-                final int method = httpRequestBuilder.getMethod();
-                final Map<String, String> headers = httpRequestBuilder.getHeaders();
-                final RetryPolicy retryPolicy = httpRequestBuilder.getRetryPolicy();
-                boolean shouldCache = httpRequestBuilder.isShouldCache();
+                canCancelIfRunning(httpRequest);
+                Context context = httpRequest.contextWeakReference() != null ? httpRequest.contextWeakReference().get() : null;
+                RequestQueue requestQueue = httpRequest.requestQueue();
+                final String tag = httpRequest.tag();
+                final String url = httpRequest.url();
+                final int method = httpRequest.method();
+                final Map<String, String> headers = httpRequest.headers();
+                final RetryPolicy retryPolicy = httpRequest.retryPolicy();
+                boolean shouldCache = httpRequest.shouldCache();
                 //---------> Listeners
-                Response.Listener<String> stringListener = getStringListener(subscriber, httpRequestBuilder);
-                Response.ErrorListener errorListener = getErrorListener(subscriber, httpRequestBuilder);
+                Response.Listener<String> stringListener = getStringListener(subscriber, httpRequest);
+                Response.ErrorListener errorListener = getErrorListener(subscriber, httpRequest);
                 //---------> Request
                 if (context != null && !checkIfApplicationIsConnected(context)) {
                     errorListener.onErrorResponse(new NoConnectionError());
@@ -75,17 +62,17 @@ public class VolleyRequestManager<T> {
                 StringRequest request = new StringRequest(method, url, stringListener, errorListener) {
                     @Override
                     protected Map<String, String> getParams() throws AuthFailureError {
-                        return httpRequestBuilder.getRequestHeaderParams();
+                        return httpRequest.params();
                     }
 
                     @Override
                     public byte[] getBody() throws AuthFailureError {
-                        return httpRequestBuilder.containsBodyParams() ? httpRequestBuilder.getRequestBodyParams() : super.getBody();
+                        return httpRequest.hasBody() ? httpRequest.bodyToBytes() : super.getBody();
                     }
 
                     @Override
                     public String getBodyContentType() {
-                        return !ValidationUtils.isStringEmpty(httpRequestBuilder.getHeaderContentType()) ? httpRequestBuilder.getHeaderContentType() : super.getBodyContentType();
+                        return !ValidationUtils.isStringEmpty(httpRequest.contentType()) ? httpRequest.contentType() : super.getBodyContentType();
                     }
                 };
                 request.setHeaders(headers);
@@ -100,25 +87,24 @@ public class VolleyRequestManager<T> {
         return observable.doOnUnsubscribe(new Action0() {
             @Override
             public void call() {
-                canCancelRequestOnSubscribe(httpRequestBuilder);
+                canCancelRequestOnSubscribe(httpRequest);
             }
         });
     }
 
     @NonNull
-    private Response.Listener<String> getStringListener(final Subscriber<? super T> subscriber, final HttpRequestBuilder httpRequestBuilder) {
+    private Response.Listener<String> getStringListener(final Subscriber<? super T> subscriber, final HttpRequest httpRequest) {
         return new Response.Listener<String>() {
             @Override
             public void onResponse(final String response) {
                 final Handler handler = new Handler();
-                httpRequestBuilder.getExecutorService().execute(new Runnable() {
+                httpRequest.executorService().execute(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            httpRequestBuilder.getBaseAppLogger().log(response);
-                            String json = httpRequestBuilder.getResponseInterceptor() != null
-                                    ? httpRequestBuilder.getResponseInterceptor().interceptResponse(httpRequestBuilder.getTag(), response) : response;
-                            final T t = parseJson(json, httpRequestBuilder);
+                            httpRequest.baseAppLogger().log(response);
+                            String json = httpRequest.responseInterceptor().interceptResponse(httpRequest.tag(), response);
+                            final T t = httpRequest.responseInterceptor().parse(httpRequest.tag(), httpRequest.type(), json);
                             handler.post(new Runnable() {
                                 @Override
                                 public void run() {
@@ -127,7 +113,7 @@ public class VolleyRequestManager<T> {
                                 }
                             });
                         } catch (final Throwable e) {
-                            handleError(handler, subscriber, httpRequestBuilder, e, false);
+                            handleError(handler, subscriber, httpRequest, e, false);
                         }
                     }
                 });
@@ -136,33 +122,32 @@ public class VolleyRequestManager<T> {
     }
 
     @NonNull
-    private Response.ErrorListener getErrorListener(final Subscriber<? super T> subscriber, final HttpRequestBuilder httpRequestBuilder) {
+    private Response.ErrorListener getErrorListener(final Subscriber<? super T> subscriber, final HttpRequest httpRequest) {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(final VolleyError e) {
                 final Handler handler = new Handler();
-                httpRequestBuilder.getExecutorService().execute(new Runnable() {
+                httpRequest.executorService().execute(new Runnable() {
                     @Override
                     public void run() {
                         try {
                             if (e != null && e.networkResponse != null && e.networkResponse.data != null) {
-                                String responseError = getJsonErrorFromVolleyError(httpRequestBuilder, e);
-                                httpRequestBuilder.getBaseAppLogger().log("Server Response Error : " + responseError);
+                                String responseError = getJsonErrorFromVolleyError(httpRequest, e);
+                                httpRequest.baseAppLogger().log("Server Response Error : " + responseError);
                             } else {
-                                httpRequestBuilder.getBaseAppLogger().log("Volley Error Type : " + (e != null ? e.getClass().getName() : "Null"));
+                                httpRequest.baseAppLogger().log("Volley Error Type : " + (e != null ? e.getClass().getName() : "Null"));
                             }
                             handler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    subscriber.onError(httpRequestBuilder.getResponseInterceptor() != null
-                                            ? httpRequestBuilder.getResponseInterceptor().interceptError(httpRequestBuilder.getTag(), e) : e);
+                                    subscriber.onError(httpRequest.responseInterceptor().interceptError(httpRequest.tag(), e));
                                 }
                             });
                             if (isServerError(e)) {
-                                httpRequestBuilder.getBaseAppLogger().logError(e, true);
+                                httpRequest.baseAppLogger().logError(e, true);
                             }
                         } catch (Throwable ee) {
-                            handleError(handler, subscriber, httpRequestBuilder, e, true);
+                            handleError(handler, subscriber, httpRequest, e, true);
                         }
                     }
                 });
@@ -172,54 +157,24 @@ public class VolleyRequestManager<T> {
 
     // -------------------------> Helpers
 
-    private void canCancelIfRunning(HttpRequestBuilder httpRequestBuilder) {
-        final String tag = httpRequestBuilder.getTag();
-        final boolean cancelIfRunning = httpRequestBuilder.isCancelIfRunning();
+    private void canCancelIfRunning(HttpRequest httpRequest) {
+        final String tag = httpRequest.tag();
+        final boolean cancelIfRunning = httpRequest.cancelIfRunning();
         if (cancelIfRunning && !ValidationUtils.isStringEmpty(tag)) {
-            cancelRequestByTag(httpRequestBuilder.getRequestQueue(), tag);
+            cancelRequestByTag(httpRequest.requestQueue(), tag);
         }
     }
 
-    private void canCancelRequestOnSubscribe(HttpRequestBuilder httpRequestBuilder) {
-        final String tag = httpRequestBuilder.getTag();
-        final boolean cancelOnUnSubscribe = httpRequestBuilder.isCancelOnUnSubscribe();
+    private void canCancelRequestOnSubscribe(HttpRequest httpRequest) {
+        final String tag = httpRequest.tag();
+        final boolean cancelOnUnSubscribe = httpRequest.cancelOnUnSubscribe();
         if (cancelOnUnSubscribe && !ValidationUtils.isStringEmpty(tag)) {
-            cancelRequestByTag(httpRequestBuilder.getRequestQueue(), tag);
+            cancelRequestByTag(httpRequest.requestQueue(), tag);
         }
     }
 
-    private static String validateBuilder(HttpRequestBuilder httpRequestBuilder) {
-        String errorMessage = null;
-        if (httpRequestBuilder == null) {
-            errorMessage = "httpRequestBuilder is null";
-        } else if (TextUtils.isEmpty(httpRequestBuilder.getUrl())) {
-            errorMessage = "url is empty";
-        } else if (httpRequestBuilder.getType() == null) {
-            errorMessage = "type is null";
-        } else if (httpRequestBuilder.getHeaders() == null) {
-            errorMessage = "headers is null";
-        } else if (httpRequestBuilder.getBodyParams() == null) {
-            errorMessage = "params is null";
-        } else if (httpRequestBuilder.getRetryPolicy() == null) {
-            errorMessage = "retryPolicy is null";
-        } else if (httpRequestBuilder.getRequestQueue() == null) {
-            errorMessage = "RequestQueue is null";
-        } else if (httpRequestBuilder.getGson() == null) {
-            errorMessage = "Gson is null";
-        } else if (httpRequestBuilder.getBaseAppLogger() == null) {
-            errorMessage = "BaseAppLogger is null";
-        } else if (httpRequestBuilder.getContextWeakReference() == null) {
-            errorMessage = "Context is null";
-        }
-        return errorMessage;
-    }
-
-    private static <T> T parseJson(String json, HttpRequestBuilder httpRequestBuilder) throws JSONException {
-        return parseJson(json, httpRequestBuilder.getGson(), httpRequestBuilder.getType());
-    }
-
-    private static void handleError(Handler handler, final Subscriber subscriber, final HttpRequestBuilder httpRequestBuilder, final Throwable e, boolean fatal) {
-        httpRequestBuilder.getBaseAppLogger().logError(e, fatal);
+    private static void handleError(Handler handler, final Subscriber subscriber, final HttpRequest httpRequest, final Throwable e, boolean fatal) {
+        httpRequest.baseAppLogger().logError(e, fatal);
         if (handler != null) {
             handler.post(new Runnable() {
                 @Override
@@ -227,7 +182,7 @@ public class VolleyRequestManager<T> {
                     try {
                         subscriber.onError(e);
                     } catch (Throwable ee) {
-                        httpRequestBuilder.getBaseAppLogger().logError(ee, true);
+                        httpRequest.baseAppLogger().logError(ee, true);
                     }
                 }
             });
@@ -235,7 +190,7 @@ public class VolleyRequestManager<T> {
             try {
                 subscriber.onError(e);
             } catch (Throwable ee) {
-                httpRequestBuilder.getBaseAppLogger().logError(ee, true);
+                httpRequest.baseAppLogger().logError(ee, true);
             }
         }
     }
@@ -252,14 +207,14 @@ public class VolleyRequestManager<T> {
 
     // ------------------------->
 
-    private static String getJsonErrorFromVolleyError(HttpRequestBuilder httpRequestBuilder, Throwable error) {
+    private static String getJsonErrorFromVolleyError(HttpRequest httpRequest, Throwable error) {
         String errorInString = "Unknown Error";
         try {
             if (error != null && isRequestError(error) && ((VolleyError) error).networkResponse != null && ((VolleyError) error).networkResponse.data != null) {
                 errorInString = new String(((VolleyError) error).networkResponse.data);
             }
         } catch (Exception e) {
-            httpRequestBuilder.getBaseAppLogger().logError(e);
+            httpRequest.baseAppLogger().logError(e);
         }
         return errorInString;
     }
@@ -285,26 +240,6 @@ public class VolleyRequestManager<T> {
     }
 
     // ------------------------->
-
-    public static <T> T parseJson(String json, Gson gson, Type type) throws JSONException {
-        T t = null;
-        if (type == String.class) {
-            t = (T) json;
-        } else {
-            Object parsedData = new JSONTokener(json).nextValue();
-            if (parsedData instanceof JSONObject) {
-                JSONObject response = new JSONObject(json);
-                if (type == JSONObject.class) {
-                    t = (T) response;
-                } else {
-                    t = (T) gson.fromJson(json, type);
-                }
-            } else if (parsedData instanceof JSONArray) {
-                t = (T) gson.fromJson(json, type);
-            }
-        }
-        return t;
-    }
 
     public static void cancelRequestByTag(RequestQueue requestQueue, final String tag) {
         if (tag == null) return;

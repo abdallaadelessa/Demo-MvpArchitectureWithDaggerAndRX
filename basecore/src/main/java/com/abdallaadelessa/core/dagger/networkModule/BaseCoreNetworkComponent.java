@@ -1,6 +1,6 @@
 package com.abdallaadelessa.core.dagger.networkModule;
 
-import com.abdallaadelessa.core.dagger.networkModule.builders.HttpRequestBuilder;
+import com.abdallaadelessa.core.dagger.networkModule.builders.HttpRequest;
 import com.abdallaadelessa.core.dagger.networkModule.builders.MultipartRequestBuilder;
 import com.google.gson.Gson;
 
@@ -14,7 +14,7 @@ import dagger.Component;
 @Singleton
 @Component(modules = {BaseCoreNetworkModule.class})
 public interface BaseCoreNetworkComponent {
-    HttpRequestBuilder getHttpRequestBuilder();
+    HttpRequest.Builder getHttpRequestBuilder();
 
     MultipartRequestBuilder getMultipartRequestBuilder();
 
