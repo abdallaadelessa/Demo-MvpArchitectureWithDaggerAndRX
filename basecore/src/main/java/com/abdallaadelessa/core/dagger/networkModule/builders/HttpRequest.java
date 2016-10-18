@@ -11,7 +11,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.RetryPolicy;
 import com.google.auto.value.AutoValue;
-import com.google.gson.Gson;
 
 import org.json.JSONException;
 
@@ -27,15 +26,15 @@ import rx.Observable;
  * Created by Abdalla on 13/10/2016.
  */
 @AutoValue
-public abstract class HttpRequest extends Getters {
+public abstract class HttpRequest extends HttpRequestGetters {
 
-    public static Builder builder(Context context, RequestQueue requestQueue, BaseResponseInterceptor baseResponseInterceptor, ExecutorService executorService, BaseAppLogger baseAppLogger) {
+    public static Builder builder(Context context, RequestQueue requestQueue, BaseResponseInterceptor responseInterceptor, ExecutorService executorService, BaseAppLogger appLogger) {
         Builder builder = new AutoValue_HttpRequest.Builder();
         builder.contextWeakReference(new WeakReference<>(context));
         builder.requestQueue(requestQueue);
-        builder.responseInterceptor(baseResponseInterceptor);
+        builder.responseInterceptor(responseInterceptor);
         builder.executorService(executorService);
-        builder.baseAppLogger(baseAppLogger);
+        builder.appLogger(appLogger);
         // Default Values
         builder.GET();
         builder.type(String.class);
@@ -49,9 +48,9 @@ public abstract class HttpRequest extends Getters {
     }
 
     @AutoValue.Builder
-    public abstract static class Builder extends Getters {
+    public abstract static class Builder extends HttpRequestGetters {
 
-        abstract HttpRequest.Builder baseAppLogger(BaseAppLogger baseAppLogger);
+        abstract HttpRequest.Builder appLogger(BaseAppLogger appLogger);
 
         abstract HttpRequest.Builder requestQueue(RequestQueue requestQueue);
 
@@ -125,8 +124,6 @@ public abstract class HttpRequest extends Getters {
         }
     }
 
-    // ---------->
-
     public static abstract class BaseResponseInterceptor {
         public abstract <T> T parse(String tag, Type type, String json)throws JSONException;
 
@@ -140,8 +137,8 @@ public abstract class HttpRequest extends Getters {
     }
 }
 
-abstract class Getters {
-    public abstract BaseAppLogger baseAppLogger();
+abstract class HttpRequestGetters {
+    public abstract BaseAppLogger appLogger();
 
     public abstract RequestQueue requestQueue();
 
@@ -190,7 +187,7 @@ abstract class Getters {
                 bodyBytes = body().getBytes(PROTOCOL_CHARSET);
             }
         } catch (Exception uee) {
-            baseAppLogger().logError(uee);
+            appLogger().logError(uee);
         }
         return bodyBytes;
     }

@@ -2,10 +2,7 @@ package com.abdallaadelessa.core.dagger.networkModule.volley;
 
 import android.text.TextUtils;
 
-import com.abdallaadelessa.core.model.MessageError;
-import com.abdallaadelessa.core.dagger.networkModule.builders.MultipartRequestBuilder;
-import com.abdallaadelessa.core.utils.StringUtils;
-import com.abdallaadelessa.core.utils.ValidationUtils;
+import com.abdallaadelessa.core.dagger.networkModule.builders.MultipartRequest;
 import com.android.volley.error.NetworkError;
 
 import java.io.File;
@@ -29,27 +26,21 @@ import rx.schedulers.Schedulers;
 public class MultipartRequestManager<T> {
     public static final int TIMEOUT_IN_SECONDS = 60;
 
-    // --------------------->
-
-    public static <T> Observable<T> createObservableFrom(final MultipartRequestBuilder multipartRequestBuilder) {
+    public static <T> Observable<T> createObservableFrom(final MultipartRequest multipartRequest) {
         Observable<T> observable = Observable.create(new Observable.OnSubscribe<T>() {
             @Override
             public void call(Subscriber<? super T> subscriber) {
                 try {
-                    String error = validateBuilder(multipartRequestBuilder);
-                    if (!ValidationUtils.isStringEmpty(error)) {
-                        subscriber.onError(new MessageError(error));
-                        return;
-                    }
-                    String url = multipartRequestBuilder.getUrl();
-                    Type type = multipartRequestBuilder.getType();
-                    Map<String, String> parameters = multipartRequestBuilder.getParameters();
-                    ArrayList<MultipartRequestBuilder.MultiPartFile> files = multipartRequestBuilder.getFiles();
+                    String tag = multipartRequest.tag();
+                    String url = multipartRequest.url();
+                    Type type = multipartRequest.type();
+                    Map<String, String> parameters = multipartRequest.params();
+                    ArrayList<MultipartRequest.MultiPartFile> files = multipartRequest.files();
                     MultipartBody.Builder multipartBodyBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
                     // Files
                     if (files != null) {
                         for (int i = 0; i < files.size(); i++) {
-                            MultipartRequestBuilder.MultiPartFile multiPartFileObj = files.get(i);
+                            MultipartRequest.MultiPartFile multiPartFileObj = files.get(i);
                             String fileUrl = multiPartFileObj.getUrl();
                             String fileName = TextUtils.isEmpty(multiPartFileObj.getName()) ? "file" + i : multiPartFileObj.getName();
                             String fileMimeType = multiPartFileObj.getMimeType();
@@ -68,44 +59,23 @@ public class MultipartRequestManager<T> {
                         }
                     }
                     // Send Request
-                    multipartRequestBuilder.getBaseAppLogger().log("Uploading " + url);
+                    multipartRequest.appLogger().log("Uploading " + url);
                     RequestBody requestBody = multipartBodyBuilder.build();
                     Request request = new Request.Builder().url(url).post(requestBody).build();
                     OkHttpClient client = new OkHttpClient().newBuilder().readTimeout(TIMEOUT_IN_SECONDS, TimeUnit.SECONDS).writeTimeout(TIMEOUT_IN_SECONDS, TimeUnit.SECONDS).build();
                     Response response = client.newCall(request).execute();
-                    String responseStr = response.body().string();
-                    subscriber.onNext(StringUtils.<T>parseJson(responseStr, multipartRequestBuilder.getGson(), type));
+                    String responseStr = multipartRequest.responseInterceptor().interceptResponse(tag, response.body().string());
+                    subscriber.onNext(multipartRequest.responseInterceptor().<T>parse(tag, type, responseStr));
                     subscriber.onCompleted();
                 } catch (Throwable e) {
                     if (e instanceof SocketException) {
                         e = new NetworkError(e);
                     }
-                    multipartRequestBuilder.getBaseAppLogger().logError(e);
-                    subscriber.onError(e);
+                    multipartRequest.appLogger().logError(e);
+                    subscriber.onError(multipartRequest.responseInterceptor().interceptError(multipartRequest.tag(), e));
                 }
             }
         }).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.newThread());
         return observable;
     }
-
-    // -------------------------> Helpers
-
-    private static String validateBuilder(MultipartRequestBuilder multipartRequestBuilder) {
-        String errorMessage = null;
-        if (multipartRequestBuilder == null) {
-            errorMessage = "multipartRequestBuilder is null";
-        } else if (TextUtils.isEmpty(multipartRequestBuilder.getUrl())) {
-            errorMessage = "url is empty";
-        } else if (multipartRequestBuilder.getType() == null) {
-            errorMessage = "type is null";
-        } else if (multipartRequestBuilder.getBaseAppLogger() == null) {
-            errorMessage = "BaseAppLogger is null";
-        } else if (multipartRequestBuilder.getGson() == null) {
-            errorMessage = "Gson is null";
-        } else if (multipartRequestBuilder.getFiles() == null) {
-            errorMessage = "Files is null";
-        }
-        return errorMessage;
-    }
-
 }

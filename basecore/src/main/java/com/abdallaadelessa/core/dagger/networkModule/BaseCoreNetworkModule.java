@@ -6,7 +6,7 @@ import com.abdallaadelessa.core.dagger.appModule.BaseCoreModule;
 import com.abdallaadelessa.core.dagger.loggerModule.BaseCoreLoggerModule;
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
 import com.abdallaadelessa.core.dagger.networkModule.builders.HttpRequest;
-import com.abdallaadelessa.core.dagger.networkModule.builders.MultipartRequestBuilder;
+import com.abdallaadelessa.core.dagger.networkModule.builders.MultipartRequest;
 import com.abdallaadelessa.core.dagger.networkModule.volley.VolleyNetworkModule;
 import com.android.volley.RequestQueue;
 import com.google.gson.Gson;
@@ -68,8 +68,8 @@ public class BaseCoreNetworkModule {
 
     @Singleton
     @Provides
-    public MultipartRequestBuilder provideMultipartRequestBuilder(Gson gson, BaseAppLogger baseAppLogger) {
-        return MultipartRequestBuilder.builder(gson, baseAppLogger);
+    public MultipartRequest.Builder provideMultipartRequestBuilder(HttpRequest.BaseResponseInterceptor baseResponseInterceptor, BaseAppLogger baseAppLogger) {
+        return MultipartRequest.builder(baseResponseInterceptor, baseAppLogger);
     }
 
     @Singleton

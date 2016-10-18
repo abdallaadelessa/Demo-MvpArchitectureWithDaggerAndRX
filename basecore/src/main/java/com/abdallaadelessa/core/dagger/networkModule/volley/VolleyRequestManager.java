@@ -102,7 +102,7 @@ public class VolleyRequestManager<T> {
                     @Override
                     public void run() {
                         try {
-                            httpRequest.baseAppLogger().log(response);
+                            httpRequest.appLogger().log(response);
                             String json = httpRequest.responseInterceptor().interceptResponse(httpRequest.tag(), response);
                             final T t = httpRequest.responseInterceptor().parse(httpRequest.tag(), httpRequest.type(), json);
                             handler.post(new Runnable() {
@@ -133,9 +133,9 @@ public class VolleyRequestManager<T> {
                         try {
                             if (e != null && e.networkResponse != null && e.networkResponse.data != null) {
                                 String responseError = getJsonErrorFromVolleyError(httpRequest, e);
-                                httpRequest.baseAppLogger().log("Server Response Error : " + responseError);
+                                httpRequest.appLogger().log("Server Response Error : " + responseError);
                             } else {
-                                httpRequest.baseAppLogger().log("Volley Error Type : " + (e != null ? e.getClass().getName() : "Null"));
+                                httpRequest.appLogger().log("Volley Error Type : " + (e != null ? e.getClass().getName() : "Null"));
                             }
                             handler.post(new Runnable() {
                                 @Override
@@ -144,7 +144,7 @@ public class VolleyRequestManager<T> {
                                 }
                             });
                             if (isServerError(e)) {
-                                httpRequest.baseAppLogger().logError(e, true);
+                                httpRequest.appLogger().logError(e, true);
                             }
                         } catch (Throwable ee) {
                             handleError(handler, subscriber, httpRequest, e, true);
@@ -174,7 +174,7 @@ public class VolleyRequestManager<T> {
     }
 
     private static void handleError(Handler handler, final Subscriber subscriber, final HttpRequest httpRequest, final Throwable e, boolean fatal) {
-        httpRequest.baseAppLogger().logError(e, fatal);
+        httpRequest.appLogger().logError(e, fatal);
         if (handler != null) {
             handler.post(new Runnable() {
                 @Override
@@ -182,7 +182,7 @@ public class VolleyRequestManager<T> {
                     try {
                         subscriber.onError(e);
                     } catch (Throwable ee) {
-                        httpRequest.baseAppLogger().logError(ee, true);
+                        httpRequest.appLogger().logError(ee, true);
                     }
                 }
             });
@@ -190,7 +190,7 @@ public class VolleyRequestManager<T> {
             try {
                 subscriber.onError(e);
             } catch (Throwable ee) {
-                httpRequest.baseAppLogger().logError(ee, true);
+                httpRequest.appLogger().logError(ee, true);
             }
         }
     }
@@ -214,7 +214,7 @@ public class VolleyRequestManager<T> {
                 errorInString = new String(((VolleyError) error).networkResponse.data);
             }
         } catch (Exception e) {
-            httpRequest.baseAppLogger().logError(e);
+            httpRequest.appLogger().logError(e);
         }
         return errorInString;
     }
