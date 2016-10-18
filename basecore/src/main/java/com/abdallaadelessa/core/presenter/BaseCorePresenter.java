@@ -1,14 +1,18 @@
 package com.abdallaadelessa.core.presenter;
 
-import com.abdallaadelessa.core.view.IBaseView;
+import com.abdallaadelessa.core.app.BaseCoreApp;
 
 import java.lang.ref.WeakReference;
+
+import rx.Subscription;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by abdullah on 12/10/16.
  */
 
 public abstract class BaseCorePresenter<V> {
+    private CompositeSubscription subscriptions = new CompositeSubscription();
 
     private WeakReference<V> viewRef;
 
@@ -17,9 +21,23 @@ public abstract class BaseCorePresenter<V> {
     }
 
     public void detachView() {
-        if (viewRef != null) {
-            viewRef.clear();
-            viewRef = null;
+        try {
+            if (subscriptions != null) {
+                if (subscriptions.hasSubscriptions()) {
+                    subscriptions.unsubscribe();
+                }
+                subscriptions.clear();
+            }
+        } catch (Exception e) {
+            BaseCoreApp.getAppComponent().getLogger().logError(e);
+        }
+        try {
+            if (viewRef != null) {
+                viewRef.clear();
+                viewRef = null;
+            }
+        } catch (Exception e) {
+            BaseCoreApp.getAppComponent().getLogger().logError(e);
         }
     }
 
@@ -29,6 +47,10 @@ public abstract class BaseCorePresenter<V> {
 
     protected V getView() {
         return viewRef == null ? null : viewRef.get();
+    }
+
+    public void addSubscription(Subscription subscription) {
+        if (subscriptions != null) subscriptions.add(subscription);
     }
 
     public abstract void loadViewData();
