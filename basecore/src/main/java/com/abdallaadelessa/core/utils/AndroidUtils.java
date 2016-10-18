@@ -190,4 +190,5 @@ public class AndroidUtils {
             context.startActivity(browserIntent);
         }
     }
+
 }

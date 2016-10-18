@@ -61,8 +61,6 @@ public class FileUtils {
         }
     }
 
-    // ------------->
-
     /**
      * Encode URl UTF-8
      *

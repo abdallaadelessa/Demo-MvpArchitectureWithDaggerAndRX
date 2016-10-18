@@ -235,14 +235,6 @@ public class UIUtils {
         }
     }
 
-    public static void restartActivity(Activity activity, Bundle extras) {
-        activity.finish();
-        Intent intent = new Intent(activity, activity.getClass());
-        if (extras != null) intent.putExtras(extras);
-        activity.startActivity(intent);
-        activity.overridePendingTransition(0, 0);
-    }
-
     // ------------------------>
 
     public static ColorStateList getThemeTint(int disabledColor, int enabledColor) {

@@ -18,6 +18,26 @@ import java.util.Arrays;
 
 public class StringUtils {
 
+    public static <T> T parseJson(String json, Gson gson, Type type) throws JSONException {
+        T t = null;
+        if (type == String.class) {
+            t = (T) json;
+        } else {
+            Object parsedData = new JSONTokener(json).nextValue();
+            if (parsedData instanceof JSONObject) {
+                JSONObject response = new JSONObject(json);
+                if (type == JSONObject.class) {
+                    t = (T) response;
+                } else {
+                    t = (T) gson.fromJson(json, type);
+                }
+            } else if (parsedData instanceof JSONArray) {
+                t = (T) gson.fromJson(json, type);
+            }
+        }
+        return t;
+    }
+
     public static String removeQuotes(String text) {
         return text.replaceAll("^\"|\"$", "");
     }
@@ -40,25 +60,5 @@ public class StringUtils {
             hiddenText = new StringBuilder().append(pad).toString();
         }
         return hiddenText;
-    }
-
-    public static <T> T parseJson(String json, Gson gson, Type type) throws JSONException {
-        T t = null;
-        if (type == String.class) {
-            t = (T) json;
-        } else {
-            Object parsedData = new JSONTokener(json).nextValue();
-            if (parsedData instanceof JSONObject) {
-                JSONObject response = new JSONObject(json);
-                if (type == JSONObject.class) {
-                    t = (T) response;
-                } else {
-                    t = (T) gson.fromJson(json, type);
-                }
-            } else if (parsedData instanceof JSONArray) {
-                t = (T) gson.fromJson(json, type);
-            }
-        }
-        return t;
     }
 }
