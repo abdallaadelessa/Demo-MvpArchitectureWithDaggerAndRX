@@ -29,14 +29,14 @@ public abstract class BaseResponseInterceptor {
     public abstract <T> T parse(String tag, Type type, String json) throws JSONException;
 
     public void onStart(String tag, String url) throws Exception {
-        logger.log("Starting : " + url);
+        logger.log(tag, "Starting : " + url);
         if (!AndroidUtils.checkIfApplicationIsConnected()) {
             throw new NoConnectionError();
         }
     }
 
     public String interceptResponse(String tag, String url, String json) throws Exception {
-        logger.log(json);
+        logger.log(tag, json);
         return json;
     }
 
