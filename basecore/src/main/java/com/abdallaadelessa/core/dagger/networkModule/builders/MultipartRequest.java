@@ -19,10 +19,9 @@ import rx.Observable;
  */
 @AutoValue
 public abstract class MultipartRequest extends MultipartRequestGetters {
-    public static MultipartRequest.Builder builder(HttpRequest.BaseResponseInterceptor baseResponseInterceptor, BaseAppLogger baseAppLogger) {
+    public static MultipartRequest.Builder builder(BaseResponseInterceptor baseResponseInterceptor) {
         MultipartRequest.Builder builder = new AutoValue_MultipartRequest.Builder();
         builder.responseInterceptor(baseResponseInterceptor);
-        builder.appLogger(baseAppLogger);
         // Default Values
         builder.type(String.class);
         builder.params(new HashMap<String, String>());
@@ -32,9 +31,7 @@ public abstract class MultipartRequest extends MultipartRequestGetters {
 
     @AutoValue.Builder
     public abstract static class Builder extends MultipartRequestGetters {
-        abstract MultipartRequest.Builder responseInterceptor(HttpRequest.BaseResponseInterceptor responseInterceptor);
-
-        abstract MultipartRequest.Builder appLogger(BaseAppLogger baseAppLogger);
+        abstract MultipartRequest.Builder responseInterceptor(BaseResponseInterceptor responseInterceptor);
 
         public abstract MultipartRequest.Builder tag(String tag);
 
@@ -100,9 +97,7 @@ public abstract class MultipartRequest extends MultipartRequestGetters {
 }
 
 abstract class MultipartRequestGetters {
-    public abstract HttpRequest.BaseResponseInterceptor responseInterceptor();
-
-    public abstract BaseAppLogger appLogger();
+    public abstract BaseResponseInterceptor responseInterceptor();
 
     @Nullable
     public abstract String tag();

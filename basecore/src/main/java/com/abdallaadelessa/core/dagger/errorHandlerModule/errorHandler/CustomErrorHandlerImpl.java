@@ -19,7 +19,7 @@ public class CustomErrorHandlerImpl extends BaseErrorHandler {
     @Override
     public String getErrorMessage(Throwable error) {
         if (contextWeakReference == null || contextWeakReference.get() == null) return null;
-        if (VolleyRequestManager.isRequestError(error)) {
+        if (VolleyRequestManager.isVolleyError(error)) {
             String errorMsg = contextWeakReference.get().getString(R.string.txt_unknown_error_occured);
             if (VolleyRequestManager.isTimeoutError(error)) {
                 errorMsg = contextWeakReference.get().getString(R.string.txt_timeout);

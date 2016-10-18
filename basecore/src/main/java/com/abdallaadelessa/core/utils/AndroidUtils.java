@@ -25,8 +25,8 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 public class AndroidUtils {
-    public static Boolean checkIfApplicationIsConnected(Context context) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    public static Boolean checkIfApplicationIsConnected() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) BaseCoreApp.getAppComponent().getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
         if (activeNetInfo != null) {
             return activeNetInfo != null && activeNetInfo.isAvailable() && activeNetInfo.isConnected();

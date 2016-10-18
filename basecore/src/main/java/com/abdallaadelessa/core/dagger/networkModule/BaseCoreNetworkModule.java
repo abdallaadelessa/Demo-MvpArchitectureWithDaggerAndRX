@@ -1,10 +1,9 @@
 package com.abdallaadelessa.core.dagger.networkModule;
 
-import android.content.Context;
-
 import com.abdallaadelessa.core.dagger.appModule.BaseCoreModule;
 import com.abdallaadelessa.core.dagger.loggerModule.BaseCoreLoggerModule;
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
+import com.abdallaadelessa.core.dagger.networkModule.builders.BaseResponseInterceptor;
 import com.abdallaadelessa.core.dagger.networkModule.builders.HttpRequest;
 import com.abdallaadelessa.core.dagger.networkModule.builders.MultipartRequest;
 import com.abdallaadelessa.core.dagger.networkModule.volley.VolleyNetworkModule;
@@ -33,8 +32,8 @@ public class BaseCoreNetworkModule {
 
     @Singleton
     @Provides
-    public HttpRequest.BaseResponseInterceptor provideBaseResponseInterceptor(final Gson gson) {
-        return new HttpRequest.BaseResponseInterceptor() {
+    public BaseResponseInterceptor provideBaseResponseInterceptor(final Gson gson, BaseAppLogger baseAppLogger) {
+        return new BaseResponseInterceptor(baseAppLogger) {
 
             @Override
             public <T> T parse(String tag, Type type, String json) throws JSONException {
@@ -61,15 +60,14 @@ public class BaseCoreNetworkModule {
 
     @Singleton
     @Provides
-    public HttpRequest.Builder provideHttpRequestBuilder(Context context
-            , RequestQueue requestQueue, HttpRequest.BaseResponseInterceptor baseResponseInterceptor, ExecutorService executorService, BaseAppLogger baseAppLogger) {
-        return HttpRequest.builder(context, requestQueue, baseResponseInterceptor, executorService, baseAppLogger);
+    public HttpRequest.Builder provideHttpRequestBuilder(RequestQueue requestQueue, BaseResponseInterceptor baseResponseInterceptor, ExecutorService executorService) {
+        return HttpRequest.builder(requestQueue, baseResponseInterceptor, executorService);
     }
 
     @Singleton
     @Provides
-    public MultipartRequest.Builder provideMultipartRequestBuilder(HttpRequest.BaseResponseInterceptor baseResponseInterceptor, BaseAppLogger baseAppLogger) {
-        return MultipartRequest.builder(baseResponseInterceptor, baseAppLogger);
+    public MultipartRequest.Builder provideMultipartRequestBuilder(BaseResponseInterceptor baseResponseInterceptor) {
+        return MultipartRequest.builder(baseResponseInterceptor);
     }
 
     @Singleton

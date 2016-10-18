@@ -1,9 +1,7 @@
 package com.abdallaadelessa.core.dagger.networkModule.builders;
 
-import android.content.Context;
 import android.support.annotation.Nullable;
 
-import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
 import com.abdallaadelessa.core.dagger.networkModule.volley.VolleyRequestManager;
 import com.abdallaadelessa.core.utils.ValidationUtils;
 import com.android.volley.DefaultRetryPolicy;
@@ -12,9 +10,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.RetryPolicy;
 import com.google.auto.value.AutoValue;
 
-import org.json.JSONException;
-
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,13 +23,11 @@ import rx.Observable;
 @AutoValue
 public abstract class HttpRequest extends HttpRequestGetters {
 
-    public static Builder builder(Context context, RequestQueue requestQueue, BaseResponseInterceptor responseInterceptor, ExecutorService executorService, BaseAppLogger appLogger) {
+    public static Builder builder(RequestQueue requestQueue, BaseResponseInterceptor responseInterceptor, ExecutorService executorService) {
         Builder builder = new AutoValue_HttpRequest.Builder();
-        builder.contextWeakReference(new WeakReference<>(context));
         builder.requestQueue(requestQueue);
         builder.responseInterceptor(responseInterceptor);
         builder.executorService(executorService);
-        builder.appLogger(appLogger);
         // Default Values
         builder.GET();
         builder.type(String.class);
@@ -50,11 +43,9 @@ public abstract class HttpRequest extends HttpRequestGetters {
     @AutoValue.Builder
     public abstract static class Builder extends HttpRequestGetters {
 
-        abstract HttpRequest.Builder appLogger(BaseAppLogger appLogger);
-
         abstract HttpRequest.Builder requestQueue(RequestQueue requestQueue);
 
-        abstract HttpRequest.Builder contextWeakReference(WeakReference<Context> contextWeakReference);
+        public abstract HttpRequest.Builder responseInterceptor(BaseResponseInterceptor responseInterceptor);
 
         abstract HttpRequest.Builder executorService(ExecutorService executorService);
 
@@ -73,8 +64,6 @@ public abstract class HttpRequest extends HttpRequestGetters {
         public abstract HttpRequest.Builder body(String body);
 
         public abstract HttpRequest.Builder retryPolicy(RetryPolicy retryPolicy);
-
-        public abstract HttpRequest.Builder responseInterceptor(HttpRequest.BaseResponseInterceptor responseInterceptor);
 
         public abstract HttpRequest.Builder shouldCache(boolean shouldCache);
 
@@ -124,25 +113,12 @@ public abstract class HttpRequest extends HttpRequestGetters {
         }
     }
 
-    public static abstract class BaseResponseInterceptor {
-        public abstract <T> T parse(String tag, Type type, String json)throws JSONException;
-
-        public String interceptResponse(String tag, String json) throws Exception {
-            return json;
-        }
-
-        public Throwable interceptError(String tag, Throwable throwable) {
-            return throwable;
-        }
-    }
 }
 
 abstract class HttpRequestGetters {
-    public abstract BaseAppLogger appLogger();
-
     public abstract RequestQueue requestQueue();
 
-    public abstract WeakReference<Context> contextWeakReference();
+    public abstract BaseResponseInterceptor responseInterceptor();
 
     public abstract ExecutorService executorService();
 
@@ -164,8 +140,6 @@ abstract class HttpRequestGetters {
 
     public abstract RetryPolicy retryPolicy();
 
-    public abstract HttpRequest.BaseResponseInterceptor responseInterceptor();
-
     public abstract boolean shouldCache();
 
     public abstract boolean cancelIfRunning();
@@ -186,14 +160,13 @@ abstract class HttpRequestGetters {
             if (!ValidationUtils.isStringEmpty(body())) {
                 bodyBytes = body().getBytes(PROTOCOL_CHARSET);
             }
-        } catch (Exception uee) {
-            appLogger().logError(uee);
+        } catch (Exception ee) {
+            responseInterceptor().getLogger().logError(ee);
         }
         return bodyBytes;
     }
 
     // ----------> Constants
-    protected static final String JSON_PARAM = "|json|_|param|";
     public static final String HEADER_CONTENT_TYPE = "Content-Type";
     public static final String PROTOCOL_CHARSET = "utf-8";
     public static final String CONTENT_TYPE_JSON = String.format("application/json; charset=%s", PROTOCOL_CHARSET);

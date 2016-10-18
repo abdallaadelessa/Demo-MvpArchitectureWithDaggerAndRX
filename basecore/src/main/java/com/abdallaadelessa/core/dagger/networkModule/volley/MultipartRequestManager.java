@@ -59,20 +59,19 @@ public class MultipartRequestManager<T> {
                         }
                     }
                     // Send Request
-                    multipartRequest.appLogger().log("Uploading " + url);
+                    multipartRequest.responseInterceptor().onStart(tag, url);
                     RequestBody requestBody = multipartBodyBuilder.build();
                     Request request = new Request.Builder().url(url).post(requestBody).build();
                     OkHttpClient client = new OkHttpClient().newBuilder().readTimeout(TIMEOUT_IN_SECONDS, TimeUnit.SECONDS).writeTimeout(TIMEOUT_IN_SECONDS, TimeUnit.SECONDS).build();
                     Response response = client.newCall(request).execute();
-                    String responseStr = multipartRequest.responseInterceptor().interceptResponse(tag, response.body().string());
+                    String responseStr = multipartRequest.responseInterceptor().interceptResponse(tag, url, response.body().string());
                     subscriber.onNext(multipartRequest.responseInterceptor().<T>parse(tag, type, responseStr));
                     subscriber.onCompleted();
                 } catch (Throwable e) {
                     if (e instanceof SocketException) {
                         e = new NetworkError(e);
                     }
-                    multipartRequest.appLogger().logError(e);
-                    subscriber.onError(multipartRequest.responseInterceptor().interceptError(multipartRequest.tag(), e));
+                    subscriber.onError(multipartRequest.responseInterceptor().interceptError(multipartRequest.tag(), multipartRequest.url(), e, false));
                 }
             }
         }).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.newThread());
