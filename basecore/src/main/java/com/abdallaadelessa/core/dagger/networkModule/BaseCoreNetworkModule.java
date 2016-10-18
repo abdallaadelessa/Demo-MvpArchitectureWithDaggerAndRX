@@ -60,14 +60,14 @@ public class BaseCoreNetworkModule {
 
     @Singleton
     @Provides
-    public HttpRequest.Builder provideHttpRequestBuilder(RequestQueue requestQueue, BaseResponseInterceptor baseResponseInterceptor, ExecutorService executorService) {
-        return HttpRequest.builder(requestQueue, baseResponseInterceptor, executorService);
+    public HttpRequest.Builder provideHttpRequestBuilder(RequestQueue requestQueue, BaseResponseInterceptor responseInterceptor, ExecutorService executorService) {
+        return HttpRequest.builder(requestQueue, responseInterceptor, executorService);
     }
 
     @Singleton
     @Provides
-    public MultipartRequest.Builder provideMultipartRequestBuilder(BaseResponseInterceptor baseResponseInterceptor) {
-        return MultipartRequest.builder(baseResponseInterceptor);
+    public MultipartRequest.Builder provideMultipartRequestBuilder(BaseResponseInterceptor responseInterceptor) {
+        return MultipartRequest.builder(responseInterceptor);
     }
 
     @Singleton
