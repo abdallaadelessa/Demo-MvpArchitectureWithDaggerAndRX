@@ -26,7 +26,7 @@ public abstract class BaseResponseInterceptor {
 
     // ------------->
 
-    public abstract <T> T parse(String tag, Type type, String json) throws JSONException;
+    public abstract <T> T parse(String tag, Type type, String response) throws JSONException;
 
     public void onStart(String tag, String url) throws Exception {
         logger.log(tag, "Starting : " + url);
@@ -35,9 +35,9 @@ public abstract class BaseResponseInterceptor {
         }
     }
 
-    public String interceptResponse(String tag, String url, String json) throws Exception {
-        logger.log(tag, json);
-        return json;
+    public String interceptResponse(String tag, String url, String response) throws Exception {
+        logger.log(tag, response);
+        return response;
     }
 
     public Throwable interceptError(String tag, String url, Throwable throwable, final boolean fatal) {
