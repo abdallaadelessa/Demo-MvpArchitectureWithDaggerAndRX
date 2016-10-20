@@ -1,4 +1,4 @@
-package com.abdallaadelessa.demo.view.main;
+package com.abdallaadelessa.demo.presentation.presenter.main;
 
 import com.abdallaadelessa.core.view.IBaseView;
 

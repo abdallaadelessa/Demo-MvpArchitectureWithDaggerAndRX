@@ -1,14 +1,14 @@
-package com.abdallaadelessa.demo.view.main;
+package com.abdallaadelessa.demo.presentation.presenter.main;
 
 import com.abdallaadelessa.core.dagger.AppComponent;
 import com.abdallaadelessa.core.presenter.BaseCorePresenter;
-import com.abdallaadelessa.demo.AirlineModel;
 import com.abdallaadelessa.demo.app.MyApplication;
-import com.google.common.reflect.TypeToken;
+import com.abdallaadelessa.demo.data.airline.model.AirlineModel;
+import com.abdallaadelessa.demo.domain.airline.AirlineUseCases;
+import com.abdallaadelessa.demo.domain.airline.di.DaggerAirlineUseCasesComponent;
 
 import java.util.List;
 
-import rx.Observable;
 import rx.functions.Action1;
 
 /**
@@ -16,17 +16,18 @@ import rx.functions.Action1;
  */
 
 public class MainPresenter extends BaseCorePresenter<IMainView> {
+    private AirlineUseCases airlineUseCases;
+
+    public MainPresenter() {
+        airlineUseCases = DaggerAirlineUseCasesComponent.create().getAirlineUseCases();
+    }
+
     @Override
     public void loadViewData() {
         final AppComponent appComponent = MyApplication.getAppComponent();
-        Observable<List<AirlineModel>> observable = appComponent.getHttpRequestBuilder()
-                .tag("aaaaaaa")
-                .url("https://www.kayak.com/h/mobileapis/directory/airlines")
-                .type(new TypeToken<List<AirlineModel>>(){}.getType())
-                .build();
-        observable.subscribe(new Action1<List<AirlineModel>>() {
+        airlineUseCases.getAirlines().subscribe(new Action1<List<AirlineModel>>() {
             @Override
-            public void call(List<AirlineModel> response) {
+            public void call(List<AirlineModel> airlineModels) {
                 appComponent.getLogger().log("Success");
             }
         }, new Action1<Throwable>() {

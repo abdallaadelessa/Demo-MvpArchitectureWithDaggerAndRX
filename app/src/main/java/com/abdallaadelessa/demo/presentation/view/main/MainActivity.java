@@ -1,7 +1,8 @@
-package com.abdallaadelessa.demo.view.main;
+package com.abdallaadelessa.demo.presentation.view.main;
 
 import android.os.Bundle;
 
+import com.abdallaadelessa.core.presenter.BaseCorePresenter;
 import com.abdallaadelessa.core.view.BaseCoreActivity;
 import com.abdallaadelessa.demo.R;
 
@@ -13,5 +14,11 @@ public class MainActivity extends BaseCoreActivity {
             getSupportFragmentManager().beginTransaction().replace(R.id.content, new MainFragment()).commit();
         }
     }
+
+    @Override
+    protected BaseCorePresenter initPresenter() {
+        return null;
+    }
+
 
 }

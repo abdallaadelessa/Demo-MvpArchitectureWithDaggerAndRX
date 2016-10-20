@@ -1,4 +1,4 @@
-package com.abdallaadelessa.demo.view.managers;
+package com.abdallaadelessa.demo.presentation.view.managers;
 
 import android.app.Activity;
 

@@ -13,16 +13,13 @@ import android.support.v7.widget.Toolbar;
 import com.abdallaadelessa.core.R;
 import com.abdallaadelessa.core.presenter.BaseCorePresenter;
 
-import javax.inject.Inject;
-
 /**
  * Created by abdullah on 12/10/16.
  */
 
 public abstract class BaseCoreActivity<p extends BaseCorePresenter> extends AppCompatActivity {
     private static final int UP_DRAWABLE_ID = R.drawable.ic_white_up_arrow;
-    @Inject
-    p presenter;
+    private p presenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,9 +41,7 @@ public abstract class BaseCoreActivity<p extends BaseCorePresenter> extends AppC
 
     // --------------->
 
-    protected void injectComponent() {
-
-    }
+    protected abstract p initPresenter();
 
     public p getPresenter() {
         return presenter;
@@ -59,7 +54,7 @@ public abstract class BaseCoreActivity<p extends BaseCorePresenter> extends AppC
     // --------------->
 
     protected void initUI() {
-        injectComponent();
+        presenter = initPresenter();
         if (getPresenter() != null) getPresenter().attachView(this);
         forceScreenOrientation();
     }

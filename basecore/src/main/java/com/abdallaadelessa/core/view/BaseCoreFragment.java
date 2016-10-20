@@ -11,8 +11,6 @@ import android.view.ViewGroup;
 import com.abdallaadelessa.core.presenter.BaseCorePresenter;
 import com.abdallaadelessa.core.utils.ButterKnifeUtils;
 
-import javax.inject.Inject;
-
 import butterknife.Unbinder;
 
 /**
@@ -21,8 +19,7 @@ import butterknife.Unbinder;
 
 public abstract class BaseCoreFragment<p extends BaseCorePresenter> extends Fragment {
     private Unbinder unbinder;
-    @Inject
-    p presenter;
+    private p presenter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,9 +52,7 @@ public abstract class BaseCoreFragment<p extends BaseCorePresenter> extends Frag
 
     // --------------->
 
-    protected void injectComponent() {
-
-    }
+    protected abstract p initPresenter();
 
     public p getPresenter() {
         return presenter;
@@ -72,7 +67,7 @@ public abstract class BaseCoreFragment<p extends BaseCorePresenter> extends Frag
     protected abstract int getLayoutRes();
 
     protected Unbinder initUI(View view) {
-        injectComponent();
+        presenter = initPresenter();
         if (getPresenter() != null) getPresenter().attachView(this);
         return null;
     }

@@ -1,4 +1,4 @@
-package com.abdallaadelessa.demo;
+package com.abdallaadelessa.demo.data.airline.model;
 
 /**
  * Created by Abdalla on 18/10/2016.
