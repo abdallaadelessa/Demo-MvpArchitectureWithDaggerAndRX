@@ -1,6 +1,7 @@
 package com.abdallaadelessa.demo.presentation.airlineDetails.presenter;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.abdallaadelessa.core.presenter.BaseCorePresenter;
 import com.abdallaadelessa.core.utils.AndroidUtils;
@@ -42,31 +43,31 @@ public class AirlineDetailsPresenter extends BaseCorePresenter<IAirlineDetailsVi
         favouriteAirlinesUseCase.toggleFavAirline(airlineModel);
     }
 
-    public void openBrowser(Activity activity, AirlineModel airlineModel) {
-        if (activity == null || airlineModel == null) return;
+    public void openBrowser(Context context, AirlineModel airlineModel) {
+        if (context == null || airlineModel == null) return;
         if (!ValidationUtils.isStringEmpty(airlineModel.getSite())) {
             try {
-                AndroidUtils.openBrowser(activity, airlineModel.getSite());
+                AndroidUtils.openBrowser(context, airlineModel.getSite());
             } catch (Exception e) {
                 MyApplication.getAppComponent().getLogger().logError(e);
-                UIUtils.showToast(activity, activity.getString(R.string.error_no_browser));
+                UIUtils.showToast(context, context.getString(R.string.error_no_browser));
             }
         } else {
-            UIUtils.showToast(activity, R.string.txt_no_content);
+            UIUtils.showToast(context, R.string.txt_no_content);
         }
     }
 
-    public void callPhone(Activity activity, AirlineModel airlineModel) {
-        if (activity == null || airlineModel == null) return;
+    public void callPhone(Context context, AirlineModel airlineModel) {
+        if (context == null || airlineModel == null) return;
         if (!ValidationUtils.isStringEmpty(airlineModel.getPhone())) {
             try {
-                AndroidUtils.call(activity, airlineModel.getPhone());
+                AndroidUtils.call(context, airlineModel.getPhone());
             } catch (Exception e) {
                 MyApplication.getAppComponent().getLogger().logError(e);
-                UIUtils.showToast(activity, activity.getString(R.string.error_no_dialer));
+                UIUtils.showToast(context, context.getString(R.string.error_no_dialer));
             }
         } else {
-            UIUtils.showToast(activity, R.string.txt_no_content);
+            UIUtils.showToast(context, R.string.txt_no_content);
         }
     }
 }
