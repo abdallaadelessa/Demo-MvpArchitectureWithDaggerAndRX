@@ -6,9 +6,6 @@ import android.widget.EditText;
 import com.abdallaadelessa.core.utils.UIUtils;
 import com.abdallaadelessa.core.view.BaseCoreFragment;
 import com.abdallaadelessa.demo.R;
-import com.abdallaadelessa.demo.presentation.presenter.main.IMainView;
-import com.abdallaadelessa.demo.presentation.presenter.main.MainPresenter;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -24,7 +21,7 @@ public class MainFragment extends BaseCoreFragment<MainPresenter> implements IMa
 
     @Override
     protected MainPresenter initPresenter() {
-        return new MainPresenter();
+        return DaggerMainPresenterComponent.create().getMainPresenter();
     }
 
     @Override
@@ -50,7 +47,7 @@ public class MainFragment extends BaseCoreFragment<MainPresenter> implements IMa
     // ------------>
 
     @OnClick(R.id.button)
-    public void onClick() {
+    public void onButtonClick() {
         if (isPresenterAttached()) getPresenter().displayData(editText.getText().toString());
     }
 }

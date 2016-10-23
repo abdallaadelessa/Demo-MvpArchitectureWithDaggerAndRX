@@ -15,7 +15,11 @@ public abstract class BaseCoreApp extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
-        appComponent = DaggerAppComponent.builder().build();
+        appComponent = constructAppComponent();
+    }
+
+    protected AppComponent constructAppComponent() {
+        return DaggerAppComponent.builder().build();
     }
 
     // ------------------->

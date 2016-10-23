@@ -1,13 +1,14 @@
-package com.abdallaadelessa.demo.presentation.presenter.main;
+package com.abdallaadelessa.demo.presentation.view.main;
 
 import com.abdallaadelessa.core.dagger.AppComponent;
 import com.abdallaadelessa.core.presenter.BaseCorePresenter;
 import com.abdallaadelessa.demo.app.MyApplication;
 import com.abdallaadelessa.demo.data.airline.model.AirlineModel;
-import com.abdallaadelessa.demo.domain.airline.AirlineUseCases;
-import com.abdallaadelessa.demo.domain.airline.di.DaggerAirlineUseCasesComponent;
+import com.abdallaadelessa.demo.domain.airline.ListAirlinesUseCase;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import rx.functions.Action1;
 
@@ -16,16 +17,17 @@ import rx.functions.Action1;
  */
 
 public class MainPresenter extends BaseCorePresenter<IMainView> {
-    private AirlineUseCases airlineUseCases;
+    ListAirlinesUseCase listAirlinesUseCase;
 
-    public MainPresenter() {
-        airlineUseCases = DaggerAirlineUseCasesComponent.create().getAirlineUseCases();
+    @Inject
+    public MainPresenter(ListAirlinesUseCase listAirlinesUseCase) {
+        this.listAirlinesUseCase = listAirlinesUseCase;
     }
 
     @Override
     public void loadViewData() {
         final AppComponent appComponent = MyApplication.getAppComponent();
-        airlineUseCases.getAirlines().subscribe(new Action1<List<AirlineModel>>() {
+        listAirlinesUseCase.listAirlines().subscribe(new Action1<List<AirlineModel>>() {
             @Override
             public void call(List<AirlineModel> airlineModels) {
                 appComponent.getLogger().log("Success");

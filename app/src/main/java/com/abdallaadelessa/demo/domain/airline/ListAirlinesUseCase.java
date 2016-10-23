@@ -7,20 +7,23 @@ import com.abdallaadelessa.demo.data.airline.repository.di.DaggerAirlineReposito
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 
 /**
  * Created by Abdalla on 20/10/2016.
  */
 
-public class AirlineUseCases {
-    private AirlinesRepository repository;
+public class ListAirlinesUseCase {
+    AirlinesRepository cloudRepository;
 
-    public AirlineUseCases() {
-        repository = DaggerAirlineRepositoryComponent.create().getCloudRepository();
+    @Inject
+    public ListAirlinesUseCase() {
+        cloudRepository = DaggerAirlineRepositoryComponent.create().getCloudRepository();
     }
 
-    public Observable<List<AirlineModel>> getAirlines() {
-        return repository.listAirlines();
+    public Observable<List<AirlineModel>> listAirlines() {
+        return cloudRepository.listAirlines();
     }
 }
