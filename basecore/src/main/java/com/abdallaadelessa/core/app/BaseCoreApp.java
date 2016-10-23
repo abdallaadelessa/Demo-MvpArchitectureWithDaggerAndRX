@@ -1,6 +1,9 @@
 package com.abdallaadelessa.core.app;
 
 import android.app.Application;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import com.abdallaadelessa.core.dagger.AppComponent;
 import com.abdallaadelessa.core.dagger.DaggerAppComponent;
@@ -73,4 +76,18 @@ public abstract class BaseCoreApp extends Application {
         return path;
     }
 
+    // ------------------->
+
+    public static int getDefaultPlaceholder() {
+        return 0;
+    }
+
+    public static Bitmap getDefaultPlaceholderBitmap(Context context) {
+        try {
+            return BitmapFactory.decodeResource(context.getResources(), getDefaultPlaceholder());
+        } catch (Throwable throwable) {
+            getAppComponent().getLogger().logError(throwable);
+            return null;
+        }
+    }
 }

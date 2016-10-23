@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <include layout="@layout/view_toolbar" />
+
+        <RelativeLayout
+            android:id="@+id/vgBigToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/big_toolbar_height"
+            android:background="@color/colorPrimary"
+
+            android:paddingLeft="@dimen/margin_medium"
+            android:paddingRight="@dimen/margin_medium">
+
+            <ImageView
+                android:id="@+id/ivIcon"
+                android:layout_width="@dimen/air_line_details_icon_size"
+                android:layout_height="@dimen/air_line_details_icon_size"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                tools:src="@drawable/ic_filter" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:layout_marginStart="@dimen/margin_large"
+                android:layout_toEndOf="@+id/ivIcon"
+                android:layout_toRightOf="@+id/ivIcon"
+                android:orientation="vertical">
+
+                <com.abdallaadelessa.core.view.custom.TextViewWithMovingMarquee
+                    android:id="@+id/tvTitle"
+                    style="@style/XXXLargeTextViewStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/padding_medium"
+                    android:layout_toEndOf="@+id/ivIcon"
+                    android:layout_toRightOf="@+id/ivIcon"
+                    android:textColor="@android:color/white"
+                    tools:text="Egypt Air" />
+
+                <TextView
+                    android:id="@+id/textView2"
+                    style="@style/MediumTextViewStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/ivIcon"
+                    android:text="@string/txt_kayak_airlines"
+                    android:textColor="@color/colorOffWhite" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/margin_large"
+            android:paddingTop="@dimen/margin_large">
+
+            <LinearLayout
+                android:id="@+id/vgWebsite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/default_selector"
+                android:clickable="true"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/margin_medium"
+                android:paddingLeft="@dimen/margin_large"
+                android:paddingRight="@dimen/margin_large"
+                android:paddingTop="@dimen/margin_medium">
+
+                <com.abdallaadelessa.core.view.custom.TextViewWithMovingMarquee
+                    android:id="@+id/tvSite"
+                    style="@style/LargeTextViewStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/ivIcon"
+                    android:layout_marginBottom="@dimen/margin_small"
+                    android:text="@string/txt_kayak_airlines"
+                    android:textColor="@android:color/black"
+                    tools:text="ww.kayak.com" />
+
+                <TextView
+                    style="@style/MediumTextViewStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/ivIcon"
+                    android:text="@string/txt_website" />
+
+            </LinearLayout>
+
+            <View
+                style="@style/HorizontalSeparatorStyle"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:layout_marginRight="@dimen/margin_large" />
+
+            <LinearLayout
+                android:id="@+id/vgPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/default_selector"
+                android:clickable="true"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/margin_medium"
+                android:paddingLeft="@dimen/margin_large"
+                android:paddingRight="@dimen/margin_large"
+                android:paddingTop="@dimen/margin_medium">
+
+                <com.abdallaadelessa.core.view.custom.TextViewWithMovingMarquee
+                    android:id="@+id/tvPhone"
+                    style="@style/LargeTextViewStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/ivIcon"
+                    android:layout_marginBottom="@dimen/margin_small"
+                    android:textColor="@android:color/black"
+                    tools:text="0122650934" />
+
+                <TextView
+                    style="@style/MediumTextViewStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/ivIcon"
+                    android:text="@string/txt_phone_number" />
+            </LinearLayout>
+
+            <View
+                style="@style/HorizontalSeparatorStyle"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:layout_marginRight="@dimen/margin_large" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        android:clickable="true"
+        android:src="@drawable/ic_star_selected"
+        app:backgroundTint="@color/colorPrimary"
+        app:layout_anchor="@+id/vgBigToolbar"
+        app:layout_anchorGravity="bottom|right|end" />
+</android.support.design.widget.CoordinatorLayout>

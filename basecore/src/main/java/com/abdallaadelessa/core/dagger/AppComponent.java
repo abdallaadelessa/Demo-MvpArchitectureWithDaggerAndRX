@@ -8,8 +8,8 @@ import com.abdallaadelessa.core.dagger.eventBusModule.BaseCoreEventBusComponent;
 import com.abdallaadelessa.core.dagger.eventBusModule.BaseCoreEventBusModule;
 import com.abdallaadelessa.core.dagger.loggerModule.BaseCoreLoggerComponent;
 import com.abdallaadelessa.core.dagger.loggerModule.BaseCoreLoggerModule;
-import com.abdallaadelessa.core.dagger.memoryModule.BaseCoreCacheComponent;
-import com.abdallaadelessa.core.dagger.memoryModule.BaseCoreCacheModule;
+import com.abdallaadelessa.core.dagger.cacheModule.BaseCoreCacheComponent;
+import com.abdallaadelessa.core.dagger.cacheModule.BaseCoreCacheModule;
 import com.abdallaadelessa.core.dagger.networkModule.BaseCoreNetworkComponent;
 import com.abdallaadelessa.core.dagger.networkModule.BaseCoreNetworkModule;
 

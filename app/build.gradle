@@ -20,6 +20,7 @@ android {
 }
 
 repositories{
+    maven { url "https://jitpack.io" }
     maven { url 'https://dl.bintray.com/abdalla-essa92/maven' }
 }
 dependencies {
@@ -31,4 +32,8 @@ dependencies {
     apt 'com.google.dagger:dagger-compiler:2.0.1'
     provided 'org.glassfish:javax.annotation:10.0-b28'
     compile 'com.abdallaadelessa.android.dataplaceholder:library:1.1.1@aar'
+    compile 'com.github.jd-alexander:LikeButton:0.2.0'
+    compile('com.github.afollestad.material-dialogs:core:0.8.5.6@aar') {
+        transitive = true
+    }
 }

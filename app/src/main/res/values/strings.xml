@@ -1,3 +1,19 @@
 <resources>
-    <string name="app_name">App</string>
+    <string name="app_name">InstaBugAndroidChallenge</string>
+    <string name="txt_error">An Error Occurred</string>
+    <string name="txt_yes">Yes</string>
+    <string name="txt_no">No</string>
+    <string name="txt_kayak_airlines">Kayak Airlines</string>
+    <string name="txt_kayak_airlines_all">Kayak Airlines (All)</string>
+    <string name="txt_kayak_airlines_fav_only">Kayak Airlines (Favourites Only)</string>
+    <string name="filter_airlines">Filter Airlines</string>
+    <string name="txt_favourite_air_lines_only">Favourite Airlines Only</string>
+    <string name="txt_all">All</string>
+    <string name="filter">Filter</string>
+    <string name="error_filteration">Error occurred while filtering the airlines</string>
+    <string name="txt_filtering_airlines">Filtering Airlines</string>
+    <string name="txt_website">Website</string>
+    <string name="txt_phone_number">Phone number</string>
+    <string name="error_no_browser">No Browser found</string>
+    <string name="error_no_dialer">No Dialer found</string>
 </resources>
