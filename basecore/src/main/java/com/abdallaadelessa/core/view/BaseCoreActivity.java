@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import com.abdallaadelessa.core.R;
 import com.abdallaadelessa.core.presenter.BaseCorePresenter;
@@ -26,6 +27,16 @@ public abstract class BaseCoreActivity<p extends BaseCorePresenter> extends AppC
         super.onCreate(savedInstanceState);
         setContentView(getLayoutRes());
         initUI();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

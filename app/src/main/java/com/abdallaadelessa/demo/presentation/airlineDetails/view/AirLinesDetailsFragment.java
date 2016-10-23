@@ -103,8 +103,6 @@ public class AirLinesDetailsFragment extends BaseCoreFragment<AirlineDetailsPres
             tvTitle.setTransitionName(getString(R.string.trans_title));
         }
         //--->
-        getPresenter().loadViewData();
-        //--->
         return unbinder;
     }
 
