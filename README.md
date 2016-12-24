@@ -4,21 +4,20 @@ Demo app for good android architecture using
 <br>&emsp;-Dagger
 <br>&emsp;-Butterknife
 <br>&emsp;-Google Auto values
-<br>&emsp;-MVP
 <br>&emsp;-Glide
 <br>&emsp;-Volley
 <br>&emsp;-Timber
 
 ####The app is divided into two modules
 ####-App Module
-A demo module using the MVP Pattern 
-<br>the demo app is divided into three layers
-<br>&emsp;-Data layer
+<br>A demo module 
+<br>which is divided into three layers
+<br>&emsp;-Data layer (Repository Pattern)
 <br>&emsp;-Domain layer
-<br>&emsp;-Presentation layer
+<br>&emsp;-Presentation layer (MVP Pattern)
   
 ####-BaseCore Module
-which contains reusable modules 
+which contains reusable dagger modules 
 <br>&emsp;-Network Module
 <br>&emsp;-Logger Module
 <br>&emsp;-Cache Module
