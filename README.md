@@ -1,5 +1,14 @@
 # Demo-MvpArchitectureWithDaggerAndRX
-Demo app for good android architecture
+Demo app for good android architecture using
+<br>&emsp;-Rxjava
+<br>&emsp;-Dagger
+<br>&emsp;-Butterknife
+<br>&emsp;-Google Auto values
+<br>&emsp;-MVP
+<br>&emsp;-Glide
+<br>&emsp;-Volley
+<br>&emsp;-Timber
+
 ####The app is divided into two modules
 ####-App Module
 A demo module using the MVP Pattern 
