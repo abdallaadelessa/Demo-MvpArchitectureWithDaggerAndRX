@@ -12,7 +12,7 @@ Demo app for good android architecture using
 ####The app is divided into two modules
 ####-App Module
 A demo module using the MVP Pattern 
-<br>the demo app is divided to three layers
+<br>the demo app is divided into three layers
 <br>&emsp;-Data layer
 <br>&emsp;-Domain layer
 <br>&emsp;-Presentation layer
