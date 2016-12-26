@@ -29,12 +29,6 @@ public class AirlineDetailsPresenter extends BaseCorePresenter<IAirlineDetailsVi
 
     // ------------>
 
-    @Override
-    public void loadViewData() {
-    }
-
-    // ------------>
-
     public boolean isFavouriteAirline(AirlineModel airlineModel) {
         return favouriteAirlinesUseCase.isFavAirline(airlineModel);
     }

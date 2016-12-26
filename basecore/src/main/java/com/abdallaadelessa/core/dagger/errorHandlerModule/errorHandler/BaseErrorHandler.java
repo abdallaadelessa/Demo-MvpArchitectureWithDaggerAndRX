@@ -2,6 +2,7 @@ package com.abdallaadelessa.core.dagger.errorHandlerModule.errorHandler;
 
 import android.content.Context;
 
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpRequestManager;
 import com.abdallaadelessa.core.model.MessageError;
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
 import com.abdallaadelessa.core.R;
@@ -22,14 +23,14 @@ public abstract class BaseErrorHandler {
     }
 
     public String getErrorMessage(Throwable error) {
-        if (contextWeakReference == null || contextWeakReference.get() == null) return null;
+        if(contextWeakReference == null || contextWeakReference.get() == null) return null;
         String errorMsg = contextWeakReference.get().getString(R.string.txt_unknown_error_occured);
         try {
-
-            if (isMessageError(error)) {
+            if(isMessageError(error)) {
                 errorMsg = error.getMessage();
             }
-        } catch (Exception e) {
+        }
+        catch(Exception e) {
             appLogger.logError(e, true);
         }
         return errorMsg;

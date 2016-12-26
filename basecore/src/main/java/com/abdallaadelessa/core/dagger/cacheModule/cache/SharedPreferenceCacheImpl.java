@@ -5,12 +5,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-public class SharedPreferenceImpl implements BaseCache<String, String> {
+public class SharedPreferenceCacheImpl implements BaseCache<SharedPreferences, String, String> {
     private SharedPreferences sharedPreferences;
 
     // ----------------->
 
-    public SharedPreferenceImpl(Context context) {
+    public SharedPreferenceCacheImpl(Context context) {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
@@ -19,6 +19,16 @@ public class SharedPreferenceImpl implements BaseCache<String, String> {
     }
 
     // ----------------->
+
+    @Override
+    public void setCacheObject(SharedPreferences sharedPreferences) {
+        this.sharedPreferences = sharedPreferences;
+    }
+
+    @Override
+    public SharedPreferences getCacheObject() {
+        return sharedPreferences;
+    }
 
     @Override
     public String getEntry(String key, String defaultValue) {

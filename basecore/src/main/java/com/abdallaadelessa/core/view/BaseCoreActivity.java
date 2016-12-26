@@ -12,7 +12,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.abdallaadelessa.core.R;
+import com.abdallaadelessa.core.app.BaseCoreApp;
 import com.abdallaadelessa.core.presenter.BaseCorePresenter;
+
+import java.util.HashMap;
 
 /**
  * Created by abdullah on 12/10/16.
@@ -20,13 +23,30 @@ import com.abdallaadelessa.core.presenter.BaseCorePresenter;
 
 public abstract class BaseCoreActivity<p extends BaseCorePresenter> extends AppCompatActivity {
     private static final int UP_DRAWABLE_ID = R.drawable.ic_white_up_arrow;
+    public static final String KEY_RETAINED_MEMORY_CACHE = "RetainedMemoryCache";
     private p presenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            HashMap cacheObject = (HashMap) savedInstanceState.getSerializable(KEY_RETAINED_MEMORY_CACHE);
+            if (cacheObject != null) {
+                BaseCoreApp.getAppComponent().getRetainedMemoryCache().clearCache();
+                BaseCoreApp.getAppComponent().getRetainedMemoryCache().setCacheObject(cacheObject);
+            }
+        }
         setContentView(getLayoutRes());
         initUI();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        HashMap cacheObject = BaseCoreApp.getAppComponent().getRetainedMemoryCache().getCacheObject();
+        if (cacheObject != null) {
+            outState.putSerializable(KEY_RETAINED_MEMORY_CACHE, cacheObject);
+        }
     }
 
     @Override

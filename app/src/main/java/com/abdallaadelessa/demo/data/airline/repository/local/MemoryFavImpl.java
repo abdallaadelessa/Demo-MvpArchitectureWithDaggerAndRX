@@ -3,6 +3,7 @@ package com.abdallaadelessa.demo.data.airline.repository.local;
 import com.abdallaadelessa.core.app.BaseCoreApp;
 import com.abdallaadelessa.demo.data.airline.model.AirlineModel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,18 +18,18 @@ public class MemoryFavImpl implements AirlinesFavRepository {
     public void addToFavourites(AirlineModel airlineModel) {
         List<String> favourites = getFavourites();
         favourites.add(airlineModel.getCode());
-        BaseCoreApp.getAppComponent().getMemoryCache().putEntry(FAV_KEY, favourites);
+        BaseCoreApp.getAppComponent().getRetainedMemoryCache().putEntry(FAV_KEY, (Serializable) favourites);
     }
 
     @Override
     public void removeFromFavourites(AirlineModel airlineModel) {
         List<String> favourites = getFavourites();
         favourites.remove(airlineModel.getCode());
-        BaseCoreApp.getAppComponent().getMemoryCache().putEntry(FAV_KEY, favourites);
+        BaseCoreApp.getAppComponent().getRetainedMemoryCache().putEntry(FAV_KEY, (Serializable) favourites);
     }
 
     @Override
     public List<String> getFavourites() {
-        return (List<String>) BaseCoreApp.getAppComponent().getMemoryCache().getEntry(FAV_KEY, new ArrayList<String>());
+        return (List<String>) BaseCoreApp.getAppComponent().getRetainedMemoryCache().getEntry(FAV_KEY, new ArrayList<String>());
     }
 }

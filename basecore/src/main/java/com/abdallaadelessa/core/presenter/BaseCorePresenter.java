@@ -53,6 +53,8 @@ public abstract class BaseCorePresenter<V> {
         if (subscriptions != null) subscriptions.add(subscription);
     }
 
-    public abstract void loadViewData();
+    public void loadViewData() {
+
+    }
 
 }

@@ -3,8 +3,10 @@ package com.abdallaadelessa.core.dagger.errorHandlerModule.errorHandler;
 import android.content.Context;
 
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
-import com.abdallaadelessa.core.dagger.networkModule.volley.VolleyRequestManager;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpRequestManager;
+import com.abdallaadelessa.core.dagger.networkModule.volley.VolleyHttpObservableExecutor;
 import com.abdallaadelessa.core.R;
+import com.abdallaadelessa.core.model.MessageError;
 
 /**
  * Created by Abdalla on 16/10/2016.
@@ -18,18 +20,24 @@ public class CustomErrorHandlerImpl extends BaseErrorHandler {
 
     @Override
     public String getErrorMessage(Throwable error) {
-        if (contextWeakReference == null || contextWeakReference.get() == null) return null;
-        if (VolleyRequestManager.isVolleyError(error)) {
-            String errorMsg = contextWeakReference.get().getString(R.string.txt_unknown_error_occured);
-            if (VolleyRequestManager.isTimeoutError(error)) {
+        if(contextWeakReference == null || contextWeakReference.get() == null) return null;
+        String errorMsg = contextWeakReference.get().getString(R.string.txt_unknown_error_occured);
+        if(error instanceof MessageError) {
+            if(((MessageError) error).getCode().equalsIgnoreCase(MessageError.CODE_TIMEOUT_ERROR)) {
                 errorMsg = contextWeakReference.get().getString(R.string.txt_timeout);
-            } else if (VolleyRequestManager.isNetworkError(error)) {
+            }
+            else if(((MessageError) error).getCode().equalsIgnoreCase(MessageError.CODE_NETWORK_ERROR)) {
                 errorMsg = contextWeakReference.get().getString(R.string.txt_no_internet_connection);
-            } else if (VolleyRequestManager.isServerError(error)) {
+            }
+            else if(((MessageError) error).getCode().equalsIgnoreCase(MessageError.CODE_SERVER_ERROR)) {
+                errorMsg = contextWeakReference.get().getString(R.string.txt_server_error);
+            }
+            else if(((MessageError) error).getCode().equalsIgnoreCase(MessageError.CODE_BAD_REQUEST_ERROR)) {
                 errorMsg = contextWeakReference.get().getString(R.string.txt_server_error);
             }
             return errorMsg;
-        } else {
+        }
+        else {
             return super.getErrorMessage(error);
         }
     }

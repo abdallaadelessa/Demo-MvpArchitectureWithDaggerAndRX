@@ -3,7 +3,6 @@ package com.abdallaadelessa.core.dagger.networkModule.volley;
 import android.content.Context;
 
 import com.abdallaadelessa.core.app.BaseCoreApp;
-import com.abdallaadelessa.core.dagger.appModule.BaseCoreModule;
 import com.android.volley.RequestQueue;
 import com.android.volley.RequestTickle;
 import com.android.volley.VolleyLog;
@@ -29,27 +28,22 @@ public class VolleyNetworkModule {
 
     //----> Volley
     @Provides
-
     public HttpStack provideHttpStack() {
         return new OkHttpStack();
     }
 
     @Provides
-
     public RequestQueue provideRequestQueue(Context context, HttpStack okHttpStack) {
-
         return Volley.newRequestQueue(context, okHttpStack);
     }
 
     @Provides
-
     public RequestTickle provideRequestTickle(Context context, HttpStack okHttpStack) {
         return VolleyTickle.newRequestTickle(context, okHttpStack);
     }
 
     //----> Image Loader
     @Provides
-
     public SimpleImageLoader provideSimpleImageLoader(Context context) {
         DiskLruBasedCache.ImageCacheParams cacheParams = new DiskLruBasedCache.ImageCacheParams(context, "CacheDirectory");
         cacheParams.setMemCacheSizePercent(0.5f);

@@ -265,7 +265,7 @@ public class ImageLoaderManager {
         return file;
     }
 
-    // -------------------------> Builder Helpers
+    // -------------------------> HttpRequest Helpers
 
     private static boolean validate(Builder builder) {
         return builder != null;

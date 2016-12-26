@@ -7,9 +7,9 @@ import android.support.v4.util.LruCache;
  * Created by Abdalla on 16/10/2016.
  */
 
-public class LruBaseCacheImpl implements BaseCache<String, Object> {
+public class LruBaseCacheImpl implements BaseCache<LruCache, String, Object> {
     private static final int MAX_SIZE = 10;
-    private final LruCache<String, Object> lruCache;
+    private LruCache<String, Object> lruCache;
 
     // ----------------->
 
@@ -22,6 +22,16 @@ public class LruBaseCacheImpl implements BaseCache<String, Object> {
     }
 
     // ----------------->
+
+    @Override
+    public void setCacheObject(LruCache lruCache) {
+        this.lruCache = lruCache;
+    }
+
+    @Override
+    public LruCache getCacheObject() {
+        return lruCache;
+    }
 
     @Override
     public Object getEntry(String key, Object defaultValue) {

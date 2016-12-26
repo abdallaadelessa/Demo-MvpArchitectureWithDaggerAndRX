@@ -1,6 +1,7 @@
 package com.abdallaadelessa.demo.data.airline.repository.remote;
 
-import com.abdallaadelessa.core.dagger.networkModule.builders.HttpRequest;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpRequestManager;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpRequest;
 import com.abdallaadelessa.demo.app.MyApplication;
 import com.abdallaadelessa.demo.data.airline.model.AirlineModel;
 import com.google.common.reflect.TypeToken;
@@ -15,15 +16,16 @@ import rx.Observable;
 public class CloudImpl implements AirlinesRemoteRepository {
     @Override
     public Observable<List<AirlineModel>> listAirlines() {
-        return getHttpRequestBuilder()
-                .tag("aaaaaaa")
-                .url("https://www.kayak.com/h/mobileapis/directory/airlines")
-                .type(new TypeToken<List<AirlineModel>>() {
+        return getHttpRequestManager()
+                .newHttpRequest()
+                .setTag("aaaaaaa")
+                .setUrl("https://www.kayak.com/h/mobileapis/directory/airlines")
+                .setType(new TypeToken<List<AirlineModel>>() {
                 }.getType())
-                .build();
+                .toObservable();
     }
 
-    private HttpRequest.Builder getHttpRequestBuilder() {
-        return MyApplication.getAppComponent().getHttpRequestBuilder();
+    private HttpRequestManager getHttpRequestManager() {
+        return MyApplication.getAppComponent().getHttpRequestManager();
     }
 }
