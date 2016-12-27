@@ -3,6 +3,9 @@ package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager;
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.MultiPartRequest;
+import com.abdallaadelessa.core.dagger.networkModule.volley.MultiPartObservableExecutor;
+import com.abdallaadelessa.core.dagger.networkModule.volley.VolleyHttpObservableExecutor;
+import com.android.volley.RequestQueue;
 
 import java.util.concurrent.ExecutorService;
 
@@ -11,33 +14,47 @@ import java.util.concurrent.ExecutorService;
  */
 
 public class HttpRequestManager {
-    private HttpInterceptor interceptor;
-    private HttpParser parser;
     private BaseAppLogger logger;
     private ExecutorService executorService;
-    private BaseHttpObservableExecutor httpObservableExecutor;
-    private BaseHttpObservableExecutor multipartObservableExecutor;
+    private HttpInterceptor interceptor;
+    private HttpParser parser;
+    private RequestQueue queue;
 
     //===========> Constructor
 
-    public HttpRequestManager(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger, BaseHttpObservableExecutor httpObservableExecutor, BaseHttpObservableExecutor multipartObservableExecutor, ExecutorService executorService) {
+    public HttpRequestManager(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger, ExecutorService executorService, RequestQueue queue) {
         this.interceptor = interceptor;
         this.parser = parser;
         this.logger = logger;
-        this.httpObservableExecutor = httpObservableExecutor;
-        this.multipartObservableExecutor = multipartObservableExecutor;
         this.executorService = executorService;
+        this.queue = queue;
     }
 
-    public HttpRequest newHttpRequest() {
-        return HttpRequest.create(getInterceptor(), getParser(), getLogger(), getHttpObservableExecutor(), getExecutorService());
+    public <T> HttpRequest<T> newHttpRequest() {
+        return HttpRequest.create(getInterceptor(), getParser(), getLogger(), new VolleyHttpObservableExecutor<T>(queue), getExecutorService());
     }
 
-    public MultiPartRequest newMultiPartRequest() {
-        return MultiPartRequest.create(getInterceptor(), getParser(), getLogger(), getMultipartObservableExecutor(), getExecutorService());
+    public <T> MultiPartRequest<T> newMultiPartRequest() {
+        return MultiPartRequest.create(getInterceptor(), getParser(), getLogger(), new MultiPartObservableExecutor<T>(), getExecutorService());
     }
 
     //===========> Setters and Getters
+
+    public BaseAppLogger getLogger() {
+        return logger;
+    }
+
+    public void setLogger(BaseAppLogger logger) {
+        this.logger = logger;
+    }
+
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
+    }
 
     public HttpInterceptor getInterceptor() {
         return interceptor;
@@ -55,37 +72,6 @@ public class HttpRequestManager {
         this.parser = parser;
     }
 
-    public BaseAppLogger getLogger() {
-        return logger;
-    }
-
-    public void setLogger(BaseAppLogger logger) {
-        this.logger = logger;
-    }
-
-    public BaseHttpObservableExecutor getHttpObservableExecutor() {
-        return httpObservableExecutor;
-    }
-
-    public BaseHttpObservableExecutor getMultipartObservableExecutor() {
-        return multipartObservableExecutor;
-    }
-
-    public void setMultipartObservableExecutor(BaseHttpObservableExecutor multipartObservableExecutor) {
-        this.multipartObservableExecutor = multipartObservableExecutor;
-    }
-
-    public void setHttpObservableExecutor(BaseHttpObservableExecutor httpObservableExecutor) {
-        this.httpObservableExecutor = httpObservableExecutor;
-    }
-
-    public ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
-    }
 
     //===========>
 }

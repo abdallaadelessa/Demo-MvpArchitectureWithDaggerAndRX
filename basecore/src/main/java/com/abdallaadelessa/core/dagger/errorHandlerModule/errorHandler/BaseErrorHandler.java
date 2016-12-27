@@ -2,8 +2,7 @@ package com.abdallaadelessa.core.dagger.errorHandlerModule.errorHandler;
 
 import android.content.Context;
 
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpRequestManager;
-import com.abdallaadelessa.core.model.MessageError;
+import com.abdallaadelessa.core.model.BaseCoreError;
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
 import com.abdallaadelessa.core.R;
 
@@ -37,6 +36,6 @@ public abstract class BaseErrorHandler {
     }
 
     private boolean isMessageError(Throwable error) {
-        return error instanceof MessageError;
+        return error instanceof BaseCoreError;
     }
 }

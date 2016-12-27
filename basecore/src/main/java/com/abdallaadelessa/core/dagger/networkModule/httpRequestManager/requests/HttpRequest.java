@@ -21,9 +21,9 @@ import rx.Observable;
  */
 
 public class HttpRequest<T> extends BaseRequest<T> {
-    public static final String HEADER_CONTENT_TYPE = "Content-Type";
-    public static final String PROTOCOL_CHARSET = "utf-8";
-    public static final String CONTENT_TYPE_JSON = String.format("application/json; charset=%s", PROTOCOL_CHARSET);
+    private static final String HEADER_CONTENT_TYPE = "Content-Type";
+    private static final String PROTOCOL_CHARSET = "utf-8";
+    private static final String CONTENT_TYPE_JSON = String.format("application/json; charset=%s", PROTOCOL_CHARSET);
     public static final RetryPolicy FILE_UPLOAD_RETRY_POLICY = new DefaultRetryPolicy(40000, 0, 0);
     public static final DefaultRetryPolicy DEFAULT_RETRY_POLICY = new DefaultRetryPolicy(5000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
     private int method;
@@ -38,9 +38,10 @@ public class HttpRequest<T> extends BaseRequest<T> {
 
     //=====> Builder
 
-    public static HttpRequest create(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger, BaseHttpObservableExecutor observableExecutor, ExecutorService executorService) {
+    public static <T> HttpRequest<T> create(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger
+            , BaseHttpObservableExecutor<T, HttpRequest> observableExecutor, ExecutorService executorService) {
         // Default Values
-        HttpRequest httpRequest = new HttpRequest(interceptor, parser, logger, observableExecutor, executorService);
+        HttpRequest<T> httpRequest = new HttpRequest<T>(interceptor, parser, logger, observableExecutor, executorService);
         httpRequest.GET();
         httpRequest.setType(String.class);
         httpRequest.setHeaders(new HashMap<String, String>());
@@ -52,30 +53,30 @@ public class HttpRequest<T> extends BaseRequest<T> {
         return httpRequest;
     }
 
-    private HttpRequest(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger, BaseHttpObservableExecutor observableExecutor, ExecutorService executorService) {
+    private HttpRequest(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger, BaseHttpObservableExecutor<T, HttpRequest> observableExecutor, ExecutorService executorService) {
         super(interceptor, parser, logger, observableExecutor, executorService);
     }
 
     //=====>
 
-    public HttpRequest GET() {
+    public HttpRequest<T> GET() {
         return setMethod(Request.Method.GET);
     }
 
-    public HttpRequest POST() {
+    public HttpRequest<T> POST() {
         return setMethod(Request.Method.POST);
     }
 
-    public HttpRequest contentType(String contentType) {
+    public HttpRequest<T> contentType(String contentType) {
         return addHeader(HEADER_CONTENT_TYPE, contentType);
     }
 
-    public HttpRequest addHeader(String key, String value) {
+    public HttpRequest<T> addHeader(String key, String value) {
         getHeaders().put(key, value);
         return this;
     }
 
-    public HttpRequest addParam(String key, String value) {
+    public HttpRequest<T> addParam(String key, String value) {
         setBody(null);
         contentType(contentType());
         getParams().put(key, value);
@@ -83,7 +84,7 @@ public class HttpRequest<T> extends BaseRequest<T> {
         return this;
     }
 
-    public HttpRequest addBody(String body) {
+    public HttpRequest<T> addBody(String body) {
         setParams(new HashMap<String, String>());
         contentType(CONTENT_TYPE_JSON);
         setBody(body);
@@ -93,82 +94,82 @@ public class HttpRequest<T> extends BaseRequest<T> {
 
     //==> Setters
 
-    public HttpRequest setMethod(int method) {
+    public HttpRequest<T> setMethod(int method) {
         this.method = method;
         return this;
     }
 
-    public HttpRequest setType(Type type) {
+    public HttpRequest<T> setType(Type type) {
         this.type = type;
         return this;
     }
 
-    public HttpRequest setRetryPolicy(RetryPolicy retryPolicy) {
+    public HttpRequest<T> setRetryPolicy(RetryPolicy retryPolicy) {
         this.retryPolicy = retryPolicy;
         return this;
     }
 
-    public HttpRequest setShouldCache(boolean shouldCache) {
+    public HttpRequest<T> setShouldCache(boolean shouldCache) {
         this.shouldCache = shouldCache;
         return this;
     }
 
-    public HttpRequest setCancelIfRunning(boolean cancelIfRunning) {
+    public HttpRequest<T> setCancelIfRunning(boolean cancelIfRunning) {
         this.cancelIfRunning = cancelIfRunning;
         return this;
     }
 
-    public HttpRequest setCancelOnUnSubscribe(boolean cancelOnUnSubscribe) {
+    public HttpRequest<T> setCancelOnUnSubscribe(boolean cancelOnUnSubscribe) {
         this.cancelOnUnSubscribe = cancelOnUnSubscribe;
         return this;
     }
 
-    private HttpRequest setBody(String body) {
+    private HttpRequest<T> setBody(String body) {
         this.body = body;
         return this;
     }
 
-    private HttpRequest setHeaders(Map<String, String> headers) {
+    private HttpRequest<T> setHeaders(Map<String, String> headers) {
         this.headers = headers;
         return this;
     }
 
-    private HttpRequest setParams(Map<String, String> params) {
+    private HttpRequest<T> setParams(Map<String, String> params) {
         this.params = params;
         return this;
     }
 
-    public HttpRequest setInterceptor(HttpInterceptor interceptor) {
+    public HttpRequest<T> setInterceptor(HttpInterceptor interceptor) {
         this.interceptor = interceptor;
         return this;
     }
 
-    public HttpRequest setParser(HttpParser parser) {
+    public HttpRequest<T> setParser(HttpParser parser) {
         this.parser = parser;
         return this;
     }
 
-    public HttpRequest setLogger(BaseAppLogger logger) {
+    public HttpRequest<T> setLogger(BaseAppLogger logger) {
         this.logger = logger;
         return this;
     }
 
-    public HttpRequest setObservableExecutor(BaseHttpObservableExecutor observableExecutor) {
+    public HttpRequest<T> setObservableExecutor(BaseHttpObservableExecutor observableExecutor) {
         this.observableExecutor = observableExecutor;
         return this;
     }
 
-    public HttpRequest setExecutorService(ExecutorService executorService) {
+    public HttpRequest<T> setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
         return this;
     }
 
-    public HttpRequest setTag(String tag) {
+    public HttpRequest<T> setTag(String tag) {
         this.tag = tag;
         return this;
     }
 
-    public HttpRequest setUrl(String url) {
+    public HttpRequest<T> setUrl(String url) {
         this.url = url;
         return this;
     }
@@ -222,19 +223,18 @@ public class HttpRequest<T> extends BaseRequest<T> {
     public byte[] bodyToBytes() {
         byte[] bodyBytes = null;
         try {
-            if(!ValidationUtils.isStringEmpty(getBody())) {
+            if (!ValidationUtils.isStringEmpty(getBody())) {
                 bodyBytes = getBody().getBytes(PROTOCOL_CHARSET);
             }
-        }
-        catch(Exception ee) {
-            if(getLogger() != null) getLogger().logError(ee);
+        } catch (Exception ee) {
+            if (getLogger() != null) getLogger().logError(ee);
         }
         return bodyBytes;
     }
 
     //=====>
 
-    public <T> Observable<T> toObservable() {
+    public Observable<T> toObservable() {
         return getObservableExecutor().toObservable(this);
     }
 }

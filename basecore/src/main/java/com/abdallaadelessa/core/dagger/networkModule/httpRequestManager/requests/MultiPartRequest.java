@@ -28,86 +28,86 @@ public class MultiPartRequest<T> extends BaseRequest<T> {
 
     //=====> Builder
 
-    public static MultiPartRequest create(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger, BaseHttpObservableExecutor observableExecutor, ExecutorService executorService) {
+    public static <T> MultiPartRequest<T> create(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger, BaseHttpObservableExecutor<T, MultiPartRequest> observableExecutor, ExecutorService executorService) {
         // Default Values
-        MultiPartRequest multiPartRequest = new MultiPartRequest(interceptor, parser, logger, observableExecutor, executorService);
+        MultiPartRequest<T> multiPartRequest = new MultiPartRequest<T>(interceptor, parser, logger, observableExecutor, executorService);
         multiPartRequest.setType(String.class);
         multiPartRequest.setParams(new HashMap<String, String>());
         multiPartRequest.setFiles(new ArrayList<MultiPartFile>());
         return multiPartRequest;
     }
 
-    private MultiPartRequest(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger, BaseHttpObservableExecutor observableExecutor, ExecutorService executorService) {
+    private MultiPartRequest(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger, BaseHttpObservableExecutor<T, MultiPartRequest> observableExecutor, ExecutorService executorService) {
         super(interceptor, parser, logger, observableExecutor, executorService);
     }
-    
+
     //=====> Setter
-    
-    public MultiPartRequest addParam(String key, String value) {
+
+    public MultiPartRequest<T> addParam(String key, String value) {
         getParams().put(key, value);
         return this;
     }
 
-    public MultiPartRequest addFile(String fileName, String filepath, String mimeType) {
+    public MultiPartRequest<T> addFile(String fileName, String filepath, String mimeType) {
         getFiles().add(new MultiPartFile(fileName, filepath, mimeType));
         return this;
     }
 
-    public MultiPartRequest addFile(String fileName, String filepath) {
+    public MultiPartRequest<T> addFile(String fileName, String filepath) {
         String mimeType = FileUtils.getMimeType(filepath);
         return addFile(fileName, filepath, mimeType != null ? mimeType : DEFAULT_MIME_TYPE);
     }
 
-    public MultiPartRequest addFile(String filepath) {
+    public MultiPartRequest<T> addFile(String filepath) {
         return addFile(FileUtils.getFileNameFromUrl(filepath), filepath);
     }
 
-    public MultiPartRequest setType(Type type) {
+    public MultiPartRequest<T> setType(Type type) {
         this.type = type;
         return this;
     }
 
-    private MultiPartRequest setParams(Map<String, String> params) {
+    private MultiPartRequest<T> setParams(Map<String, String> params) {
         this.params = params;
         return this;
     }
 
-    private MultiPartRequest setFiles(ArrayList<MultiPartFile> files) {
+    private MultiPartRequest<T> setFiles(ArrayList<MultiPartFile> files) {
         this.files = files;
         return this;
     }
 
-    public MultiPartRequest setInterceptor(HttpInterceptor interceptor) {
+    public MultiPartRequest<T> setInterceptor(HttpInterceptor interceptor) {
         this.interceptor = interceptor;
         return this;
     }
 
-    public MultiPartRequest setParser(HttpParser parser) {
+    public MultiPartRequest<T> setParser(HttpParser parser) {
         this.parser = parser;
         return this;
     }
 
-    public MultiPartRequest setLogger(BaseAppLogger logger) {
+    public MultiPartRequest<T> setLogger(BaseAppLogger logger) {
         this.logger = logger;
         return this;
     }
 
-    public MultiPartRequest setObservableExecutor(BaseHttpObservableExecutor observableExecutor) {
+    public MultiPartRequest<T> setObservableExecutor(BaseHttpObservableExecutor observableExecutor) {
         this.observableExecutor = observableExecutor;
         return this;
     }
 
-    public MultiPartRequest setExecutorService(ExecutorService executorService) {
+    public MultiPartRequest<T> setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
         return this;
     }
 
-    public MultiPartRequest setTag(String tag) {
+    public MultiPartRequest<T> setTag(String tag) {
         this.tag = tag;
         return this;
     }
 
-    public MultiPartRequest setUrl(String url) {
+    public MultiPartRequest<T> setUrl(String url) {
         this.url = url;
         return this;
     }

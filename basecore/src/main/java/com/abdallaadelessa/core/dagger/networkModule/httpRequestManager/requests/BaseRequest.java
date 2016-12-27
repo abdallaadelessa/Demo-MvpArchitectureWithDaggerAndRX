@@ -15,7 +15,7 @@ public abstract class BaseRequest<T> {
     protected HttpInterceptor interceptor;
     protected HttpParser parser;
     protected BaseAppLogger logger;
-    protected BaseHttpObservableExecutor observableExecutor;
+    protected BaseHttpObservableExecutor<T, BaseRequest> observableExecutor;
     protected ExecutorService executorService;
     protected String tag;
     protected String url;
@@ -42,7 +42,7 @@ public abstract class BaseRequest<T> {
         return logger;
     }
 
-    public BaseHttpObservableExecutor getObservableExecutor() {
+    public BaseHttpObservableExecutor<T, BaseRequest> getObservableExecutor() {
         return observableExecutor;
     }
 

@@ -3,7 +3,6 @@ package com.abdallaadelessa.core.dagger.networkModule.volley;
 import android.text.TextUtils;
 
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpObservableExecutor;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.MultiPartRequest;
 import com.android.volley.error.NetworkError;
 
@@ -26,11 +25,11 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-public class MultiPartObservableExecutor<T> extends BaseHttpObservableExecutor<T, MultiPartRequest> {
+public class MultiPartObservableExecutor<M> extends BaseHttpObservableExecutor<M, MultiPartRequest> {
     private static final int TIMEOUT_IN_SECONDS = 60;
 
     @Override
-    public Observable<T> toObservable(final MultiPartRequest request) {
+    public Observable<M> toObservable(final MultiPartRequest request) {
         return Observable.create(new Observable.OnSubscribe<MultiPartRequest>() {
             @Override
             public void call(Subscriber<? super MultiPartRequest> subscriber) {
@@ -43,12 +42,12 @@ public class MultiPartObservableExecutor<T> extends BaseHttpObservableExecutor<T
                     onError(request, subscriber, e, false);
                 }
             }
-        }).flatMap(new Func1<MultiPartRequest, Observable<T>>() {
+        }).flatMap(new Func1<MultiPartRequest, Observable<M>>() {
             @Override
-            public Observable<T> call(final MultiPartRequest multiPartRequest) {
-                return Observable.create(new Observable.OnSubscribe<T>() {
+            public Observable<M> call(final MultiPartRequest multiPartRequest) {
+                return Observable.create(new Observable.OnSubscribe<M>() {
                     @Override
-                    public void call(Subscriber<? super T> subscriber) {
+                    public void call(Subscriber<? super M> subscriber) {
                         try {
                             String tag = multiPartRequest.getTag();
                             String url = multiPartRequest.getUrl();
@@ -83,7 +82,7 @@ public class MultiPartObservableExecutor<T> extends BaseHttpObservableExecutor<T
                             OkHttpClient client = new OkHttpClient().newBuilder().readTimeout(TIMEOUT_IN_SECONDS, TimeUnit.SECONDS).writeTimeout(TIMEOUT_IN_SECONDS, TimeUnit.SECONDS).build();
                             Response response = client.newCall(request).execute();
                             String responseStr = multiPartRequest.getInterceptor().interceptResponse(multiPartRequest, response.body().string());
-                            subscriber.onNext(multiPartRequest.getParser().<T>parse(tag, type, responseStr));
+                            subscriber.onNext(multiPartRequest.getParser().<M>parse(tag, type, responseStr));
                             subscriber.onCompleted();
                         }
                         catch(Throwable e) {

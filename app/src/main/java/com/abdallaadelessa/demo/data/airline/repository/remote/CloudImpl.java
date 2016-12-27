@@ -17,12 +17,10 @@ public class CloudImpl implements AirlinesRemoteRepository {
     @Override
     public Observable<List<AirlineModel>> listAirlines() {
         return getHttpRequestManager()
-                .newHttpRequest()
+                .<List<AirlineModel>>newHttpRequest()
                 .setTag("aaaaaaa")
                 .setUrl("https://www.kayak.com/h/mobileapis/directory/airlines")
-                .setType(new TypeToken<List<AirlineModel>>() {
-                }.getType())
-                .toObservable();
+                .setType(new TypeToken<List<AirlineModel>>() {}.getType()).toObservable();
     }
 
     private HttpRequestManager getHttpRequestManager() {

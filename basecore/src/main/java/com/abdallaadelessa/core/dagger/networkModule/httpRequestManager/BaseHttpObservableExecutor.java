@@ -3,8 +3,7 @@ package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager;
 import android.os.Handler;
 
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.BaseRequest;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpRequest;
-import com.abdallaadelessa.core.model.MessageError;
+import com.abdallaadelessa.core.model.BaseCoreError;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -13,23 +12,23 @@ import rx.Subscriber;
  * Created by abdullah on 12/26/16.
  */
 
-public abstract class BaseHttpObservableExecutor<T, R extends BaseRequest> {
+public abstract class BaseHttpObservableExecutor<M, R extends BaseRequest> {
     private final Handler handler = new Handler();
     //================>
 
-    public abstract Observable<T> toObservable(R request);
+    public abstract Observable<M> toObservable(R request);
 
-    public MessageError getMessageError(Throwable throwable) {
-        return new MessageError(throwable);
+    public BaseCoreError getMessageError(Throwable throwable) {
+        return new BaseCoreError(throwable);
     }
 
     //================>
 
-    protected void onSuccess(final R request, final Subscriber<? super T> subscriber, final T t) {
+    protected void onSuccess(final R request, final Subscriber<? super M> subscriber, final M m) {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                subscriber.onNext(t);
+                subscriber.onNext(m);
                 subscriber.onCompleted();
             }
         });
@@ -42,8 +41,7 @@ public abstract class BaseHttpObservableExecutor<T, R extends BaseRequest> {
                 try {
                     Throwable error = request.getInterceptor().interceptError(request, e, fatal);
                     subscriber.onError(error);
-                }
-                catch(Throwable ee) {
+                } catch (Throwable ee) {
                     onError(request, subscriber, ee, true);
                 }
             }

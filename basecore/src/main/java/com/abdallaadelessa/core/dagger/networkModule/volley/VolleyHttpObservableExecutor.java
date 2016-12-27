@@ -1,13 +1,11 @@
 package com.abdallaadelessa.core.dagger.networkModule.volley;
 
 
-import android.os.Handler;
 import android.support.annotation.NonNull;
 
-import com.abdallaadelessa.core.R;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpObservableExecutor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpRequest;
-import com.abdallaadelessa.core.model.MessageError;
+import com.abdallaadelessa.core.model.BaseCoreError;
 import com.abdallaadelessa.core.utils.ValidationUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -30,7 +28,7 @@ import rx.functions.Func1;
 /**
  * Created by abdulla on 8/12/15.
  */
-public class VolleyHttpObservableExecutor<T> extends BaseHttpObservableExecutor<T, HttpRequest> {
+public class VolleyHttpObservableExecutor<M> extends BaseHttpObservableExecutor<M, HttpRequest> {
 
     private RequestQueue requestQueue;
 
@@ -40,7 +38,7 @@ public class VolleyHttpObservableExecutor<T> extends BaseHttpObservableExecutor<
         this.requestQueue = requestQueue;
     }
 
-    public Observable<T> toObservable(final HttpRequest request) {
+    public Observable<M> toObservable(final HttpRequest request) {
         return Observable.create(new Observable.OnSubscribe<HttpRequest>() {
             @Override
             public void call(Subscriber<? super HttpRequest> subscriber) {
@@ -48,19 +46,18 @@ public class VolleyHttpObservableExecutor<T> extends BaseHttpObservableExecutor<
                     HttpRequest httpRequest = (HttpRequest) request.getInterceptor().interceptRequest(request);
                     subscriber.onNext(httpRequest);
                     subscriber.onCompleted();
-                }
-                catch(Exception e) {
+                } catch (Exception e) {
                     onError(request, subscriber, e, false);
                 }
             }
-        }).flatMap(new Func1<HttpRequest, Observable<T>>() {
+        }).flatMap(new Func1<HttpRequest, Observable<M>>() {
             @Override
-            public Observable<T> call(final HttpRequest httpRequest) {
-                return Observable.create(new Observable.OnSubscribe<T>() {
+            public Observable<M> call(final HttpRequest httpRequest) {
+                return Observable.create(new Observable.OnSubscribe<M>() {
                     @Override
-                    public void call(final Subscriber<? super T> subscriber) {
+                    public void call(final Subscriber<? super M> subscriber) {
                         try {
-                            if(subscriber.isUnsubscribed()) return;
+                            if (subscriber.isUnsubscribed()) return;
                             // Cancel All By Tag
                             canCancelIfRunning(httpRequest);
                             final String tag = httpRequest.getTag();
@@ -94,10 +91,9 @@ public class VolleyHttpObservableExecutor<T> extends BaseHttpObservableExecutor<
                             request1.setHeaders(headers);
                             request1.setRetryPolicy(retryPolicy);
                             request1.setShouldCache(shouldCache);
-                            if(!ValidationUtils.isStringEmpty(tag)) request1.setTag(tag);
+                            if (!ValidationUtils.isStringEmpty(tag)) request1.setTag(tag);
                             requestQueue.add(request1);
-                        }
-                        catch(Exception e) {
+                        } catch (Exception e) {
                             onError(httpRequest, subscriber, e, false);
                         }
                     }
@@ -114,7 +110,7 @@ public class VolleyHttpObservableExecutor<T> extends BaseHttpObservableExecutor<
     //=====================>
 
     @NonNull
-    private Response.Listener<String> getStringListener(final HttpRequest httpRequest, final Subscriber<? super T> subscriber) {
+    private Response.Listener<String> getStringListener(final HttpRequest httpRequest, final Subscriber<? super M> subscriber) {
         return new Response.Listener<String>() {
             @Override
             public void onResponse(final String response) {
@@ -123,10 +119,9 @@ public class VolleyHttpObservableExecutor<T> extends BaseHttpObservableExecutor<
                     public void run() {
                         try {
                             String json = httpRequest.getInterceptor().interceptResponse(httpRequest, response);
-                            final T t = httpRequest.getParser().parse(httpRequest.getTag(), httpRequest.getType(), json);
-                            onSuccess(httpRequest, subscriber, t);
-                        }
-                        catch(final Throwable e) {
+                            final M m = httpRequest.getParser().parse(httpRequest.getTag(), httpRequest.getType(), json);
+                            onSuccess(httpRequest, subscriber, m);
+                        } catch (final Throwable e) {
                             onError(httpRequest, subscriber, e, false);
                         }
                     }
@@ -136,7 +131,7 @@ public class VolleyHttpObservableExecutor<T> extends BaseHttpObservableExecutor<
     }
 
     @NonNull
-    private Response.ErrorListener getErrorListener(final HttpRequest httpRequest, final Subscriber<? super T> subscriber) {
+    private Response.ErrorListener getErrorListener(final HttpRequest httpRequest, final Subscriber<? super M> subscriber) {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(final VolleyError e) {
@@ -155,7 +150,7 @@ public class VolleyHttpObservableExecutor<T> extends BaseHttpObservableExecutor<
     private void canCancelIfRunning(HttpRequest httpRequest) {
         final String tag = httpRequest.getTag();
         final boolean cancelIfRunning = httpRequest.isCancelIfRunning();
-        if(cancelIfRunning && !ValidationUtils.isStringEmpty(tag)) {
+        if (cancelIfRunning && !ValidationUtils.isStringEmpty(tag)) {
             cancelRequestByTag(requestQueue, tag);
         }
     }
@@ -163,7 +158,7 @@ public class VolleyHttpObservableExecutor<T> extends BaseHttpObservableExecutor<
     private void canCancelRequestOnSubscribe(HttpRequest httpRequest) {
         final String tag = httpRequest.getTag();
         final boolean cancelOnUnSubscribe = httpRequest.isCancelOnUnSubscribe();
-        if(cancelOnUnSubscribe && !ValidationUtils.isStringEmpty(tag)) {
+        if (cancelOnUnSubscribe && !ValidationUtils.isStringEmpty(tag)) {
             cancelRequestByTag(requestQueue, tag);
         }
     }
@@ -171,23 +166,20 @@ public class VolleyHttpObservableExecutor<T> extends BaseHttpObservableExecutor<
     // ------------------------->
 
     @Override
-    public MessageError getMessageError(Throwable throwable) {
-        MessageError messageError = new MessageError(throwable);
-        if(isVolleyError(throwable)) {
-            if(isTimeoutError(throwable)) {
-                messageError = new MessageError(MessageError.CODE_TIMEOUT_ERROR, throwable);
-            }
-            else if(isNetworkError(throwable)) {
-                messageError = new MessageError(MessageError.CODE_NETWORK_ERROR, throwable);
-            }
-            else if(isServerError(throwable)) {
-                messageError = new MessageError(MessageError.CODE_SERVER_ERROR, throwable);
-            }
-            else if(isBadRequestError(throwable)) {
-                messageError = new MessageError(MessageError.CODE_BAD_REQUEST_ERROR, throwable);
+    public BaseCoreError getMessageError(Throwable throwable) {
+        BaseCoreError baseCoreError = new BaseCoreError(throwable);
+        if (isVolleyError(throwable)) {
+            if (isTimeoutError(throwable)) {
+                baseCoreError = new BaseCoreError(BaseCoreError.CODE_TIMEOUT_ERROR, throwable);
+            } else if (isNetworkError(throwable)) {
+                baseCoreError = new BaseCoreError(BaseCoreError.CODE_NETWORK_ERROR, throwable);
+            } else if (isServerError(throwable)) {
+                baseCoreError = new BaseCoreError(BaseCoreError.CODE_SERVER_ERROR, throwable);
+            } else if (isBadRequestError(throwable)) {
+                baseCoreError = new BaseCoreError(BaseCoreError.CODE_BAD_REQUEST_ERROR, throwable);
             }
         }
-        return messageError;
+        return baseCoreError;
     }
 
     public boolean isVolleyError(Throwable error) {
@@ -213,7 +205,7 @@ public class VolleyHttpObservableExecutor<T> extends BaseHttpObservableExecutor<
     // ------------------------->
 
     public static void cancelRequestByTag(RequestQueue requestQueue, final String tag) {
-        if(tag == null) return;
+        if (tag == null) return;
         requestQueue.cancelAll(new RequestQueue.RequestFilter() {
             @Override
             public boolean apply(Request<?> request) {

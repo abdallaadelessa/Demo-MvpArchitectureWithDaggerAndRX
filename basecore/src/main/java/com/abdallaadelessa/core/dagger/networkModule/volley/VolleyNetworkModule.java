@@ -12,6 +12,8 @@ import com.android.volley.toolbox.HttpStack;
 import com.android.volley.toolbox.Volley;
 import com.android.volley.toolbox.VolleyTickle;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -32,11 +34,13 @@ public class VolleyNetworkModule {
         return new OkHttpStack();
     }
 
+    @Singleton
     @Provides
     public RequestQueue provideRequestQueue(Context context, HttpStack okHttpStack) {
         return Volley.newRequestQueue(context, okHttpStack);
     }
 
+    @Singleton
     @Provides
     public RequestTickle provideRequestTickle(Context context, HttpStack okHttpStack) {
         return VolleyTickle.newRequestTickle(context, okHttpStack);

@@ -3,25 +3,22 @@ package com.abdallaadelessa.core.dagger.networkModule;
 import com.abdallaadelessa.core.dagger.appModule.BaseCoreModule;
 import com.abdallaadelessa.core.dagger.loggerModule.BaseCoreLoggerModule;
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpObservableExecutor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpInterceptor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpParser;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.BaseRequest;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpRequestManager;
-import com.abdallaadelessa.core.dagger.networkModule.volley.MultiPartObservableExecutor;
-import com.abdallaadelessa.core.dagger.networkModule.volley.VolleyHttpObservableExecutor;
 import com.abdallaadelessa.core.dagger.networkModule.volley.VolleyNetworkModule;
-import com.abdallaadelessa.core.model.MessageError;
 import com.android.volley.RequestQueue;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.lang.reflect.Type;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.inject.Singleton;
 
@@ -56,8 +53,7 @@ public class BaseCoreNetworkModule {
             public Throwable interceptError(BaseRequest request, Throwable throwable, boolean fatal) {
                 try {
                     logger.logError(request.getTag(), throwable, fatal);
-                }
-                catch(Exception e) {
+                } catch (Exception e) {
                     //Eat it!
                 }
                 return throwable;
@@ -67,29 +63,35 @@ public class BaseCoreNetworkModule {
 
     @Singleton
     @Provides
-    public HttpParser provideHttpParser() {
+    public HttpParser provideHttpParser(final Gson gson) {
         return new HttpParser() {
             @Override
-            public <T> T parse(String tag, Type type, String response) throws JSONException {
-                return null;
+            public <T> T parse(String tag, Type type, String json) throws JSONException {
+                T t = null;
+                if (type == String.class) {
+                    t = (T) json;
+                } else {
+                    Object parsedData = new JSONTokener(json).nextValue();
+                    if (parsedData instanceof JSONObject) {
+                        JSONObject response = new JSONObject(json);
+                        if (type == JSONObject.class) {
+                            t = (T) response;
+                        } else {
+                            t = (T) gson.fromJson(json, type);
+                        }
+                    } else if (parsedData instanceof JSONArray) {
+                        t = (T) gson.fromJson(json, type);
+                    }
+                }
+                return t;
             }
         };
     }
 
-    @Provides
-    public VolleyHttpObservableExecutor provideVolleyHttpObservableExecutor(RequestQueue requestQueue) {
-        return new VolleyHttpObservableExecutor(requestQueue);
-    }
-
-    @Provides
-    public MultiPartObservableExecutor provideMultiPartObservableExecutor() {
-        return new MultiPartObservableExecutor();
-    }
-
     @Singleton
     @Provides
-    public HttpRequestManager provideHttpRequestManager(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger, VolleyHttpObservableExecutor volleyHttpObservableExecutor, MultiPartObservableExecutor multiPartObservableExecutor, ExecutorService executorService) {
-        return new HttpRequestManager(interceptor, parser, logger, volleyHttpObservableExecutor, multiPartObservableExecutor, executorService);
+    public HttpRequestManager provideHttpRequestManager(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger, ExecutorService executorService, RequestQueue queue) {
+        return new HttpRequestManager(interceptor, parser, logger, executorService, queue);
     }
 
     //=================>
