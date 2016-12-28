@@ -1,4 +1,4 @@
-package com.abdallaadelessa.core.dagger.networkModule.volley;
+package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.volley;
 
 
 import android.support.annotation.NonNull;
