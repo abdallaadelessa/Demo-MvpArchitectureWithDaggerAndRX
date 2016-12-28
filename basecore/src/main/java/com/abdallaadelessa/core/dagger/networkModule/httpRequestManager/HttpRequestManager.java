@@ -3,11 +3,15 @@ package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager;
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.MultiPartRequest;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.volley.MultiPartExecutor;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.volley.VolleyHttpExecutor;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModules.okhttpModule.MultiPartExecutor;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModules.volleyModule.VolleyHttpExecutor;
 import com.android.volley.RequestQueue;
 
 import java.util.concurrent.ExecutorService;
+
+import javax.inject.Inject;
+
+import okhttp3.OkHttpClient;
 
 /**
  * Created by abdullah on 12/26/16.
@@ -18,16 +22,17 @@ public class HttpRequestManager {
     private ExecutorService executorService;
     private HttpInterceptor interceptor;
     private HttpParser parser;
+    //======>
     private RequestQueue queue;
+    private OkHttpClient okHttpClient;
 
     //===========> Constructor
-
-    public HttpRequestManager(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger, ExecutorService executorService, RequestQueue queue) {
+    @Inject
+    public HttpRequestManager(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger, ExecutorService executorService) {
         this.interceptor = interceptor;
         this.parser = parser;
         this.logger = logger;
         this.executorService = executorService;
-        this.queue = queue;
     }
 
     public <T> HttpRequest<T> newHttpRequest() {
@@ -35,10 +40,19 @@ public class HttpRequestManager {
     }
 
     public <T> MultiPartRequest<T> newMultiPartRequest() {
-        return MultiPartRequest.create(getInterceptor(), getParser(), getLogger(), new MultiPartExecutor<T>(), getExecutorService());
+        return MultiPartRequest.create(getInterceptor(), getParser(), getLogger(), new MultiPartExecutor<T>(okHttpClient), getExecutorService());
     }
 
     //===========> Setters and Getters
+
+
+    public void setQueue(RequestQueue queue) {
+        this.queue = queue;
+    }
+
+    public void setOkHttpClient(OkHttpClient okHttpClient) {
+        this.okHttpClient = okHttpClient;
+    }
 
     public BaseAppLogger getLogger() {
         return logger;

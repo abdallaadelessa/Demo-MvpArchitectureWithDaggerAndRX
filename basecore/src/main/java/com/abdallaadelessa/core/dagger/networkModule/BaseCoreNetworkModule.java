@@ -7,7 +7,7 @@ import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpInte
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpParser;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.BaseRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpRequestManager;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.volley.VolleyNetworkModule;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModules.volleyModule.VolleyNetworkModule;
 import com.android.volley.RequestQueue;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -24,6 +24,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import okhttp3.OkHttpClient;
 
 /**
  * Created by Abdalla on 16/10/2016.
@@ -90,8 +91,12 @@ public class BaseCoreNetworkModule {
 
     @Singleton
     @Provides
-    public HttpRequestManager provideHttpRequestManager(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger, ExecutorService executorService, RequestQueue queue) {
-        return new HttpRequestManager(interceptor, parser, logger, executorService, queue);
+    public HttpRequestManager provideHttpRequestManager(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger, ExecutorService executorService
+            , OkHttpClient okHttpClient, RequestQueue queue) {
+        HttpRequestManager httpRequestManager = new HttpRequestManager(interceptor, parser, logger, executorService);
+        httpRequestManager.setOkHttpClient(okHttpClient);
+        httpRequestManager.setQueue(queue);
+        return httpRequestManager;
     }
 
     //=================>

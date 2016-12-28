@@ -1,8 +1,10 @@
-package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.volley;
+package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModules.volleyModule;
 
 import android.content.Context;
 
 import com.abdallaadelessa.core.app.BaseCoreApp;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModules.okhttpModule.OkHttpModule;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModules.okhttpModule.OkHttpStack;
 import com.android.volley.RequestQueue;
 import com.android.volley.RequestTickle;
 import com.android.volley.VolleyLog;
@@ -20,18 +22,12 @@ import dagger.Provides;
 /**
  * Created by abdullah on 12/10/16.
  */
-@Module
+@Module(includes = OkHttpModule.class)
 public class VolleyNetworkModule {
     private static final boolean ENABLE_LOGS = !BaseCoreApp.getInstance().isReleaseBuildType();
 
     public VolleyNetworkModule() {
         VolleyLog.DEBUG = ENABLE_LOGS;
-    }
-
-    //----> Volley
-    @Provides
-    public HttpStack provideHttpStack() {
-        return new OkHttpStack();
     }
 
     @Singleton
@@ -46,13 +42,10 @@ public class VolleyNetworkModule {
         return VolleyTickle.newRequestTickle(context, okHttpStack);
     }
 
-    //----> Image Loader
     @Provides
     public SimpleImageLoader provideSimpleImageLoader(Context context) {
         DiskLruBasedCache.ImageCacheParams cacheParams = new DiskLruBasedCache.ImageCacheParams(context, "CacheDirectory");
         cacheParams.setMemCacheSizePercent(0.5f);
         return new SimpleImageLoader(context, cacheParams);
     }
-
-
 }

@@ -20,7 +20,6 @@ public class MultiPartRequest<T> extends BaseRequest<T> {
     public static final String DEFAULT_MIME_TYPE = "image/jpeg";
     private String tag;
     private String url;
-    private Type type;
     private Map<String, String> params;
     private ArrayList<MultiPartFile> files;
 
@@ -63,11 +62,6 @@ public class MultiPartRequest<T> extends BaseRequest<T> {
 
     public MultiPartRequest<T> setType(Type type) {
         this.type = type;
-        return this;
-    }
-
-    private MultiPartRequest<T> setParams(Map<String, String> params) {
-        this.params = params;
         return this;
     }
 
@@ -124,10 +118,6 @@ public class MultiPartRequest<T> extends BaseRequest<T> {
 
     public String getUrl() {
         return url;
-    }
-
-    public Type getType() {
-        return type;
     }
 
     public Map<String, String> getParams() {

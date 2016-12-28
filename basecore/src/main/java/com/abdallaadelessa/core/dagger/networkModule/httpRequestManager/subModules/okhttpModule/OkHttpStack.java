@@ -1,4 +1,4 @@
-package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.volley;
+package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModules.okhttpModule;
 
 
 import com.android.volley.toolbox.HurlStack;
@@ -16,15 +16,12 @@ import okhttp3.OkUrlFactory;
  * which uses OkHttp as its transport.
  */
 public class OkHttpStack extends HurlStack {
-
+    private OkHttpClient okHttpClient;
     private OkUrlFactory mFactory;
 
-    public OkHttpStack() {
-        this(getClient());
-    }
-
     public OkHttpStack(OkHttpClient client) {
-        if(client == null) {
+        this.okHttpClient = client;
+        if (client == null) {
             throw new NullPointerException("Client must not be null.");
         }
         mFactory = new OkUrlFactory(client);
@@ -33,12 +30,5 @@ public class OkHttpStack extends HurlStack {
     @Override
     protected HttpURLConnection createConnection(URL url) throws IOException {
         return mFactory.open(url);
-    }
-
-    // ---------------->
-
-    private static OkHttpClient getClient() {
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        return builder.build();
     }
 }

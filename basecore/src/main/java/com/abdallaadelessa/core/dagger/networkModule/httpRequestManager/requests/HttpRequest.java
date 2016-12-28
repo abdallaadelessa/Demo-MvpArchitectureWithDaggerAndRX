@@ -21,20 +21,11 @@ import rx.Observable;
  */
 
 public class HttpRequest<T> extends BaseRequest<T> {
-    private static final String HEADER_CONTENT_TYPE = "Content-Type";
-    private static final String PROTOCOL_CHARSET = "utf-8";
-    private static final String CONTENT_TYPE_JSON = String.format("application/json; charset=%s", PROTOCOL_CHARSET);
     public static final RetryPolicy FILE_UPLOAD_RETRY_POLICY = new DefaultRetryPolicy(40000, 0, 0);
     public static final DefaultRetryPolicy DEFAULT_RETRY_POLICY = new DefaultRetryPolicy(5000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
     private int method;
-    private Type type;
-    private Map<String, String> headers;
-    private Map<String, String> params;
     private String body;
-    private RetryPolicy retryPolicy;
     private boolean shouldCache;
-    private boolean cancelIfRunning;
-    private boolean cancelOnUnSubscribe;
 
     //=====> Builder
 
@@ -130,14 +121,13 @@ public class HttpRequest<T> extends BaseRequest<T> {
         return this;
     }
 
-    private HttpRequest<T> setHeaders(Map<String, String> headers) {
+    protected HttpRequest<T> setHeaders(Map<String, String> headers) {
         this.headers = headers;
         return this;
     }
 
-    private HttpRequest<T> setParams(Map<String, String> params) {
-        this.params = params;
-        return this;
+    protected HttpRequest<T> setParams(Map<String, String> params) {
+        return (HttpRequest<T>) super.setParams(params);
     }
 
     public HttpRequest<T> addInterceptor(HttpInterceptor interceptor) {
@@ -186,36 +176,12 @@ public class HttpRequest<T> extends BaseRequest<T> {
         return method;
     }
 
-    public Type getType() {
-        return type;
-    }
-
-    public Map<String, String> getHeaders() {
-        return headers;
-    }
-
-    public Map<String, String> getParams() {
-        return params;
-    }
-
     public String getBody() {
         return body;
     }
 
-    public RetryPolicy getRetryPolicy() {
-        return retryPolicy;
-    }
-
     public boolean isShouldCache() {
         return shouldCache;
-    }
-
-    public boolean isCancelIfRunning() {
-        return cancelIfRunning;
-    }
-
-    public boolean isCancelOnUnSubscribe() {
-        return cancelOnUnSubscribe;
     }
 
     public String contentType() {

@@ -23,7 +23,8 @@ import com.abdallaadelessa.core.dagger.loggerModule.DaggerBaseCoreLoggerComponen
 import com.abdallaadelessa.core.dagger.networkModule.BaseCoreNetworkComponent;
 import com.abdallaadelessa.core.dagger.networkModule.BaseCoreNetworkModule;
 import com.abdallaadelessa.core.dagger.networkModule.DaggerBaseCoreNetworkComponent;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.volley.VolleyNetworkModule;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModules.okhttpModule.OkHttpModule;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModules.volleyModule.VolleyNetworkModule;
 
 import java.io.File;
 
@@ -37,6 +38,7 @@ public abstract class BaseCoreApp extends Application {
     private BaseCoreCacheModule cacheModule;
     private BaseCoreNetworkModule networkModule;
     private VolleyNetworkModule volleyModule;
+    private OkHttpModule okHttpModule;
     //===>
     private BaseCoreAppComponent appComponent;
     private BaseCoreErrorHandlerComponent errorHandlerComponent;
@@ -51,6 +53,10 @@ public abstract class BaseCoreApp extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+        constructAppModules();
+    }
+
+    private void constructAppModules() {
         appModule = new BaseCoreAppModule();
         errorHandlerModule = new BaseCoreErrorHandlerModule();
         eventBusModule = new BaseCoreEventBusModule();
@@ -58,6 +64,7 @@ public abstract class BaseCoreApp extends Application {
         cacheModule = new BaseCoreCacheModule();
         networkModule = new BaseCoreNetworkModule();
         volleyModule = new VolleyNetworkModule();
+        okHttpModule = new OkHttpModule();
     }
 
     //=========================>
