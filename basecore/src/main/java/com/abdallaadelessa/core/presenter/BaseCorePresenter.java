@@ -29,7 +29,7 @@ public abstract class BaseCorePresenter<V> {
                 subscriptions.clear();
             }
         } catch (Exception e) {
-            BaseCoreApp.getAppComponent().getLogger().logError(e);
+            BaseCoreApp.getInstance().getLoggerComponent().getLogger().logError(e);
         }
         try {
             if (viewRef != null) {
@@ -37,7 +37,7 @@ public abstract class BaseCorePresenter<V> {
                 viewRef = null;
             }
         } catch (Exception e) {
-            BaseCoreApp.getAppComponent().getLogger().logError(e);
+            BaseCoreApp.getInstance().getLoggerComponent().getLogger().logError(e);
         }
     }
 

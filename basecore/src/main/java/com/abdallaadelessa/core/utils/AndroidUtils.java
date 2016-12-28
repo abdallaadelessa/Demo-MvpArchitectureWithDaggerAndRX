@@ -26,7 +26,7 @@ import java.util.List;
 
 public class AndroidUtils {
     public static Boolean checkIfApplicationIsConnected() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) BaseCoreApp.getAppComponent().getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) BaseCoreApp.getInstance().getAppComponent().getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
         if (activeNetInfo != null) {
             return activeNetInfo != null && activeNetInfo.isAvailable() && activeNetInfo.isConnected();
@@ -115,13 +115,13 @@ public class AndroidUtils {
             }
             return buf.toString();
         } catch (IOException e) {
-            BaseCoreApp.getAppComponent().getLogger().log("Error opening asset " + fileName);
+            BaseCoreApp.getInstance().getLoggerComponent().getLogger().log("Error opening asset " + fileName);
         } finally {
             if (in != null) {
                 try {
                     in.close();
                 } catch (IOException e) {
-                    BaseCoreApp.getAppComponent().getLogger().log("Error closing asset " + fileName);
+                    BaseCoreApp.getInstance().getLoggerComponent().getLogger().log("Error closing asset " + fileName);
                 }
             }
         }

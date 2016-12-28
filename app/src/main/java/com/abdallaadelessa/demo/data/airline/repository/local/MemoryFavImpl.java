@@ -18,18 +18,18 @@ public class MemoryFavImpl implements AirlinesFavRepository {
     public void addToFavourites(AirlineModel airlineModel) {
         List<String> favourites = getFavourites();
         favourites.add(airlineModel.getCode());
-        BaseCoreApp.getAppComponent().getRetainedMemoryCache().putEntry(FAV_KEY, (Serializable) favourites);
+        BaseCoreApp.getInstance().getCacheComponent().getRetainedMemoryCache().putEntry(FAV_KEY, (Serializable) favourites);
     }
 
     @Override
     public void removeFromFavourites(AirlineModel airlineModel) {
         List<String> favourites = getFavourites();
         favourites.remove(airlineModel.getCode());
-        BaseCoreApp.getAppComponent().getRetainedMemoryCache().putEntry(FAV_KEY, (Serializable) favourites);
+        BaseCoreApp.getInstance().getCacheComponent().getRetainedMemoryCache().putEntry(FAV_KEY, (Serializable) favourites);
     }
 
     @Override
     public List<String> getFavourites() {
-        return (List<String>) BaseCoreApp.getAppComponent().getRetainedMemoryCache().getEntry(FAV_KEY, new ArrayList<String>());
+        return (List<String>) BaseCoreApp.getInstance().getCacheComponent().getRetainedMemoryCache().getEntry(FAV_KEY, new ArrayList<String>());
     }
 }

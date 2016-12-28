@@ -43,7 +43,7 @@ public class AirlineDetailsPresenter extends BaseCorePresenter<IAirlineDetailsVi
             try {
                 AndroidUtils.openBrowser(context, airlineModel.getSite());
             } catch (Exception e) {
-                MyApplication.getAppComponent().getLogger().logError(e);
+                MyApplication.getInstance().getLoggerComponent().getLogger().logError(e);
                 UIUtils.showToast(context, context.getString(R.string.error_no_browser));
             }
         } else {
@@ -57,7 +57,7 @@ public class AirlineDetailsPresenter extends BaseCorePresenter<IAirlineDetailsVi
             try {
                 AndroidUtils.call(context, airlineModel.getPhone());
             } catch (Exception e) {
-                MyApplication.getAppComponent().getLogger().logError(e);
+                MyApplication.getInstance().getLoggerComponent().getLogger().logError(e);
                 UIUtils.showToast(context, context.getString(R.string.error_no_dialer));
             }
         } else {

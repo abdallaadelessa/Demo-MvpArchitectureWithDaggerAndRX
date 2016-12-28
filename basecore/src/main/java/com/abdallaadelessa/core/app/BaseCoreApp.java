@@ -5,47 +5,146 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.abdallaadelessa.core.dagger.AppComponent;
-import com.abdallaadelessa.core.dagger.DaggerAppComponent;
+import com.abdallaadelessa.core.dagger.appModule.BaseCoreAppComponent;
+import com.abdallaadelessa.core.dagger.appModule.BaseCoreAppModule;
+import com.abdallaadelessa.core.dagger.appModule.DaggerBaseCoreAppComponent;
+import com.abdallaadelessa.core.dagger.cacheModule.BaseCoreCacheComponent;
+import com.abdallaadelessa.core.dagger.cacheModule.BaseCoreCacheModule;
+import com.abdallaadelessa.core.dagger.cacheModule.DaggerBaseCoreCacheComponent;
+import com.abdallaadelessa.core.dagger.errorHandlerModule.BaseCoreErrorHandlerComponent;
+import com.abdallaadelessa.core.dagger.errorHandlerModule.BaseCoreErrorHandlerModule;
+import com.abdallaadelessa.core.dagger.errorHandlerModule.DaggerBaseCoreErrorHandlerComponent;
+import com.abdallaadelessa.core.dagger.eventBusModule.BaseCoreEventBusComponent;
+import com.abdallaadelessa.core.dagger.eventBusModule.BaseCoreEventBusModule;
+import com.abdallaadelessa.core.dagger.eventBusModule.DaggerBaseCoreEventBusComponent;
+import com.abdallaadelessa.core.dagger.loggerModule.BaseCoreLoggerComponent;
+import com.abdallaadelessa.core.dagger.loggerModule.BaseCoreLoggerModule;
+import com.abdallaadelessa.core.dagger.loggerModule.DaggerBaseCoreLoggerComponent;
+import com.abdallaadelessa.core.dagger.networkModule.BaseCoreNetworkComponent;
+import com.abdallaadelessa.core.dagger.networkModule.BaseCoreNetworkModule;
+import com.abdallaadelessa.core.dagger.networkModule.DaggerBaseCoreNetworkComponent;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.volley.VolleyNetworkModule;
 
 import java.io.File;
 
 public abstract class BaseCoreApp extends Application {
     private static BaseCoreApp mInstance;
-    private AppComponent appComponent;
+    //===>
+    private BaseCoreAppModule appModule;
+    private BaseCoreErrorHandlerModule errorHandlerModule;
+    private BaseCoreEventBusModule eventBusModule;
+    private BaseCoreLoggerModule loggerModule;
+    private BaseCoreCacheModule cacheModule;
+    private BaseCoreNetworkModule networkModule;
+    private VolleyNetworkModule volleyModule;
+    //===>
+    private BaseCoreAppComponent appComponent;
+    private BaseCoreErrorHandlerComponent errorHandlerComponent;
+    private BaseCoreEventBusComponent eventBusComponent;
+    private BaseCoreLoggerComponent loggerComponent;
+    private BaseCoreCacheComponent cacheComponent;
+    private BaseCoreNetworkComponent networkComponent;
+
+    //===>
 
     @Override
     public void onCreate() {
         super.onCreate();
         mInstance = this;
-        appComponent = constructAppComponent();
+        appModule = new BaseCoreAppModule();
+        errorHandlerModule = new BaseCoreErrorHandlerModule();
+        eventBusModule = new BaseCoreEventBusModule();
+        loggerModule = new BaseCoreLoggerModule();
+        cacheModule = new BaseCoreCacheModule();
+        networkModule = new BaseCoreNetworkModule();
+        volleyModule = new VolleyNetworkModule();
     }
 
-    protected AppComponent constructAppComponent() {
-        return DaggerAppComponent.builder().build();
-    }
-
-    // ------------------->
+    //=========================>
 
     public static BaseCoreApp getInstance() {
         return mInstance;
     }
 
-    public static AppComponent getAppComponent() {
-        return getInstance().appComponent;
+    //=========================>
+
+    public BaseCoreAppComponent getAppComponent() {
+        if (appComponent == null) {
+            appComponent = DaggerBaseCoreAppComponent
+                    .builder()
+                    .baseCoreAppModule(appModule)
+                    .build();
+        }
+        return appComponent;
     }
 
-    // -------------------> Build Config Fields
+    public BaseCoreErrorHandlerComponent getErrorHandlerComponent() {
+        if (errorHandlerComponent == null) {
+            errorHandlerComponent = DaggerBaseCoreErrorHandlerComponent
+                    .builder()
+                    .baseCoreAppModule(appModule)
+                    .baseCoreErrorHandlerModule(errorHandlerModule)
+                    .baseCoreLoggerModule(loggerModule)
+                    .build();
+        }
+        return errorHandlerComponent;
+    }
+
+    public BaseCoreEventBusComponent getEventBusComponent() {
+        if (eventBusComponent == null) {
+            eventBusComponent = DaggerBaseCoreEventBusComponent
+                    .builder()
+                    .baseCoreEventBusModule(eventBusModule)
+                    .build();
+        }
+        return eventBusComponent;
+    }
+
+    public BaseCoreLoggerComponent getLoggerComponent() {
+        if (loggerComponent == null) {
+            loggerComponent = DaggerBaseCoreLoggerComponent
+                    .builder()
+                    .baseCoreLoggerModule(loggerModule)
+                    .build();
+        }
+        return loggerComponent;
+    }
+
+    public BaseCoreCacheComponent getCacheComponent() {
+        if (cacheComponent == null) {
+            cacheComponent = DaggerBaseCoreCacheComponent
+                    .builder()
+                    .baseCoreAppModule(appModule)
+                    .baseCoreCacheModule(cacheModule)
+                    .build();
+        }
+        return cacheComponent;
+    }
+
+    public BaseCoreNetworkComponent getNetworkComponent() {
+        if (networkComponent == null) {
+            networkComponent = DaggerBaseCoreNetworkComponent
+                    .builder()
+                    .baseCoreAppModule(appModule)
+                    .baseCoreLoggerModule(loggerModule)
+                    .baseCoreNetworkModule(networkModule)
+                    .volleyNetworkModule(volleyModule)
+                    .build();
+        }
+        return networkComponent;
+    }
+
+    //=========================> Build Config Fields
 
     public abstract boolean isReleaseBuildType();
 
     public abstract boolean isDebugBuildType();
 
-    // -------------------> Static Methods
+    //=========================> Static Methods
 
     public static String getAppFolderPath() {
-        File externalCacheDir = getAppComponent().getContext().getExternalCacheDir();
-        File internalCacheDir = getAppComponent().getContext().getCacheDir();
+        File externalCacheDir = BaseCoreApp.getInstance().getAppComponent().getContext().getExternalCacheDir();
+        File internalCacheDir = BaseCoreApp.getInstance().getAppComponent().getContext().getCacheDir();
         return externalCacheDir == null ? internalCacheDir.getPath() : externalCacheDir.getPath();
     }
 
@@ -76,7 +175,7 @@ public abstract class BaseCoreApp extends Application {
         return path;
     }
 
-    // ------------------->
+    //=========================>
 
     public static int getDefaultPlaceholder() {
         return 0;
@@ -86,7 +185,7 @@ public abstract class BaseCoreApp extends Application {
         try {
             return BitmapFactory.decodeResource(context.getResources(), getDefaultPlaceholder());
         } catch (Throwable throwable) {
-            getAppComponent().getLogger().logError(throwable);
+            BaseCoreApp.getInstance().getLoggerComponent().getLogger().logError(throwable);
             return null;
         }
     }

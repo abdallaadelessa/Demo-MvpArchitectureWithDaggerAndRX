@@ -63,7 +63,7 @@ public class BinaryUtils {
             }
             key = sb.toString();
         } catch (UnsupportedEncodingException e) {
-            BaseCoreApp.getAppComponent().getLogger().logError(e);
+            BaseCoreApp.getInstance().getLoggerComponent().getLogger().logError(e);
         }
         return key;
     }
@@ -106,7 +106,7 @@ public class BinaryUtils {
         try {
             decode = Base32String.decode(s);
         } catch (Base32String.DecodingException e) {
-            BaseCoreApp.getAppComponent().getLogger().logError(e);
+            BaseCoreApp.getInstance().getLoggerComponent().getLogger().logError(e);
         }
         return decode;
     }

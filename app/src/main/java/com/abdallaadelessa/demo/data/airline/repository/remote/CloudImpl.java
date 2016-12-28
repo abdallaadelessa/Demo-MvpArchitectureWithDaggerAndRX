@@ -24,6 +24,6 @@ public class CloudImpl implements AirlinesRemoteRepository {
     }
 
     private HttpRequestManager getHttpRequestManager() {
-        return MyApplication.getAppComponent().getHttpRequestManager();
+        return MyApplication.getInstance().getNetworkComponent().getHttpRequestManager();
     }
 }

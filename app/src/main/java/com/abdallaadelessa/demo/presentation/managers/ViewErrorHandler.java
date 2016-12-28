@@ -14,13 +14,13 @@ public class ViewErrorHandler {
 
     public static void handleError(DataPlaceHolder dataPlaceHolder, Throwable error, Runnable runnable) {
         if (dataPlaceHolder == null) return;
-        String errorMessage = BaseCoreApp.getAppComponent().getErrorHandler().getErrorMessage(error);
+        String errorMessage = BaseCoreApp.getInstance().getErrorHandlerComponent().getErrorHandler().getErrorMessage(error);
         dataPlaceHolder.showMessage(errorMessage, -1, dataPlaceHolder.getContext().getString(R.string.txt_retry), runnable);
     }
 
     public static void handleError(Activity activity, Throwable error, Runnable runnable) {
         if (activity == null) return;
-        String errorMessage = BaseCoreApp.getAppComponent().getErrorHandler().getErrorMessage(error);
+        String errorMessage = BaseCoreApp.getInstance().getErrorHandlerComponent().getErrorHandler().getErrorMessage(error);
         UIUtils.showToast(activity, errorMessage);
     }
 }

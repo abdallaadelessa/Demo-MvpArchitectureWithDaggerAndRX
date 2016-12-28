@@ -17,7 +17,7 @@ import dagger.Provides;
  * Created by abdullah on 12/10/16.
  */
 @Module
-public class BaseCoreModule {
+public class BaseCoreAppModule {
 
     @Singleton
     @Provides

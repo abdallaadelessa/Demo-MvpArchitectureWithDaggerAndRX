@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.support.v4.util.ArrayMap;
 import android.support.v4.util.LruCache;
 
+import com.abdallaadelessa.core.dagger.appModule.BaseCoreAppModule;
 import com.abdallaadelessa.core.dagger.cacheModule.cache.BaseCache;
 
 import java.io.Serializable;

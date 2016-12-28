@@ -215,7 +215,7 @@ public class ImageLoaderManager {
                     subscriber.onNext(file);
                     subscriber.onCompleted();
                 } catch (Throwable e) {
-                    BaseCoreApp.getAppComponent().getLogger().logError(e);
+                    BaseCoreApp.getInstance().getLoggerComponent().getLogger().logError(e);
                     subscriber.onError(e);
                 }
             }
@@ -260,7 +260,7 @@ public class ImageLoaderManager {
                 file = requestManager.load(path).downloadOnly(builder.width, builder.height).get();
             }
         } catch (Throwable e) {
-            BaseCoreApp.getAppComponent().getLogger().logError(e);
+            BaseCoreApp.getInstance().getLoggerComponent().getLogger().logError(e);
         }
         return file;
     }
@@ -326,12 +326,12 @@ public class ImageLoaderManager {
             @Override
             public boolean onException(Exception e, String model, com.bumptech.glide.request.target.Target<GlideDrawable> target, boolean isFirstResource) {
                 try {
-                    BaseCoreApp.getAppComponent().getLogger().logError(e);
+                    BaseCoreApp.getInstance().getLoggerComponent().getLogger().logError(e);
                     if (callback != null) {
                         callback.onError();
                     }
                 } catch (Throwable ee) {
-                    BaseCoreApp.getAppComponent().getLogger().logError(ee);
+                    BaseCoreApp.getInstance().getLoggerComponent().getLogger().logError(ee);
                 }
                 return false;
             }
@@ -343,7 +343,7 @@ public class ImageLoaderManager {
                         callback.onSuccess();
                     }
                 } catch (Throwable ee) {
-                    BaseCoreApp.getAppComponent().getLogger().logError(ee);
+                    BaseCoreApp.getInstance().getLoggerComponent().getLogger().logError(ee);
                 }
                 return false;
             }
@@ -367,7 +367,7 @@ public class ImageLoaderManager {
                             if (bitmap != null) target.onImageReady(bitmap);
                         }
                     } catch (Throwable e) {
-                        BaseCoreApp.getAppComponent().getLogger().logError(e);
+                        BaseCoreApp.getInstance().getLoggerComponent().getLogger().logError(e);
                     }
                 }
 
@@ -378,7 +378,7 @@ public class ImageLoaderManager {
                             target.onError(e);
                         }
                     } catch (Throwable ee) {
-                        BaseCoreApp.getAppComponent().getLogger().logError(ee);
+                        BaseCoreApp.getInstance().getLoggerComponent().getLogger().logError(ee);
                     }
                 }
             };

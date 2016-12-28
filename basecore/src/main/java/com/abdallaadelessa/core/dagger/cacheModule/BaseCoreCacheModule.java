@@ -2,10 +2,9 @@ package com.abdallaadelessa.core.dagger.cacheModule;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.v4.util.ArrayMap;
 import android.support.v4.util.LruCache;
 
-import com.abdallaadelessa.core.dagger.appModule.BaseCoreModule;
+import com.abdallaadelessa.core.dagger.appModule.BaseCoreAppModule;
 import com.abdallaadelessa.core.dagger.cacheModule.cache.BaseCache;
 import com.abdallaadelessa.core.dagger.cacheModule.cache.LruBaseCacheImpl;
 import com.abdallaadelessa.core.dagger.cacheModule.cache.RetainedMemoryCacheImpl;
@@ -13,7 +12,6 @@ import com.abdallaadelessa.core.dagger.cacheModule.cache.SharedPreferenceCacheIm
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Map;
 
 import javax.inject.Singleton;
 
@@ -23,7 +21,7 @@ import dagger.Provides;
 /**
  * Created by Abdalla on 16/10/2016.
  */
-@Module(includes = BaseCoreModule.class)
+@Module(includes = BaseCoreAppModule.class)
 public class BaseCoreCacheModule {
     @Singleton
     @Provides

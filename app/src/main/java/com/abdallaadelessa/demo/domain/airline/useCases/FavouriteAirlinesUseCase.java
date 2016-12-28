@@ -37,7 +37,7 @@ public class FavouriteAirlinesUseCase {
         } else {
             airlinesFavRepository.removeFromFavourites(airlineModel);
         }
-        MyApplication.getAppComponent().getGlobalEventBus().send(FavouriteAirLineStateChanged.newInstance());
+        MyApplication.getInstance().getEventBusComponent().getGlobalEventBus().send(FavouriteAirLineStateChanged.newInstance());
     }
 
     public void toggleFavAirline(AirlineModel airlineModel) {
@@ -46,7 +46,7 @@ public class FavouriteAirlinesUseCase {
         } else {
             airlinesFavRepository.removeFromFavourites(airlineModel);
         }
-        MyApplication.getAppComponent().getGlobalEventBus().send(FavouriteAirLineStateChanged.newInstance());
+        MyApplication.getInstance().getEventBusComponent().getGlobalEventBus().send(FavouriteAirLineStateChanged.newInstance());
     }
 
     public Observable<List<AirlineModel>> filterAirlinesAsObservable(final List<AirlineModel> allAirLines, final boolean favOnly) {

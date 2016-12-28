@@ -1,5 +1,6 @@
 package com.abdallaadelessa.core.dagger.errorHandlerModule;
 
+import com.abdallaadelessa.core.dagger.appModule.BaseCoreAppModule;
 import com.abdallaadelessa.core.dagger.errorHandlerModule.errorHandler.BaseErrorHandler;
 
 import javax.inject.Singleton;

@@ -53,7 +53,7 @@ public abstract class BaseCoreRecyclerAdapter<VH extends RecyclerView.ViewHolder
             return holderClass.getDeclaredConstructor(View.class).newInstance(view);
         }
         catch(Exception e) {
-            BaseCoreApp.getAppComponent().getLogger().logError(e);
+            BaseCoreApp.getInstance().getLoggerComponent().getLogger().logError(e);
             throw new RuntimeException(e);
         }
     }

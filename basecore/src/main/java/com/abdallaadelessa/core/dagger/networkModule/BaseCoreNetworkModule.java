@@ -1,6 +1,6 @@
 package com.abdallaadelessa.core.dagger.networkModule;
 
-import com.abdallaadelessa.core.dagger.appModule.BaseCoreModule;
+import com.abdallaadelessa.core.dagger.appModule.BaseCoreAppModule;
 import com.abdallaadelessa.core.dagger.loggerModule.BaseCoreLoggerModule;
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpInterceptor;
@@ -28,7 +28,7 @@ import dagger.Provides;
 /**
  * Created by Abdalla on 16/10/2016.
  */
-@Module(includes = {BaseCoreModule.class, BaseCoreLoggerModule.class, VolleyNetworkModule.class})
+@Module(includes = {BaseCoreAppModule.class, BaseCoreLoggerModule.class, VolleyNetworkModule.class})
 public class BaseCoreNetworkModule {
 
     //=================>  HttpRequestManager

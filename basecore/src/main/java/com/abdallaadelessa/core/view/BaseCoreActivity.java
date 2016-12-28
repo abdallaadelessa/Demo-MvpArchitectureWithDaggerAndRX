@@ -32,8 +32,8 @@ public abstract class BaseCoreActivity<p extends BaseCorePresenter> extends AppC
         if (savedInstanceState != null) {
             HashMap cacheObject = (HashMap) savedInstanceState.getSerializable(KEY_RETAINED_MEMORY_CACHE);
             if (cacheObject != null) {
-                BaseCoreApp.getAppComponent().getRetainedMemoryCache().clearCache();
-                BaseCoreApp.getAppComponent().getRetainedMemoryCache().setCacheObject(cacheObject);
+                BaseCoreApp.getInstance().getCacheComponent().getRetainedMemoryCache().clearCache();
+                BaseCoreApp.getInstance().getCacheComponent().getRetainedMemoryCache().setCacheObject(cacheObject);
             }
         }
         setContentView(getLayoutRes());
@@ -43,7 +43,7 @@ public abstract class BaseCoreActivity<p extends BaseCorePresenter> extends AppC
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        HashMap cacheObject = BaseCoreApp.getAppComponent().getRetainedMemoryCache().getCacheObject();
+        HashMap cacheObject = BaseCoreApp.getInstance().getCacheComponent().getRetainedMemoryCache().getCacheObject();
         if (cacheObject != null) {
             outState.putSerializable(KEY_RETAINED_MEMORY_CACHE, cacheObject);
         }

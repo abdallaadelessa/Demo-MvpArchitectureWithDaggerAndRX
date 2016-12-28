@@ -55,7 +55,7 @@ public class UIUtils {
         if (time != null && time.length > 0) {
             toastTime = time[0];
         }
-        Toast appToast = BaseCoreApp.getAppComponent().getToast();
+        Toast appToast = BaseCoreApp.getInstance().getAppComponent().getToast();
         if (appToast != null) {
             appToast.setDuration(toastTime);
             appToast.setText(msg);
@@ -82,7 +82,7 @@ public class UIUtils {
             is.close();
             return bm;
         } catch (Exception e) {
-            BaseCoreApp.getAppComponent().getLogger().logError(e);
+            BaseCoreApp.getInstance().getLoggerComponent().getLogger().logError(e);
         }
         return bm;
     }
@@ -143,7 +143,7 @@ public class UIUtils {
             drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
             drawable.draw(canvas);
         } catch (Throwable e) {
-            BaseCoreApp.getAppComponent().getLogger().logError(e);
+            BaseCoreApp.getInstance().getLoggerComponent().getLogger().logError(e);
         }
         return bitmap;
     }
@@ -218,7 +218,7 @@ public class UIUtils {
             }
             view.setEnabled(enabled);
         } catch (Exception e) {
-            BaseCoreApp.getAppComponent().getLogger().logError(e);
+            BaseCoreApp.getInstance().getLoggerComponent().getLogger().logError(e);
         }
     }
 
@@ -231,7 +231,7 @@ public class UIUtils {
             }
             imageView.setEnabled(enabled);
         } catch (Exception e) {
-            BaseCoreApp.getAppComponent().getLogger().logError(e);
+            BaseCoreApp.getInstance().getLoggerComponent().getLogger().logError(e);
         }
     }
 

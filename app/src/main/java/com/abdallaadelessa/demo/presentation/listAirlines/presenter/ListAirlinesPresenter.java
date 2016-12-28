@@ -47,7 +47,7 @@ public class ListAirlinesPresenter extends BaseCorePresenter<IListAirlinesView> 
     // -------------------->
 
     private void registerEventBus() {
-        Subscription subscription = BaseCoreApp.getAppComponent().getGlobalEventBus().toObservable().subscribe(new Action1<Object>() {
+        Subscription subscription = BaseCoreApp.getInstance().getEventBusComponent().getGlobalEventBus().toObservable().subscribe(new Action1<Object>() {
             @Override
             public void call(Object o) {
                 if (!isViewAttached()) return;
