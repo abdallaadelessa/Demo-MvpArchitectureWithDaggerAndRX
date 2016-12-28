@@ -17,7 +17,7 @@ public abstract class BaseErrorHandler {
     protected BaseAppLogger appLogger;
 
     public BaseErrorHandler(Context context, BaseAppLogger appLogger) {
-        this.contextWeakReference = new WeakReference<Context>(context);
+        this.contextWeakReference = new WeakReference<>(context);
         this.appLogger = appLogger;
     }
 
@@ -25,7 +25,7 @@ public abstract class BaseErrorHandler {
         if(contextWeakReference == null || contextWeakReference.get() == null) return null;
         String errorMsg = contextWeakReference.get().getString(R.string.txt_unknown_error_occured);
         try {
-            if(isMessageError(error)) {
+            if(isBaseCoreError(error)) {
                 errorMsg = error.getMessage();
             }
         }
@@ -35,7 +35,7 @@ public abstract class BaseErrorHandler {
         return errorMsg;
     }
 
-    private boolean isMessageError(Throwable error) {
+    public boolean isBaseCoreError(Throwable error) {
         return error instanceof BaseCoreError;
     }
 }

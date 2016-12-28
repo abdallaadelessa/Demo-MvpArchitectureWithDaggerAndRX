@@ -130,7 +130,12 @@ public class ListAirlinesFragment extends BaseCoreFragment<ListAirlinesPresenter
 
     @Override
     public void showError(Throwable throwable) {
-        ViewErrorHandler.handleError(getActivity(), throwable);
+        ViewErrorHandler.handleError(getActivity(), throwable, new Runnable() {
+            @Override
+            public void run() {
+                if (isPresenterAttached()) getPresenter().startListAirlinesRequest();
+            }
+        });
     }
 
     @Override

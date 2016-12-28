@@ -37,6 +37,13 @@ public class ListAirlinesPresenter extends BaseCorePresenter<IListAirlinesView> 
         registerEventBus();
     }
 
+    @Override
+    public void loadViewData() {
+        if (!isViewAttached()) return;
+        getView().setTitle(R.string.txt_kayak_airlines_all);
+        startListAirlinesRequest();
+    }
+
     // -------------------->
 
     private void registerEventBus() {
@@ -69,9 +76,7 @@ public class ListAirlinesPresenter extends BaseCorePresenter<IListAirlinesView> 
 
     // -------------------->
 
-    @Override
-    public void loadViewData() {
-        if (!isViewAttached()) return;
+    public void startListAirlinesRequest() {
         getView().enableMenu(false);
         getView().showProgress(true);
         Subscription subscription = listAirlinesUseCase.listAirlines().subscribe(new Action1<List<AirlineModel>>() {

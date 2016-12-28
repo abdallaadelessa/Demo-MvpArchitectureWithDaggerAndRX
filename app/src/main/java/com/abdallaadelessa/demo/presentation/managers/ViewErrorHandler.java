@@ -18,7 +18,7 @@ public class ViewErrorHandler {
         dataPlaceHolder.showMessage(errorMessage, -1, dataPlaceHolder.getContext().getString(R.string.txt_retry), runnable);
     }
 
-    public static void handleError(Activity activity, Throwable error) {
+    public static void handleError(Activity activity, Throwable error, Runnable runnable) {
         if (activity == null) return;
         String errorMessage = BaseCoreApp.getAppComponent().getErrorHandler().getErrorMessage(error);
         UIUtils.showToast(activity, errorMessage);

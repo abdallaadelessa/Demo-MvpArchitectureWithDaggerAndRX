@@ -152,7 +152,7 @@ public class VolleyHttpExecutor<M> extends BaseHttpExecutor<M, HttpRequest> {
                 httpRequest.getExecutorService().execute(new Runnable() {
                     @Override
                     public void run() {
-                        onError(httpRequest, subscriber, getMessageError(e), false);
+                        onError(httpRequest, subscriber, getBaseCoreError(e), false);
                     }
                 });
             }
@@ -180,7 +180,7 @@ public class VolleyHttpExecutor<M> extends BaseHttpExecutor<M, HttpRequest> {
     // ------------------------->
 
     @Override
-    public BaseCoreError getMessageError(Throwable throwable) {
+    public BaseCoreError getBaseCoreError(Throwable throwable) {
         BaseCoreError baseCoreError = new BaseCoreError(throwable);
         if (isVolleyError(throwable)) {
             if (isTimeoutError(throwable)) {
@@ -196,23 +196,23 @@ public class VolleyHttpExecutor<M> extends BaseHttpExecutor<M, HttpRequest> {
         return baseCoreError;
     }
 
-    public boolean isVolleyError(Throwable error) {
+    private boolean isVolleyError(Throwable error) {
         return error instanceof VolleyError;
     }
 
-    public boolean isTimeoutError(Throwable error) {
+    private boolean isTimeoutError(Throwable error) {
         return error instanceof TimeoutError;
     }
 
-    public boolean isNetworkError(Throwable error) {
+    private boolean isNetworkError(Throwable error) {
         return (error instanceof NetworkError);
     }
 
-    public boolean isServerError(Throwable error) {
+    private boolean isServerError(Throwable error) {
         return (error instanceof ServerError) || (error instanceof AuthFailureError);
     }
 
-    public boolean isBadRequestError(Throwable error) {
+    private boolean isBadRequestError(Throwable error) {
         return isVolleyError(error) && (((VolleyError) error).networkResponse != null && (((VolleyError) error).networkResponse.statusCode == 400));
     }
 

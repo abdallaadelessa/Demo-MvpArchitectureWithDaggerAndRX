@@ -58,4 +58,12 @@ public abstract class BaseRequest<T> {
     public String getUrl() {
         return url;
     }
+
+    @Override
+    public String toString() {
+        return "Request{" +
+                "tag='" + tag + '\'' +
+                ", url='" + url + '\'' +
+                '}';
+    }
 }

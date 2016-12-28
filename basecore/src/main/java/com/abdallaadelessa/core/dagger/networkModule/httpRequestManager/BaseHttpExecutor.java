@@ -20,7 +20,7 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
 
     public abstract Observable<M> toObservable(R request);
 
-    public BaseCoreError getMessageError(Throwable throwable) {
+    public BaseCoreError getBaseCoreError(Throwable throwable) {
         return new BaseCoreError(throwable);
     }
 

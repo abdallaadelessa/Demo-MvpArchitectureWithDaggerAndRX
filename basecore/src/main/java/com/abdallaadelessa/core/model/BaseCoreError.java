@@ -12,16 +12,10 @@ public class BaseCoreError extends Exception {
     public static final String CODE_SERVER_ERROR = "-300";
     public static final String CODE_BAD_REQUEST_ERROR = "-400";
     private String code;
-    private String message;
-    private Throwable throwable;
-
-    //===============>
 
     public BaseCoreError(String code, String message, Throwable throwable) {
         super(message, throwable);
         this.code = code;
-        this.message = message;
-        this.throwable = throwable;
     }
 
     public BaseCoreError(String code, Throwable throwable) {
@@ -52,7 +46,7 @@ public class BaseCoreError extends Exception {
 
     @Override
     public String toString() {
-        return "Code " + getCode() + " Message " + message;
+        return "Code " + getCode() + " Message " + getMessage();
     }
 
 }

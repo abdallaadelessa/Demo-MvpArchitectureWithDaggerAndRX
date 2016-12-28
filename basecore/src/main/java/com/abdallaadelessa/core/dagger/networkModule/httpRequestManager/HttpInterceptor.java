@@ -7,10 +7,16 @@ import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests
  * Created by abdullah on 12/26/16.
  */
 
-public interface HttpInterceptor {
-    BaseRequest interceptRequest(BaseRequest request) throws Exception;
+public abstract class HttpInterceptor {
+    public BaseRequest interceptRequest(BaseRequest request) throws Exception {
+        return request;
+    }
 
-    String interceptResponse(BaseRequest request, String response) throws Exception;
+    public String interceptResponse(BaseRequest request, String response) throws Exception {
+        return response;
+    }
 
-    Throwable interceptError(BaseRequest request, Throwable throwable, final boolean fatal);
+    public Throwable interceptError(BaseRequest request, Throwable throwable, final boolean fatal) {
+        return throwable;
+    }
 }
