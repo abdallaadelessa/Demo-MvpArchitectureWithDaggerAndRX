@@ -7,7 +7,7 @@ import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpInte
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpParser;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.BaseRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpRequestManager;
-import com.abdallaadelessa.core.dagger.networkModule.volley.VolleyNetworkModule;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.volley.VolleyNetworkModule;
 import com.android.volley.RequestQueue;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

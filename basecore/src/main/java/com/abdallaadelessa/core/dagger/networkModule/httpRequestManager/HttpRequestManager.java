@@ -3,8 +3,8 @@ package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager;
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.MultiPartRequest;
-import com.abdallaadelessa.core.dagger.networkModule.volley.MultiPartObservableExecutor;
-import com.abdallaadelessa.core.dagger.networkModule.volley.VolleyHttpObservableExecutor;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.volley.MultiPartObservableExecutor;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.volley.VolleyHttpObservableExecutor;
 import com.android.volley.RequestQueue;
 
 import java.util.concurrent.ExecutorService;
