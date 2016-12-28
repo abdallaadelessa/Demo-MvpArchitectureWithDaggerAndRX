@@ -2,6 +2,7 @@ package com.abdallaadelessa.demo.presentation.listAirlines.view;
 
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -29,8 +30,10 @@ import butterknife.Unbinder;
  * Created by Abdalla on 13/10/2016.
  */
 
-public class ListAirlinesFragment extends BaseCoreFragment<ListAirlinesPresenter> implements IListAirlinesView, AirLinesRVAdapter.IAirLinesRVAdapter {
+public class ListAirlinesFragment extends BaseCoreFragment<ListAirlinesPresenter> implements IListAirlinesView, AirLinesRVAdapter.IAirLinesRVAdapter, SwipeRefreshLayout.OnRefreshListener {
     private static final int TYPE_FAV_ONLY = 1;
+    @BindView(R.id.vgRefreshLayout)
+    SwipeRefreshLayout vgRefreshLayout;
     @BindView(R.id.dataPlaceHolder)
     DataPlaceHolder dataPlaceHolder;
     @BindView(R.id.rvList)
@@ -66,6 +69,7 @@ public class ListAirlinesFragment extends BaseCoreFragment<ListAirlinesPresenter
         rvList.setLayoutManager(new LinearLayoutManager(getActivity()));
         airLinesRVAdapter = new AirLinesRVAdapter();
         airLinesRVAdapter.setIAirLinesRVAdapter(this);
+        vgRefreshLayout.setOnRefreshListener(this);
         rvList.setAdapter(airLinesRVAdapter);
         //-->
         if (isPresenterAttached()) getPresenter().loadViewData();
@@ -98,6 +102,12 @@ public class ListAirlinesFragment extends BaseCoreFragment<ListAirlinesPresenter
     public void onDestroyView() {
         super.onDestroyView();
         if (isPresenterAttached()) getPresenter().detachView();
+    }
+
+    @Override
+    public void onRefresh() {
+        vgRefreshLayout.setRefreshing(false);
+        if (isPresenterAttached()) getPresenter().startListAirlinesRequest();
     }
 
     // ------------> Adapter Listener
