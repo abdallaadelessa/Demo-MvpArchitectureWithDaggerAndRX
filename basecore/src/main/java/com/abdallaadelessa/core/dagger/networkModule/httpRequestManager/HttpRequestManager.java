@@ -3,8 +3,8 @@ package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager;
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.MultiPartRequest;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.volley.MultiPartObservableExecutor;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.volley.VolleyHttpObservableExecutor;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.volley.MultiPartExecutor;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.volley.VolleyHttpExecutor;
 import com.android.volley.RequestQueue;
 
 import java.util.concurrent.ExecutorService;
@@ -31,11 +31,11 @@ public class HttpRequestManager {
     }
 
     public <T> HttpRequest<T> newHttpRequest() {
-        return HttpRequest.create(getInterceptor(), getParser(), getLogger(), new VolleyHttpObservableExecutor<T>(queue), getExecutorService());
+        return HttpRequest.create(getInterceptor(), getParser(), getLogger(), new VolleyHttpExecutor<T>(queue), getExecutorService());
     }
 
     public <T> MultiPartRequest<T> newMultiPartRequest() {
-        return MultiPartRequest.create(getInterceptor(), getParser(), getLogger(), new MultiPartObservableExecutor<T>(), getExecutorService());
+        return MultiPartRequest.create(getInterceptor(), getParser(), getLogger(), new MultiPartExecutor<T>(), getExecutorService());
     }
 
     //===========> Setters and Getters

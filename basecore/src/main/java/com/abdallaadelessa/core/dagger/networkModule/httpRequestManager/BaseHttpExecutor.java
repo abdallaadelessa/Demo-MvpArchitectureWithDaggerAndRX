@@ -5,6 +5,8 @@ import android.os.Handler;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.BaseRequest;
 import com.abdallaadelessa.core.model.BaseCoreError;
 
+import java.util.List;
+
 import rx.Observable;
 import rx.Subscriber;
 
@@ -12,7 +14,7 @@ import rx.Subscriber;
  * Created by abdullah on 12/26/16.
  */
 
-public abstract class BaseHttpObservableExecutor<M, R extends BaseRequest> {
+public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
     private final Handler handler = new Handler();
     //================>
 
@@ -39,7 +41,11 @@ public abstract class BaseHttpObservableExecutor<M, R extends BaseRequest> {
             @Override
             public void run() {
                 try {
-                    Throwable error = request.getInterceptor().interceptError(request, e, fatal);
+                    Throwable error = e;
+                    List<HttpInterceptor> interceptors = request.getInterceptors();
+                    for (HttpInterceptor interceptor : interceptors) {
+                        error = interceptor.interceptError(request, error, fatal);
+                    }
                     subscriber.onError(error);
                 } catch (Throwable ee) {
                     onError(request, subscriber, ee, true);

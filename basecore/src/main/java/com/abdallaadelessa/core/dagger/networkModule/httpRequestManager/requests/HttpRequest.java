@@ -1,7 +1,7 @@
 package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests;
 
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpObservableExecutor;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpExecutor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpInterceptor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpParser;
 import com.abdallaadelessa.core.utils.ValidationUtils;
@@ -39,9 +39,10 @@ public class HttpRequest<T> extends BaseRequest<T> {
     //=====> Builder
 
     public static <T> HttpRequest<T> create(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger
-            , BaseHttpObservableExecutor<T, HttpRequest> observableExecutor, ExecutorService executorService) {
+            , BaseHttpExecutor<T, HttpRequest> observableExecutor, ExecutorService executorService) {
         // Default Values
-        HttpRequest<T> httpRequest = new HttpRequest<T>(interceptor, parser, logger, observableExecutor, executorService);
+        HttpRequest<T> httpRequest = new HttpRequest<T>(parser, logger, observableExecutor, executorService);
+        httpRequest.addInterceptor(interceptor);
         httpRequest.GET();
         httpRequest.setType(String.class);
         httpRequest.setHeaders(new HashMap<String, String>());
@@ -53,8 +54,8 @@ public class HttpRequest<T> extends BaseRequest<T> {
         return httpRequest;
     }
 
-    private HttpRequest(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger, BaseHttpObservableExecutor<T, HttpRequest> observableExecutor, ExecutorService executorService) {
-        super(interceptor, parser, logger, observableExecutor, executorService);
+    private HttpRequest(HttpParser parser, BaseAppLogger logger, BaseHttpExecutor<T, HttpRequest> observableExecutor, ExecutorService executorService) {
+        super(parser, logger, observableExecutor, executorService);
     }
 
     //=====>
@@ -139,8 +140,13 @@ public class HttpRequest<T> extends BaseRequest<T> {
         return this;
     }
 
-    public HttpRequest<T> setInterceptor(HttpInterceptor interceptor) {
-        this.interceptor = interceptor;
+    public HttpRequest<T> addInterceptor(HttpInterceptor interceptor) {
+        getInterceptors().add(interceptor);
+        return this;
+    }
+
+    public HttpRequest<T> clearInterceptors() {
+        getInterceptors().clear();
         return this;
     }
 
@@ -154,7 +160,7 @@ public class HttpRequest<T> extends BaseRequest<T> {
         return this;
     }
 
-    public HttpRequest<T> setObservableExecutor(BaseHttpObservableExecutor observableExecutor) {
+    public HttpRequest<T> setObservableExecutor(BaseHttpExecutor observableExecutor) {
         this.observableExecutor = observableExecutor;
         return this;
     }

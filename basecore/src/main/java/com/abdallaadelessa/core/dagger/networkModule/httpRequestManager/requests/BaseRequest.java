@@ -1,10 +1,12 @@
 package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests;
 
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpObservableExecutor;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpExecutor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpInterceptor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpParser;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -12,16 +14,16 @@ import java.util.concurrent.ExecutorService;
  */
 
 public abstract class BaseRequest<T> {
-    protected HttpInterceptor interceptor;
     protected HttpParser parser;
     protected BaseAppLogger logger;
-    protected BaseHttpObservableExecutor<T, BaseRequest> observableExecutor;
+    protected BaseHttpExecutor<T, BaseRequest> observableExecutor;
+    private List<HttpInterceptor> interceptors;
     protected ExecutorService executorService;
     protected String tag;
     protected String url;
 
-    public BaseRequest(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger, BaseHttpObservableExecutor observableExecutor, ExecutorService executorService) {
-        this.interceptor = interceptor;
+    public BaseRequest(HttpParser parser, BaseAppLogger logger, BaseHttpExecutor observableExecutor, ExecutorService executorService) {
+        this.interceptors = new ArrayList<>();
         this.parser = parser;
         this.logger = logger;
         this.observableExecutor = observableExecutor;
@@ -30,10 +32,9 @@ public abstract class BaseRequest<T> {
 
     //=====> Getters
 
-    public HttpInterceptor getInterceptor() {
-        return interceptor;
+    public List<HttpInterceptor> getInterceptors() {
+        return interceptors;
     }
-
     public HttpParser getParser() {
         return parser;
     }
@@ -42,7 +43,7 @@ public abstract class BaseRequest<T> {
         return logger;
     }
 
-    public BaseHttpObservableExecutor<T, BaseRequest> getObservableExecutor() {
+    public BaseHttpExecutor<T, BaseRequest> getObservableExecutor() {
         return observableExecutor;
     }
 

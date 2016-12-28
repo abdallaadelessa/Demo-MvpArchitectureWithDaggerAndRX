@@ -1,9 +1,7 @@
 package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests;
 
-import android.support.annotation.Nullable;
-
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpObservableExecutor;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpExecutor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpInterceptor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpParser;
 import com.abdallaadelessa.core.utils.FileUtils;
@@ -28,17 +26,18 @@ public class MultiPartRequest<T> extends BaseRequest<T> {
 
     //=====> Builder
 
-    public static <T> MultiPartRequest<T> create(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger, BaseHttpObservableExecutor<T, MultiPartRequest> observableExecutor, ExecutorService executorService) {
+    public static <T> MultiPartRequest<T> create(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger, BaseHttpExecutor<T, MultiPartRequest> observableExecutor, ExecutorService executorService) {
         // Default Values
-        MultiPartRequest<T> multiPartRequest = new MultiPartRequest<T>(interceptor, parser, logger, observableExecutor, executorService);
+        MultiPartRequest<T> multiPartRequest = new MultiPartRequest<T>(parser, logger, observableExecutor, executorService);
+        multiPartRequest.addInterceptor(interceptor);
         multiPartRequest.setType(String.class);
         multiPartRequest.setParams(new HashMap<String, String>());
         multiPartRequest.setFiles(new ArrayList<MultiPartFile>());
         return multiPartRequest;
     }
 
-    private MultiPartRequest(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger, BaseHttpObservableExecutor<T, MultiPartRequest> observableExecutor, ExecutorService executorService) {
-        super(interceptor, parser, logger, observableExecutor, executorService);
+    private MultiPartRequest(HttpParser parser, BaseAppLogger logger, BaseHttpExecutor<T, MultiPartRequest> observableExecutor, ExecutorService executorService) {
+        super(parser, logger, observableExecutor, executorService);
     }
 
     //=====> Setter
@@ -77,8 +76,13 @@ public class MultiPartRequest<T> extends BaseRequest<T> {
         return this;
     }
 
-    public MultiPartRequest<T> setInterceptor(HttpInterceptor interceptor) {
-        this.interceptor = interceptor;
+    public MultiPartRequest<T> addInterceptor(HttpInterceptor interceptor) {
+        getInterceptors().add(interceptor);
+        return this;
+    }
+
+    public MultiPartRequest<T> clearInterceptors() {
+        getInterceptors().clear();
         return this;
     }
 
@@ -92,7 +96,7 @@ public class MultiPartRequest<T> extends BaseRequest<T> {
         return this;
     }
 
-    public MultiPartRequest<T> setObservableExecutor(BaseHttpObservableExecutor observableExecutor) {
+    public MultiPartRequest<T> setObservableExecutor(BaseHttpExecutor observableExecutor) {
         this.observableExecutor = observableExecutor;
         return this;
     }
