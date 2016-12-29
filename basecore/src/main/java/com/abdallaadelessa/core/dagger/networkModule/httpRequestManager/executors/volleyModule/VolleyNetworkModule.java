@@ -1,11 +1,10 @@
-package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModules.volleyModule;
+package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.volleyModule;
 
 import android.content.Context;
 
 import com.abdallaadelessa.core.app.BaseCoreApp;
 import com.abdallaadelessa.core.dagger.appModule.BaseCoreAppModule;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModules.okhttpModule.OkHttpModule;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModules.okhttpModule.OkHttpStack;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule.OkHttpModule;
 import com.android.volley.RequestQueue;
 import com.android.volley.RequestTickle;
 import com.android.volley.VolleyLog;

@@ -4,8 +4,8 @@ import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.BaseRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.MultiPartRequest;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModules.okhttpModule.MultiPartExecutor;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModules.volleyModule.VolleyHttpExecutor;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule.MultiPartExecutor;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.volleyModule.VolleyHttpExecutor;
 
 import java.util.Collections;
 import java.util.HashMap;

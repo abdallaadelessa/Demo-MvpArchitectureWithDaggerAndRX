@@ -2,7 +2,6 @@ package com.abdallaadelessa.core.utils;
 
 import android.net.Uri;
 
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.BaseRequest;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;

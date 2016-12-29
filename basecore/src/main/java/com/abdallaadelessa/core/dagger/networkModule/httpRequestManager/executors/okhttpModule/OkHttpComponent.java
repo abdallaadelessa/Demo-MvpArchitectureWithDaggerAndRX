@@ -1,6 +1,4 @@
-package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModules.okhttpModule;
-
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModules.volleyModule.VolleyHttpExecutor;
+package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule;
 
 import javax.inject.Singleton;
 

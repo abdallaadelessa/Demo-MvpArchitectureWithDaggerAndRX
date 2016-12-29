@@ -1,4 +1,4 @@
-package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModules.okhttpModule;
+package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule;
 
 import android.text.TextUtils;
 
@@ -27,6 +27,10 @@ public class MultiPartExecutor<M> extends BaseHttpExecutor<M, MultiPartRequest> 
     private static final int TIMEOUT_IN_SECONDS = 60;
     private OkHttpClient client;
     private Call call;
+
+    public MultiPartExecutor() {
+        client = DaggerOkHttpComponent.create().getOkHttpClient();
+    }
 
     public Observable<M> buildObservable(final MultiPartRequest multiPartRequest) {
         return Observable.create(new Observable.OnSubscribe<M>() {

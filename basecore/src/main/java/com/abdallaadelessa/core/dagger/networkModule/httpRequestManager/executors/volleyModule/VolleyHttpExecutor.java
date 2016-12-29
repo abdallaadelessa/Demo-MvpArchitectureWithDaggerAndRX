@@ -1,4 +1,4 @@
-package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModules.volleyModule;
+package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.volleyModule;
 
 
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpExecutor;

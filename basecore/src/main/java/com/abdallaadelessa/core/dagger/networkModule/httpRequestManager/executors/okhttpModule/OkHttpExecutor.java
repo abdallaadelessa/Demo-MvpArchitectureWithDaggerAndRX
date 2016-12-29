@@ -1,4 +1,4 @@
-package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModules.okhttpModule;
+package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule;
 
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpExecutor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.BaseRequest;

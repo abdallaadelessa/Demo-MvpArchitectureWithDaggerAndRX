@@ -1,7 +1,6 @@
 package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager;
 
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.BaseRequest;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpRequest;
 
 /**
  * Created by abdullah on 12/26/16.
