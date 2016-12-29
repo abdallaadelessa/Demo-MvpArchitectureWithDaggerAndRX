@@ -3,13 +3,8 @@ package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModu
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpExecutor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.BaseRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpRequest;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.MultiPartRequest;
 import com.abdallaadelessa.core.utils.ValidationUtils;
-import com.android.volley.RetryPolicy;
-import com.android.volley.error.AuthFailureError;
-import com.android.volley.request.StringRequest;
 
-import java.io.IOException;
 import java.util.Map;
 
 import okhttp3.Call;
@@ -32,9 +27,11 @@ public class OkHttpExecutor<M> extends BaseHttpExecutor<M, HttpRequest> {
     private OkHttpClient client;
     private Call call;
 
-    public OkHttpExecutor(OkHttpClient client) {
-        this.client = client;
+    public OkHttpExecutor() {
+        client = DaggerOkHttpComponent.create().getOkHttpClient();
     }
+
+    //=====================>
 
     @Override
     public Observable<M> buildObservable(final HttpRequest httpRequest) {
@@ -44,9 +41,8 @@ public class OkHttpExecutor<M> extends BaseHttpExecutor<M, HttpRequest> {
                 try {
                     final String tag = httpRequest.getTag();
                     final String url = httpRequest.getUrl();
-                    final int method = httpRequest.getMethod();
-                    final Map<String, String> headers = httpRequest.getHeaders();
-                    final Map<String, String> params = httpRequest.getParams();
+                    final Map<String, String> headers = httpRequest.getHeaderParams();
+                    final Map<String, String> params = httpRequest.getFormParams();
                     //---------> Request
                     Request.Builder builder = new Request.Builder();
                     //-----------------> Params
@@ -61,7 +57,7 @@ public class OkHttpExecutor<M> extends BaseHttpExecutor<M, HttpRequest> {
                         }
                     }
                     //-----------------> Params
-                    if (httpRequest.getParams() != null) {
+                    if (httpRequest.getFormParams() != null) {
                         FormBody.Builder formBuilder = new FormBody.Builder();
                         for (String key : params.keySet()) {
                             String value = params.get(key);
@@ -71,26 +67,27 @@ public class OkHttpExecutor<M> extends BaseHttpExecutor<M, HttpRequest> {
                         builder.post(formBody);
                     }
                     //-----------------> Body
-                    if (httpRequest.hasBody()) {
-                        builder.post(RequestBody.create(MediaType.parse(BaseRequest.CONTENT_TYPE_JSON), httpRequest.getBody()));
+                    if (httpRequest.hasJsonBody()) {
+                        builder.post(RequestBody.create(MediaType.parse(BaseRequest.CONTENT_TYPE_JSON), httpRequest.getJsonBody()));
                     }
                     //-----------------> Execute
                     call = client.newCall(builder.build());
                     Response response = call.execute();
                     String responseStr = response.body().string();
-                    M m = parse(responseStr, httpRequest);
-                    onSuccess(httpRequest, subscriber, m);
+                    onSuccess(subscriber, httpRequest, responseStr);
                 } catch (Exception e) {
-                    onError(httpRequest, subscriber, e, false);
+                    onError(subscriber, httpRequest, e, false);
                 }
             }
         }).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io());
     }
 
     @Override
-    protected void cancelRequest(HttpRequest request) {
-        if (call != null && request.isCancelOnUnSubscribe()) {
+    protected void cancelExecutor() {
+        if (call != null) {
             call.cancel();
         }
     }
+
+    //=====================>
 }

@@ -1,9 +1,12 @@
 package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager;
 
 import android.os.Handler;
+import android.os.Looper;
 
+import com.abdallaadelessa.core.app.BaseCoreApp;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.BaseRequest;
 import com.abdallaadelessa.core.model.BaseCoreError;
+import com.abdallaadelessa.core.utils.RxUtils;
 import com.abdallaadelessa.core.utils.ValidationUtils;
 
 import java.util.List;
@@ -18,7 +21,9 @@ import rx.functions.Func1;
  */
 
 public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
-    private final Handler handler = new Handler();
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private boolean isCanceled;
+
     //================>
 
     public final Observable<M> toObservable(R request) {
@@ -26,10 +31,11 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
             @Override
             public Observable<M> call(final R r) {
                 try {
+                    isCanceled = false;
                     return buildObservable(r).doOnUnsubscribe(new Action0() {
                         @Override
                         public void call() {
-                            cancelRequestOnSubscribe(r);
+                            forceCancelRequestOnUnSubscribe(r);
                         }
                     });
                 } catch (Exception e) {
@@ -43,7 +49,18 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
 
     protected abstract Observable<M> buildObservable(R request);
 
-    protected abstract void cancelRequest(R request);
+    //================>
+
+    public void cancel() {
+        isCanceled = true;
+        cancelExecutor();
+    }
+
+    public boolean isCanceled() {
+        return isCanceled;
+    }
+
+    protected abstract void cancelExecutor();
 
     //================>
 
@@ -53,34 +70,65 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
 
     //================>
 
-    protected M parse(String json, R r) throws Exception {
-        json = interceptResponse(json, r);
-        return r.getParser().parse(r.getTag(), r.getType(), json);
-    }
-
-    protected void onSuccess(final R request, final Subscriber<? super M> subscriber, final M m) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                subscriber.onNext(m);
-                subscriber.onCompleted();
-            }
-        });
-    }
-
-    protected void onError(final R request, final Subscriber subscriber, final Throwable e, final boolean fatal) {
-        handler.post(new Runnable() {
+    protected void onSuccess(final Subscriber subscriber, final R request, final String response) {
+        if (isCanceled()) {
+            RxUtils.unSubscribeIfNotNull(subscriber);
+            return;
+        }
+        request.getExecutorService().execute(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Throwable error = interceptError(e, request, fatal);
-                    subscriber.onError(error);
-                } catch (Throwable ee) {
-                    onError(request, subscriber, ee, true);
+                    final M m = parse(response, request);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            subscriber.onNext(m);
+                            subscriber.onCompleted();
+                        }
+                    });
+                } catch (final Exception e) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            onError(subscriber, request, e, false);
+                        }
+                    });
                 }
             }
         });
 
+    }
+
+    protected void onError(final Subscriber subscriber, final R request, final Throwable e, final boolean fatal) {
+        if (isCanceled()) {
+            RxUtils.unSubscribeIfNotNull(subscriber);
+            return;
+        }
+        try {
+            final Throwable error = interceptError(getBaseCoreError(e), request, fatal);
+            subscriber.onError(error);
+        } catch (Throwable ee) {
+            subscriber.onError(ee);
+        }
+    }
+
+    //================>
+
+    private void cancelRequestByHttpRequestManager(R request) {
+        BaseCoreApp.getInstance().getNetworkComponent().getHttpRequestManager().cancelRequestByTag(request.getTag());
+    }
+
+    private void forceCancelIfRunning(R r) {
+        if (r.isCancelIfWasRunning() && !ValidationUtils.isStringEmpty(r.getTag())) {
+            cancelRequestByHttpRequestManager(r);
+        }
+    }
+
+    private void forceCancelRequestOnUnSubscribe(R r) {
+        if (r.isCancelOnUnSubscribe() && !ValidationUtils.isStringEmpty(r.getTag())) {
+            cancelRequestByHttpRequestManager(r);
+        }
     }
 
     //================>
@@ -92,31 +140,26 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
                 try {
                     // Check Subscriber
                     if (subscriber.isUnsubscribed()) return;
+                    // Cancel if Running
+                    forceCancelIfRunning(request);
                     // Intercept Request
                     R httpRequest = interceptRequest(request);
-                    // Cancel if Running
-                    cancelIfRunning(request);
                     // Complete
                     subscriber.onNext(httpRequest);
                     subscriber.onCompleted();
                 } catch (Exception e) {
-                    onError(request, subscriber, e, false);
+                    onError(subscriber, request, e, false);
                 }
             }
         });
     }
 
-    private void cancelIfRunning(R r) {
-        if (r.isCancelIfRunning() && !ValidationUtils.isStringEmpty(r.getTag())) {
-            cancelRequest(r);
-        }
+    private M parse(String json, R r) throws Exception {
+        json = interceptResponse(json, r);
+        return r.getParser().parse(r.getTag(), r.getType(), json);
     }
 
-    private void cancelRequestOnSubscribe(R r) {
-        if (r.isCancelOnUnSubscribe() && !ValidationUtils.isStringEmpty(r.getTag())) {
-            cancelRequest(r);
-        }
-    }
+    //================>
 
     private R interceptRequest(R request) throws Exception {
         R httpRequest = request;

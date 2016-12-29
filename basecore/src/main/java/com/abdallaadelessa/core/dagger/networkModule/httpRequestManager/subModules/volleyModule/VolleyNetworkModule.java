@@ -3,6 +3,7 @@ package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModu
 import android.content.Context;
 
 import com.abdallaadelessa.core.app.BaseCoreApp;
+import com.abdallaadelessa.core.dagger.appModule.BaseCoreAppModule;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModules.okhttpModule.OkHttpModule;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModules.okhttpModule.OkHttpStack;
 import com.android.volley.RequestQueue;
@@ -22,7 +23,7 @@ import dagger.Provides;
 /**
  * Created by abdullah on 12/10/16.
  */
-@Module(includes = OkHttpModule.class)
+@Module(includes = {BaseCoreAppModule.class, OkHttpModule.class})
 public class VolleyNetworkModule {
     private static final boolean ENABLE_LOGS = !BaseCoreApp.getInstance().isReleaseBuildType();
 

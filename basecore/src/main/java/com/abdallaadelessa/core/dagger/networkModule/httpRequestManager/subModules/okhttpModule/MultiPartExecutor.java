@@ -7,12 +7,9 @@ import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests
 import com.android.volley.error.NetworkError;
 
 import java.io.File;
-import java.lang.reflect.Type;
 import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.MediaType;
@@ -24,7 +21,6 @@ import okhttp3.Response;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class MultiPartExecutor<M> extends BaseHttpExecutor<M, MultiPartRequest> {
@@ -32,18 +28,14 @@ public class MultiPartExecutor<M> extends BaseHttpExecutor<M, MultiPartRequest> 
     private OkHttpClient client;
     private Call call;
 
-    public MultiPartExecutor(OkHttpClient client) {
-        this.client = client;
-    }
-
     public Observable<M> buildObservable(final MultiPartRequest multiPartRequest) {
         return Observable.create(new Observable.OnSubscribe<M>() {
             @Override
             public void call(Subscriber<? super M> subscriber) {
                 try {
                     String url = multiPartRequest.getUrl();
-                    Map<String, String> parameters = multiPartRequest.getParams();
-                    ArrayList<MultiPartRequest.MultiPartFile> files = multiPartRequest.getFiles();
+                    Map<String, String> parameters = multiPartRequest.getFormParams();
+                    List<MultiPartRequest.MultiPartFile> files = multiPartRequest.getFiles();
                     MultipartBody.Builder multipartBodyBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
                     // Files
                     if (files != null) {
@@ -72,21 +64,20 @@ public class MultiPartExecutor<M> extends BaseHttpExecutor<M, MultiPartRequest> 
                     call = client.newCall(request);
                     Response response = call.execute();
                     String responseStr = response.body().string();
-                    M m = parse(responseStr, multiPartRequest);
-                    onSuccess(multiPartRequest, subscriber, m);
+                    onSuccess(subscriber, multiPartRequest, responseStr);
                 } catch (Throwable e) {
                     if (e instanceof SocketException) {
                         e = new NetworkError(e);
                     }
-                    onError(multiPartRequest, subscriber, e, false);
+                    onError(subscriber, multiPartRequest, e, false);
                 }
             }
         }).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io());
     }
 
     @Override
-    protected void cancelRequest(MultiPartRequest request) {
-        if (call != null && request.isCancelOnUnSubscribe()) {
+    protected void cancelExecutor() {
+        if (call != null) {
             call.cancel();
         }
     }

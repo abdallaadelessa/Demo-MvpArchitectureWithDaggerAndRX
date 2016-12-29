@@ -135,7 +135,6 @@ public abstract class BaseCoreApp extends Application {
                     .baseCoreAppModule(appModule)
                     .baseCoreLoggerModule(loggerModule)
                     .baseCoreNetworkModule(networkModule)
-                    .volleyNetworkModule(volleyModule)
                     .build();
         }
         return networkComponent;

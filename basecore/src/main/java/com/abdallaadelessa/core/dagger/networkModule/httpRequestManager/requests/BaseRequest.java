@@ -4,116 +4,215 @@ import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpExecutor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpInterceptor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpParser;
-import com.android.volley.RetryPolicy;
+import com.abdallaadelessa.core.utils.StringUtils;
+import com.abdallaadelessa.core.utils.ValidationUtils;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+
+import rx.Observable;
 
 /**
  * Created by abdullah on 12/27/16.
  */
 
-public abstract class BaseRequest<T> {
-    public static final String HEADER_CONTENT_TYPE = "Content-Type";
-    public static final String PROTOCOL_CHARSET = "utf-8";
-    public static final String CONTENT_TYPE_JSON = String.format("application/json; charset=%s", PROTOCOL_CHARSET);
+public abstract class BaseRequest<B extends BaseRequest, T> {
+    private static final String HEADER_CONTENT_TYPE = "Content-Type";
+    public static final String UTF_8 = "utf-8";
+    public static final String CONTENT_TYPE_JSON = String.format("application/json; charset=%s", UTF_8);
+    public static final String CONTENT_TYPE_FORM = String.format("application/x-www-form-urlencoded; charset=%s", UTF_8);
+    public static final int TIMEOUT_LONG_IN_MILLIS = 40000;
+    public static final int TIMEOUT_MEDIUM_IN_MILLIS = 10000;
+    public static final int TIMEOUT_SHORT_IN_MILLIS = 5000;
+    //=>
     protected HttpParser parser;
     protected BaseAppLogger logger;
     protected BaseHttpExecutor<T, BaseRequest> observableExecutor;
-    private List<HttpInterceptor> interceptors;
+    protected List<HttpInterceptor> interceptors;
     protected ExecutorService executorService;
+    //=>
     protected String tag;
     protected String url;
+    protected String urlWithQueryParams;
+    protected HttpMethod method;
     protected Type type;
-    protected Map<String, String> headers;
-    protected RetryPolicy retryPolicy;
-    protected Map<String, String> params;
-    protected boolean cancelIfRunning;
+    //=>
+    protected int retriesNumber;
+    protected int timeout;
+    //=>
+    protected Map<String, String> headerParams;
+    protected Map<String, String> queryParams;
+    protected Map<String, String> formParams;
+    //=>
+    protected boolean shouldCacheResponse;
+    protected boolean cancelIfWasRunning;
     protected boolean cancelOnUnSubscribe;
 
+    //=====>
+
+    protected BaseRequest() {
+        // Default Values
+        retriesNumber = 1;
+        timeout = TIMEOUT_MEDIUM_IN_MILLIS;
+        method = HttpMethod.GET;
+        type = String.class;
+        interceptors = new ArrayList<>();
+        headerParams = new HashMap<>();
+        formParams = new HashMap<>();
+        queryParams = new HashMap<>();
+        shouldCacheResponse = false;
+        cancelIfWasRunning = true;
+        cancelOnUnSubscribe = true;
+    }
+
     public BaseRequest(HttpParser parser, BaseAppLogger logger, BaseHttpExecutor observableExecutor, ExecutorService executorService) {
-        this.interceptors = new ArrayList<>();
+        this();
         this.parser = parser;
         this.logger = logger;
         this.observableExecutor = observableExecutor;
         this.executorService = executorService;
+    }
+
+    //=====> Custom
+
+    public B GET() {
+        return setMethod(HttpMethod.GET);
+    }
+
+    public B POST() {
+        return setMethod(HttpMethod.POST);
+    }
+
+    public B addHeader(String key, String value) {
+        getHeaderParams().put(key, value);
+        return (B) this;
+    }
+
+    public B addQueryParam(String key, String value) {
+        getQueryParams().put(key, value);
+        return (B) this;
+    }
+
+    public B addFormParam(String key, String value) {
+        getFormParams().put(key, value);
+        return (B) this;
+    }
+
+    public boolean hasContentType() {
+        return !ValidationUtils.isStringEmpty(contentType());
+    }
+
+    public B contentType(String contentType) {
+        return addHeader(HEADER_CONTENT_TYPE, contentType);
+    }
+
+    public String contentType() {
+        return getHeaderParams().get(HEADER_CONTENT_TYPE);
+    }
+
+    public B addInterceptor(HttpInterceptor interceptor) {
+        getInterceptors().add(interceptor);
+        return (B) this;
+    }
+
+    public B clearInterceptors() {
+        getInterceptors().clear();
+        return (B) this;
     }
 
     //=====> Setters
 
-    public BaseRequest<T> setParser(HttpParser parser) {
+    public B setParser(HttpParser parser) {
         this.parser = parser;
-        return this;
+        return (B) this;
     }
 
-    public BaseRequest<T> setLogger(BaseAppLogger logger) {
+    public B setLogger(BaseAppLogger logger) {
         this.logger = logger;
-        return this;
+        return (B) this;
     }
 
-    public BaseRequest<T> setObservableExecutor(BaseHttpExecutor<T, BaseRequest> observableExecutor) {
+    public B setObservableExecutor(BaseHttpExecutor<T, BaseRequest> observableExecutor) {
         this.observableExecutor = observableExecutor;
-        return this;
+        return (B) this;
     }
 
-    public BaseRequest<T> setInterceptors(List<HttpInterceptor> interceptors) {
+    public B setInterceptors(List<HttpInterceptor> interceptors) {
         this.interceptors = interceptors;
-        return this;
+        return (B) this;
     }
 
-    public BaseRequest<T> setExecutorService(ExecutorService executorService) {
+    public B setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
-        return this;
+        return (B) this;
     }
 
-    public BaseRequest<T> setTag(String tag) {
+    public B setTag(String tag) {
         this.tag = tag;
-        return this;
+        return (B) this;
     }
 
-    public BaseRequest<T> setUrl(String url) {
+    public B setUrl(String url) {
         this.url = url;
-        return this;
+        return (B) this;
     }
 
-    public BaseRequest<T> setType(Type type) {
+    public B setMethod(HttpMethod method) {
+        this.method = method;
+        return (B) this;
+    }
+
+    public B setType(Type type) {
         this.type = type;
-        return this;
+        return (B) this;
     }
 
-    public BaseRequest<T> setRetryPolicy(RetryPolicy retryPolicy) {
-        this.retryPolicy = retryPolicy;
-        return this;
+    public B setRetriesNumber(int retriesNumber) {
+        this.retriesNumber = retriesNumber;
+        return (B) this;
     }
 
-    public BaseRequest<T> setCancelIfRunning(boolean cancelIfRunning) {
-        this.cancelIfRunning = cancelIfRunning;
-        return this;
+    public B setTimeout(int timeout) {
+        this.timeout = timeout;
+        return (B) this;
     }
 
-    public BaseRequest<T> setCancelOnUnSubscribe(boolean cancelOnUnSubscribe) {
+    protected B setHeaderParams(Map<String, String> headerParams) {
+        this.headerParams = headerParams;
+        return (B) this;
+    }
+
+    protected B setQueryParams(Map<String, String> queryParams) {
+        this.queryParams = queryParams;
+        return (B) this;
+    }
+
+    protected B setFormParams(Map<String, String> formParams) {
+        this.formParams = formParams;
+        return (B) this;
+    }
+
+    public B setShouldCacheResponse(boolean shouldCacheResponse) {
+        this.shouldCacheResponse = shouldCacheResponse;
+        return (B) this;
+    }
+
+    public B setCancelIfWasRunning(boolean cancelIfWasRunning) {
+        this.cancelIfWasRunning = cancelIfWasRunning;
+        return (B) this;
+    }
+
+    public B setCancelOnUnSubscribe(boolean cancelOnUnSubscribe) {
         this.cancelOnUnSubscribe = cancelOnUnSubscribe;
-        return this;
+        return (B) this;
     }
 
-    protected BaseRequest<T> setHeaders(Map<String, String> headers) {
-        this.headers = headers;
-        return this;
-    }
-
-    protected BaseRequest<T> setParams(Map<String, String> params) {
-        this.params = params;
-        return this;
-    }
 
     //=====> Getters
-
-    public List<HttpInterceptor> getInterceptors() {
-        return interceptors;
-    }
 
     public HttpParser getParser() {
         return parser;
@@ -125,6 +224,10 @@ public abstract class BaseRequest<T> {
 
     public BaseHttpExecutor<T, BaseRequest> getObservableExecutor() {
         return observableExecutor;
+    }
+
+    public List<HttpInterceptor> getInterceptors() {
+        return interceptors;
     }
 
     public ExecutorService getExecutorService() {
@@ -139,28 +242,67 @@ public abstract class BaseRequest<T> {
         return url;
     }
 
+    public String getUrlWithQueryParams() {
+        return urlWithQueryParams;
+    }
+
+    public HttpMethod getMethod() {
+        return method;
+    }
+
     public Type getType() {
         return type;
     }
 
-    public Map<String, String> getHeaders() {
-        return headers;
+    public int getRetriesNumber() {
+        return retriesNumber;
     }
 
-    public Map<String, String> getParams() {
-        return params;
+    public int getTimeout() {
+        return timeout;
     }
 
-    public RetryPolicy getRetryPolicy() {
-        return retryPolicy;
+    public Map<String, String> getHeaderParams() {
+        return headerParams;
     }
 
-    public boolean isCancelIfRunning() {
-        return cancelIfRunning;
+    public Map<String, String> getFormParams() {
+        return formParams;
+    }
+
+    public Map<String, String> getQueryParams() {
+        return queryParams;
+    }
+
+    public byte[] bodyToBytes() {
+        return StringUtils.mapToBytes(getFormParams(), UTF_8);
+    }
+
+    public boolean isShouldCacheResponse() {
+        return shouldCacheResponse;
+    }
+
+    public boolean isCancelIfWasRunning() {
+        return cancelIfWasRunning;
     }
 
     public boolean isCancelOnUnSubscribe() {
         return cancelOnUnSubscribe;
+    }
+
+    //=====>
+
+    protected void build() {
+        try {
+            urlWithQueryParams = StringUtils.addQueryParams(url, queryParams, UTF_8);
+        } catch (Exception e) {
+            urlWithQueryParams = url;
+        }
+    }
+
+    public final Observable<T> toObservable() {
+        build();
+        return getObservableExecutor().toObservable(this);
     }
 
     //=====>

@@ -3,12 +3,8 @@ package com.abdallaadelessa.core.dagger.networkModule;
 import com.abdallaadelessa.core.dagger.appModule.BaseCoreAppModule;
 import com.abdallaadelessa.core.dagger.loggerModule.BaseCoreLoggerModule;
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpInterceptor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpParser;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.BaseRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpRequestManager;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.subModules.volleyModule.VolleyNetworkModule;
-import com.android.volley.RequestQueue;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -24,43 +20,14 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import okhttp3.OkHttpClient;
 
 /**
  * Created by Abdalla on 16/10/2016.
  */
-@Module(includes = {BaseCoreAppModule.class, BaseCoreLoggerModule.class, VolleyNetworkModule.class})
+@Module(includes = {BaseCoreAppModule.class, BaseCoreLoggerModule.class})
 public class BaseCoreNetworkModule {
 
     //=================>  HttpRequestManager
-
-    @Singleton
-    @Provides
-    public HttpInterceptor provideHttpInterceptor(final BaseAppLogger logger) {
-        return new HttpInterceptor() {
-            @Override
-            public BaseRequest interceptRequest(BaseRequest request) throws Exception {
-                logger.log(request.getTag(), request.toString());
-                return request;
-            }
-
-            @Override
-            public String interceptResponse(BaseRequest request, String response) throws Exception {
-                logger.log(request.getTag(), response);
-                return response;
-            }
-
-            @Override
-            public Throwable interceptError(BaseRequest request, Throwable throwable, boolean fatal) {
-                try {
-                    logger.logError(request.getTag(), throwable, fatal);
-                } catch (Exception e) {
-                    //Eat it!
-                }
-                return throwable;
-            }
-        };
-    }
 
     @Singleton
     @Provides
@@ -91,12 +58,8 @@ public class BaseCoreNetworkModule {
 
     @Singleton
     @Provides
-    public HttpRequestManager provideHttpRequestManager(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger, ExecutorService executorService
-            , OkHttpClient okHttpClient, RequestQueue queue) {
-        HttpRequestManager httpRequestManager = new HttpRequestManager(interceptor, parser, logger, executorService);
-        httpRequestManager.setOkHttpClient(okHttpClient);
-        httpRequestManager.setQueue(queue);
-        return httpRequestManager;
+    public HttpRequestManager provideHttpRequestManager(HttpParser parser, BaseAppLogger logger, ExecutorService executorService) {
+        return  new HttpRequestManager(parser, logger, executorService);
     }
 
     //=================>

@@ -1,5 +1,8 @@
 package com.abdallaadelessa.core.utils;
 
+import android.net.Uri;
+
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.BaseRequest;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -11,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * Created by Abdalla on 16/10/2016.
@@ -60,5 +64,34 @@ public class StringUtils {
             hiddenText = new StringBuilder().append(pad).toString();
         }
         return hiddenText;
+    }
+
+    public static String addQueryParams(String url, Map<String, String> queryParams, String paramsEncoding) throws UnsupportedEncodingException {
+        Uri.Builder builder = Uri.parse(url).buildUpon();
+        if (queryParams != null) {
+            for (String key : queryParams.keySet()) {
+                String value = queryParams.get(key);
+                builder.appendQueryParameter(URLEncoder.encode(key, paramsEncoding), URLEncoder.encode(value, paramsEncoding));
+            }
+        }
+        return builder.build().toString();
+    }
+
+    public static byte[] mapToBytes(Map<String, String> params, String encoding) {
+        StringBuilder encodedParams = new StringBuilder();
+        try {
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                if (null == entry.getValue()) {
+                    continue;
+                }
+                encodedParams.append(URLEncoder.encode(entry.getKey(), encoding));
+                encodedParams.append('=');
+                encodedParams.append(URLEncoder.encode(entry.getValue(), encoding));
+                encodedParams.append('&');
+            }
+            return encodedParams.toString().getBytes(encoding);
+        } catch (UnsupportedEncodingException uee) {
+            throw new RuntimeException("Encoding not supported: " + encoding, uee);
+        }
     }
 }
