@@ -38,7 +38,7 @@ public class BaseHttpRequestManager {
         this.interceptor = initHttpRequestManagerInterceptor();
     }
 
-    private BaseHttpInterceptor initHttpRequestManagerInterceptor() {
+    protected BaseHttpInterceptor initHttpRequestManagerInterceptor() {
         return new BaseHttpInterceptor() {
             @Override
             public BaseRequest interceptRequest(BaseRequest request) throws Exception {
@@ -125,10 +125,20 @@ public class BaseHttpRequestManager {
         return parser;
     }
 
+    //===========>
+
+    public void setParser(BaseHttpParser parser) {
+        this.parser = parser;
+    }
+
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
     }
-    
+
+    public void setLogger(BaseAppLogger logger) {
+        this.logger = logger;
+    }
+
     //===========>
 
     private void addRequestToQueue(BaseRequest request) {

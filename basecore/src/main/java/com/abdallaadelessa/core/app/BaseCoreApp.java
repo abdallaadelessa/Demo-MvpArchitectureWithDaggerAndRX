@@ -37,8 +37,6 @@ public abstract class BaseCoreApp extends Application {
     private BaseCoreLoggerModule loggerModule;
     private BaseCoreCacheModule cacheModule;
     private BaseCoreNetworkModule networkModule;
-    private VolleyNetworkModule volleyModule;
-    private OkHttpModule okHttpModule;
     //===>
     private BaseCoreAppComponent appComponent;
     private BaseCoreErrorHandlerComponent errorHandlerComponent;
@@ -63,8 +61,6 @@ public abstract class BaseCoreApp extends Application {
         loggerModule = new BaseCoreLoggerModule();
         cacheModule = new BaseCoreCacheModule();
         networkModule = new BaseCoreNetworkModule();
-        volleyModule = new VolleyNetworkModule();
-        okHttpModule = new OkHttpModule();
     }
 
     //=========================>
