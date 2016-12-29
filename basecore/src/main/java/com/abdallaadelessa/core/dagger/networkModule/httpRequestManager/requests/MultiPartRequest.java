@@ -28,6 +28,7 @@ public class MultiPartRequest<T> extends BaseRequest<MultiPartRequest<T>, T> {
 
     public MultiPartRequest(BaseHttpParser parser, BaseAppLogger logger, BaseHttpExecutor observableExecutor, ExecutorService executorService) {
         super(parser, logger, observableExecutor, executorService);
+        timeout = TIMEOUT_LONG_IN_MILLIS;
         files = new ArrayList<>();
     }
 
