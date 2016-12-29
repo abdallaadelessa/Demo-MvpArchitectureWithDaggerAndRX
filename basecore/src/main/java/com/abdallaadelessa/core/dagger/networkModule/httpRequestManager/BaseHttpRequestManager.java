@@ -8,7 +8,7 @@ import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.MultiPartRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule.MultiPartExecutor;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.volleyModule.VolleyHttpExecutor;
+import com.abdallaadelessa.core.utils.ValidationUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -68,23 +68,23 @@ public class BaseHttpRequestManager {
     }
 
     @NonNull
-    private <T> BaseHttpExecutor<T, HttpRequest> getDefaultHttpExecutor() {
+    protected <T> BaseHttpExecutor<T, HttpRequest> createNewHttpExecutorInstance() {
         return new OkHttpExecutor<>();
     }
 
     @NonNull
-    private <T> BaseHttpExecutor<T, MultiPartRequest> getDefaultMultiPartExecutor() {
-        return new MultiPartExecutor<T>();
+    protected <T> BaseHttpExecutor<T, MultiPartRequest> createNewMultiPartExecutorInstance() {
+        return new MultiPartExecutor<>();
     }
 
     //===========>
 
     public final <T> HttpRequest<T> newHttpRequest() {
-        return HttpRequest.create(getInterceptor(), getParser(), getLogger(), (BaseHttpExecutor<T, HttpRequest>) getDefaultHttpExecutor(), getExecutorService());
+        return HttpRequest.create(getInterceptor(), getParser(), getLogger(), (BaseHttpExecutor<T, HttpRequest>) createNewHttpExecutorInstance(), getExecutorService());
     }
 
     public final <T> MultiPartRequest<T> newMultiPartRequest() {
-        return MultiPartRequest.create(getInterceptor(), getParser(), getLogger(), (BaseHttpExecutor<T, MultiPartRequest>) getDefaultMultiPartExecutor(), getExecutorService());
+        return MultiPartRequest.create(getInterceptor(), getParser(), getLogger(), (BaseHttpExecutor<T, MultiPartRequest>) createNewMultiPartExecutorInstance(), getExecutorService());
     }
 
     public BaseRequest getRequestByTag(String tag) {
@@ -113,41 +113,34 @@ public class BaseHttpRequestManager {
         return logger;
     }
 
-    protected void setLogger(BaseAppLogger logger) {
-        this.logger = logger;
-    }
-
     protected ExecutorService getExecutorService() {
         return executorService;
-    }
-
-    protected void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
     }
 
     protected BaseHttpInterceptor getInterceptor() {
         return interceptor;
     }
 
-    protected void setInterceptor(BaseHttpInterceptor interceptor) {
-        this.interceptor = interceptor;
-    }
-
     protected BaseHttpParser getParser() {
         return parser;
     }
 
-    protected void setParser(BaseHttpParser parser) {
-        this.parser = parser;
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
     }
-
+    
     //===========>
 
     private void addRequestToQueue(BaseRequest request) {
+        if (ValidationUtils.isStringEmpty(request.getTag())) return;
         requestsByTagMap.put(request.getTag(), request);
     }
 
     private void removeRequestFromQueue(String tag) {
+        if (ValidationUtils.isStringEmpty(tag)) return;
         requestsByTagMap.remove(tag);
     }
+
+    //===========>
+
 }
