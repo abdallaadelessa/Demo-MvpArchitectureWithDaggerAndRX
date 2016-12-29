@@ -56,14 +56,15 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
 
     protected BaseRequest() {
         // Default Values
-        retriesNumber = 1;
-        timeout = TIMEOUT_MEDIUM_IN_MILLIS;
-        method = HttpMethod.GET;
-        type = String.class;
         interceptors = new ArrayList<>();
         headerParams = new HashMap<>();
         formParams = new HashMap<>();
         queryParams = new HashMap<>();
+        retriesNumber = 1;
+        timeout = TIMEOUT_MEDIUM_IN_MILLIS;
+        method = HttpMethod.GET;
+        setContentType(CONTENT_TYPE_FORM);
+        type = String.class;
         shouldCacheResponse = false;
         cancelIfWasRunning = true;
         cancelOnUnSubscribe = true;
@@ -103,14 +104,14 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
     }
 
     public boolean hasContentType() {
-        return !ValidationUtils.isStringEmpty(contentType());
+        return !ValidationUtils.isStringEmpty(getContentType());
     }
 
-    public B contentType(String contentType) {
+    public B setContentType(String contentType) {
         return addHeader(HEADER_CONTENT_TYPE, contentType);
     }
 
-    public String contentType() {
+    public String getContentType() {
         return getHeaderParams().get(HEADER_CONTENT_TYPE);
     }
 

@@ -53,7 +53,7 @@ public class VolleyHttpExecutor<M> extends BaseHttpExecutor<M, HttpRequest> {
 
                     @Override
                     public String getBodyContentType() {
-                        return httpRequest.contentType();
+                        return httpRequest.getContentType();
                     }
                 };
                 stringRequest.setHeaders(httpRequest.getHeaderParams());

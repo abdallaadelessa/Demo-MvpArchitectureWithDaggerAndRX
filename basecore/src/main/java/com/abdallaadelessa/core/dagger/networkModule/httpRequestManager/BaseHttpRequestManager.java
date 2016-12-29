@@ -1,6 +1,9 @@
 package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager;
 
+import android.support.annotation.NonNull;
+
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule.OkHttpExecutor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.BaseRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.MultiPartRequest;
@@ -18,7 +21,7 @@ import javax.inject.Inject;
  * Created by abdullah on 12/26/16.
  */
 
-public class HttpRequestManager {
+public class BaseHttpRequestManager {
     private Map<String, BaseRequest> requestsByTagMap;
     private BaseAppLogger logger;
     private ExecutorService executorService;
@@ -27,7 +30,7 @@ public class HttpRequestManager {
 
     //===========> Constructor
     @Inject
-    public HttpRequestManager(BaseHttpParser parser, BaseAppLogger logger, ExecutorService executorService) {
+    public BaseHttpRequestManager(BaseHttpParser parser, BaseAppLogger logger, ExecutorService executorService) {
         this.parser = parser;
         this.logger = logger;
         this.executorService = executorService;
@@ -64,14 +67,24 @@ public class HttpRequestManager {
         };
     }
 
-    //===========>
-
-    public <T> HttpRequest<T> newHttpRequest() {
-        return HttpRequest.create(getInterceptor(), getParser(), getLogger(), new VolleyHttpExecutor<T>(), getExecutorService());
+    @NonNull
+    private <T> BaseHttpExecutor<T, HttpRequest> getDefaultHttpExecutor() {
+        return new OkHttpExecutor<>();
     }
 
-    public <T> MultiPartRequest<T> newMultiPartRequest() {
-        return MultiPartRequest.create(getInterceptor(), getParser(), getLogger(), new MultiPartExecutor<T>(), getExecutorService());
+    @NonNull
+    private <T> BaseHttpExecutor<T, MultiPartRequest> getDefaultMultiPartExecutor() {
+        return new MultiPartExecutor<T>();
+    }
+
+    //===========>
+
+    public final <T> HttpRequest<T> newHttpRequest() {
+        return HttpRequest.create(getInterceptor(), getParser(), getLogger(), (BaseHttpExecutor<T, HttpRequest>) getDefaultHttpExecutor(), getExecutorService());
+    }
+
+    public final <T> MultiPartRequest<T> newMultiPartRequest() {
+        return MultiPartRequest.create(getInterceptor(), getParser(), getLogger(), (BaseHttpExecutor<T, MultiPartRequest>) getDefaultMultiPartExecutor(), getExecutorService());
     }
 
     public BaseRequest getRequestByTag(String tag) {
@@ -96,35 +109,35 @@ public class HttpRequestManager {
 
     //===========> Setters and Getters
 
-    private BaseAppLogger getLogger() {
+    protected BaseAppLogger getLogger() {
         return logger;
     }
 
-    private void setLogger(BaseAppLogger logger) {
+    protected void setLogger(BaseAppLogger logger) {
         this.logger = logger;
     }
 
-    private ExecutorService getExecutorService() {
+    protected ExecutorService getExecutorService() {
         return executorService;
     }
 
-    private void setExecutorService(ExecutorService executorService) {
+    protected void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
     }
 
-    private BaseHttpInterceptor getInterceptor() {
+    protected BaseHttpInterceptor getInterceptor() {
         return interceptor;
     }
 
-    private void setInterceptor(BaseHttpInterceptor interceptor) {
+    protected void setInterceptor(BaseHttpInterceptor interceptor) {
         this.interceptor = interceptor;
     }
 
-    private BaseHttpParser getParser() {
+    protected BaseHttpParser getParser() {
         return parser;
     }
 
-    private void setParser(BaseHttpParser parser) {
+    protected void setParser(BaseHttpParser parser) {
         this.parser = parser;
     }
 

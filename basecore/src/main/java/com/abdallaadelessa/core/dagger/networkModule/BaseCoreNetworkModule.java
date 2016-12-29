@@ -4,9 +4,8 @@ import com.abdallaadelessa.core.dagger.appModule.BaseCoreAppModule;
 import com.abdallaadelessa.core.dagger.loggerModule.BaseCoreLoggerModule;
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpParser;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpRequestManager;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpRequestManager;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,7 +26,7 @@ import dagger.Provides;
 @Module(includes = {BaseCoreAppModule.class, BaseCoreLoggerModule.class})
 public class BaseCoreNetworkModule {
 
-    //=================>  HttpRequestManager
+    //=================>  BaseHttpRequestManager
 
     @Singleton
     @Provides
@@ -58,8 +57,8 @@ public class BaseCoreNetworkModule {
 
     @Singleton
     @Provides
-    public HttpRequestManager provideHttpRequestManager(BaseHttpParser parser, BaseAppLogger logger, ExecutorService executorService) {
-        return  new HttpRequestManager(parser, logger, executorService);
+    public BaseHttpRequestManager provideHttpRequestManager(BaseHttpParser parser, BaseAppLogger logger, ExecutorService executorService) {
+        return  new BaseHttpRequestManager(parser, logger, executorService);
     }
 
 }

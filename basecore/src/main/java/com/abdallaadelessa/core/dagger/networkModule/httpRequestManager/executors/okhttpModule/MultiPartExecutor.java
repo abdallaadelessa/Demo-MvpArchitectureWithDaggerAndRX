@@ -10,6 +10,7 @@ import java.io.File;
 import java.net.SocketException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.MediaType;
@@ -24,24 +25,16 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class MultiPartExecutor<M> extends BaseHttpExecutor<M, MultiPartRequest> {
-    private static final int TIMEOUT_IN_SECONDS = 60;
-    private OkHttpClient client;
     private Call call;
-
-    public MultiPartExecutor() {
-        client = DaggerOkHttpComponent.create().getOkHttpClient();
-    }
 
     public Observable<M> buildObservable(final MultiPartRequest multiPartRequest) {
         return Observable.create(new Observable.OnSubscribe<M>() {
             @Override
             public void call(Subscriber<? super M> subscriber) {
                 try {
-                    String url = multiPartRequest.getUrl();
-                    Map<String, String> parameters = multiPartRequest.getFormParams();
-                    List<MultiPartRequest.MultiPartFile> files = multiPartRequest.getFiles();
                     MultipartBody.Builder multipartBodyBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-                    // Files
+                    //======> Files
+                    List<MultiPartRequest.MultiPartFile> files = multiPartRequest.getFiles();
                     if (files != null) {
                         for (int i = 0; i < files.size(); i++) {
                             MultiPartRequest.MultiPartFile multiPartFileObj = files.get(i);
@@ -55,7 +48,8 @@ public class MultiPartExecutor<M> extends BaseHttpExecutor<M, MultiPartRequest> 
                             }
                         }
                     }
-                    // Parameters
+                    //======> Parameters
+                    Map<String, String> parameters = multiPartRequest.getFormParams();
                     if (parameters != null) {
                         for (String key : parameters.keySet()) {
                             String value = parameters.get(key);
@@ -64,15 +58,14 @@ public class MultiPartExecutor<M> extends BaseHttpExecutor<M, MultiPartRequest> 
                     }
                     // Send Request
                     RequestBody requestBody = multipartBodyBuilder.build();
-                    Request request = new Request.Builder().url(url).post(requestBody).build();
+                    Request request = new Request.Builder().url(multiPartRequest.getUrlWithQueryParams()).post(requestBody).build();
+                    OkHttpClient client = new OkHttpClient().newBuilder().writeTimeout(multiPartRequest.getTimeout(), TimeUnit.MILLISECONDS)
+                            .readTimeout(multiPartRequest.getTimeout(), TimeUnit.MILLISECONDS).build();
                     call = client.newCall(request);
                     Response response = call.execute();
                     String responseStr = response.body().string();
                     onSuccess(subscriber, multiPartRequest, responseStr);
                 } catch (Throwable e) {
-                    if (e instanceof SocketException) {
-                        e = new NetworkError(e);
-                    }
                     onError(subscriber, multiPartRequest, e, false);
                 }
             }

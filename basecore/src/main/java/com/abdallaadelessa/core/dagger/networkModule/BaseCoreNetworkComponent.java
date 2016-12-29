@@ -1,6 +1,6 @@
 package com.abdallaadelessa.core.dagger.networkModule;
 
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpRequestManager;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpRequestManager;
 import com.google.gson.Gson;
 
 import javax.inject.Singleton;
@@ -13,7 +13,7 @@ import dagger.Component;
 @Singleton
 @Component(modules = {BaseCoreNetworkModule.class})
 public interface BaseCoreNetworkComponent {
-    HttpRequestManager getHttpRequestManager();
+    BaseHttpRequestManager getHttpRequestManager();
 
     Gson getGson();
 }

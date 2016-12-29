@@ -1,6 +1,6 @@
 package com.abdallaadelessa.demo.data.airline.repository.remote;
 
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpRequestManager;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpRequestManager;
 import com.abdallaadelessa.demo.app.MyApplication;
 import com.abdallaadelessa.demo.data.airline.model.AirlineModel;
 import com.google.common.reflect.TypeToken;
@@ -22,7 +22,7 @@ public class CloudImpl implements AirlinesRemoteRepository {
                 .setType(new TypeToken<List<AirlineModel>>() {}.getType()).toObservable();
     }
 
-    private HttpRequestManager getHttpRequestManager() {
+    private BaseHttpRequestManager getHttpRequestManager() {
         return MyApplication.getInstance().getNetworkComponent().getHttpRequestManager();
     }
 }

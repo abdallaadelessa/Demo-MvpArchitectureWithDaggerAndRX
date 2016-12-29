@@ -8,7 +8,9 @@ import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests
 import com.abdallaadelessa.core.model.BaseCoreError;
 import com.abdallaadelessa.core.utils.RxUtils;
 import com.abdallaadelessa.core.utils.ValidationUtils;
+import com.android.volley.error.NetworkError;
 
+import java.net.SocketException;
 import java.util.List;
 
 import rx.Observable;
@@ -65,7 +67,13 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
     //================>
 
     public BaseCoreError getBaseCoreError(Throwable throwable) {
-        return new BaseCoreError(throwable);
+        BaseCoreError baseCoreError;
+        if (throwable instanceof SocketException) {
+            baseCoreError = new BaseCoreError(BaseCoreError.CODE_NETWORK_ERROR, throwable);
+        } else {
+            baseCoreError = new BaseCoreError(throwable);
+        }
+        return baseCoreError;
     }
 
     //================>

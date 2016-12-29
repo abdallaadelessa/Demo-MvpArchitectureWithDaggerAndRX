@@ -38,13 +38,13 @@ public class HttpRequest<T> extends BaseRequest<HttpRequest<T>, T> {
         setFormParams(new HashMap<String, String>());
         setJsonBody(jsonBody);
         POST();
-        contentType(CONTENT_TYPE_JSON);
+        setContentType(CONTENT_TYPE_JSON);
         return this;
     }
 
     public HttpRequest<T> addFormParam(String key, String value) {
         setJsonBody(null);
-        contentType(CONTENT_TYPE_FORM);
+        setContentType(CONTENT_TYPE_FORM);
         return super.addFormParam(key, value);
     }
 
@@ -60,7 +60,7 @@ public class HttpRequest<T> extends BaseRequest<HttpRequest<T>, T> {
 
     public byte[] bodyToBytes() {
         if (!hasJsonBody()) {
-            byte[] bodyBytes = null;
+            byte[] bodyBytes = new byte[0];
             try {
                 if (!ValidationUtils.isStringEmpty(getJsonBody())) {
                     bodyBytes = getJsonBody().getBytes(UTF_8);
