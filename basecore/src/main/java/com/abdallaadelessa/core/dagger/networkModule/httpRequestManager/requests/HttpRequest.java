@@ -2,8 +2,8 @@ package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.request
 
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpExecutor;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpInterceptor;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpParser;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpInterceptor;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpParser;
 import com.abdallaadelessa.core.utils.ValidationUtils;
 
 import java.util.HashMap;
@@ -16,11 +16,11 @@ import java.util.concurrent.ExecutorService;
 public class HttpRequest<T> extends BaseRequest<HttpRequest<T>, T> {
     private String jsonBody;
 
-    private HttpRequest(HttpParser parser, BaseAppLogger logger, BaseHttpExecutor<T, HttpRequest> observableExecutor, ExecutorService executorService) {
+    private HttpRequest(BaseHttpParser parser, BaseAppLogger logger, BaseHttpExecutor<T, HttpRequest> observableExecutor, ExecutorService executorService) {
         super(parser, logger, observableExecutor, executorService);
     }
 
-    public static <T> HttpRequest<T> create(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger
+    public static <T> HttpRequest<T> create(BaseHttpInterceptor interceptor, BaseHttpParser parser, BaseAppLogger logger
             , BaseHttpExecutor<T, HttpRequest> observableExecutor, ExecutorService executorService) {
         HttpRequest<T> httpRequest = new HttpRequest<>(parser, logger, observableExecutor, executorService);
         httpRequest.addInterceptor(interceptor);

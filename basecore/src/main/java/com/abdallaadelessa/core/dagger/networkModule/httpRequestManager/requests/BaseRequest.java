@@ -2,8 +2,8 @@ package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.request
 
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpExecutor;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpInterceptor;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpParser;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpInterceptor;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpParser;
 import com.abdallaadelessa.core.utils.StringUtils;
 import com.abdallaadelessa.core.utils.ValidationUtils;
 
@@ -29,10 +29,10 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
     public static final int TIMEOUT_MEDIUM_IN_MILLIS = 10000;
     public static final int TIMEOUT_SHORT_IN_MILLIS = 5000;
     //=>
-    protected HttpParser parser;
+    protected BaseHttpParser parser;
     protected BaseAppLogger logger;
     protected BaseHttpExecutor<T, BaseRequest> observableExecutor;
-    protected List<HttpInterceptor> interceptors;
+    protected List<BaseHttpInterceptor> interceptors;
     protected ExecutorService executorService;
     //=>
     protected String tag;
@@ -69,7 +69,7 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
         cancelOnUnSubscribe = true;
     }
 
-    public BaseRequest(HttpParser parser, BaseAppLogger logger, BaseHttpExecutor observableExecutor, ExecutorService executorService) {
+    public BaseRequest(BaseHttpParser parser, BaseAppLogger logger, BaseHttpExecutor observableExecutor, ExecutorService executorService) {
         this();
         this.parser = parser;
         this.logger = logger;
@@ -114,7 +114,7 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
         return getHeaderParams().get(HEADER_CONTENT_TYPE);
     }
 
-    public B addInterceptor(HttpInterceptor interceptor) {
+    public B addInterceptor(BaseHttpInterceptor interceptor) {
         getInterceptors().add(interceptor);
         return (B) this;
     }
@@ -126,7 +126,7 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
 
     //=====> Setters
 
-    public B setParser(HttpParser parser) {
+    public B setParser(BaseHttpParser parser) {
         this.parser = parser;
         return (B) this;
     }
@@ -141,7 +141,7 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
         return (B) this;
     }
 
-    public B setInterceptors(List<HttpInterceptor> interceptors) {
+    public B setInterceptors(List<BaseHttpInterceptor> interceptors) {
         this.interceptors = interceptors;
         return (B) this;
     }
@@ -214,7 +214,7 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
 
     //=====> Getters
 
-    public HttpParser getParser() {
+    public BaseHttpParser getParser() {
         return parser;
     }
 
@@ -226,7 +226,7 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
         return observableExecutor;
     }
 
-    public List<HttpInterceptor> getInterceptors() {
+    public List<BaseHttpInterceptor> getInterceptors() {
         return interceptors;
     }
 

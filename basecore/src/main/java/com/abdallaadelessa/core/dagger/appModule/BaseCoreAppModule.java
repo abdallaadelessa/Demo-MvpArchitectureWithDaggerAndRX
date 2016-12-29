@@ -4,6 +4,8 @@ import android.content.Context;
 import android.widget.Toast;
 
 import com.abdallaadelessa.core.app.BaseCoreApp;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -35,5 +37,11 @@ public class BaseCoreAppModule {
     @Provides
     public ExecutorService provideAppExecutorService() {
         return Executors.newFixedThreadPool(10);
+    }
+
+    @Singleton
+    @Provides
+    public Gson provideGson() {
+        return new GsonBuilder().create();
     }
 }

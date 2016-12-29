@@ -7,7 +7,7 @@ import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests
  * Created by abdullah on 12/26/16.
  */
 
-public abstract class HttpInterceptor {
+public abstract class BaseHttpInterceptor {
     public BaseRequest interceptRequest(BaseRequest request) throws Exception {
         return request;
     }

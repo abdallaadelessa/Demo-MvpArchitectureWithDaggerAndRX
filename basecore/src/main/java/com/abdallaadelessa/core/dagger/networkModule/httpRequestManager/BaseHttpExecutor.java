@@ -163,8 +163,8 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
 
     private R interceptRequest(R request) throws Exception {
         R httpRequest = request;
-        List<HttpInterceptor> interceptors = request.getInterceptors();
-        for (HttpInterceptor interceptor : interceptors) {
+        List<BaseHttpInterceptor> interceptors = request.getInterceptors();
+        for (BaseHttpInterceptor interceptor : interceptors) {
             httpRequest = (R) interceptor.interceptRequest(request);
         }
         return httpRequest;
@@ -172,8 +172,8 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
 
     private String interceptResponse(String response, R r) throws Exception {
         String json = response;
-        List<HttpInterceptor> interceptors = r.getInterceptors();
-        for (HttpInterceptor interceptor : interceptors) {
+        List<BaseHttpInterceptor> interceptors = r.getInterceptors();
+        for (BaseHttpInterceptor interceptor : interceptors) {
             json = interceptor.interceptResponse(r, json);
         }
         return json;
@@ -181,8 +181,8 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
 
     private Throwable interceptError(Throwable e, R request, boolean fatal) {
         Throwable error = e;
-        List<HttpInterceptor> interceptors = request.getInterceptors();
-        for (HttpInterceptor interceptor : interceptors) {
+        List<BaseHttpInterceptor> interceptors = request.getInterceptors();
+        for (BaseHttpInterceptor interceptor : interceptors) {
             error = interceptor.interceptError(request, error, fatal);
         }
         return error;

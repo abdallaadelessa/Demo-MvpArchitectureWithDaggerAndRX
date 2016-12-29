@@ -22,32 +22,32 @@ public class HttpRequestManager {
     private Map<String, BaseRequest> requestsByTagMap;
     private BaseAppLogger logger;
     private ExecutorService executorService;
-    private HttpInterceptor interceptor;
-    private HttpParser parser;
+    private BaseHttpInterceptor interceptor;
+    private BaseHttpParser parser;
 
     //===========> Constructor
     @Inject
-    public HttpRequestManager(HttpParser parser, BaseAppLogger logger, ExecutorService executorService) {
+    public HttpRequestManager(BaseHttpParser parser, BaseAppLogger logger, ExecutorService executorService) {
         this.parser = parser;
         this.logger = logger;
         this.executorService = executorService;
         requestsByTagMap = Collections.synchronizedMap(new HashMap<String, BaseRequest>());
-        this.interceptor = initQueueInterceptor();
+        this.interceptor = initHttpRequestManagerInterceptor();
     }
 
-    private HttpInterceptor initQueueInterceptor() {
-        return new HttpInterceptor() {
+    private BaseHttpInterceptor initHttpRequestManagerInterceptor() {
+        return new BaseHttpInterceptor() {
             @Override
             public BaseRequest interceptRequest(BaseRequest request) throws Exception {
                 addRequestToQueue(request);
-                logger.log(request.getTag(), request.toString());
+                request.getLogger().log(request.getTag(), request.toString());
                 return super.interceptRequest(request);
             }
 
             @Override
             public String interceptResponse(BaseRequest request, String response) throws Exception {
                 removeRequestFromQueue(request.getTag());
-                logger.log(request.getTag(), response);
+                request.getLogger().log(request.getTag(), response);
                 return super.interceptResponse(request, response);
             }
 
@@ -55,7 +55,7 @@ public class HttpRequestManager {
             public Throwable interceptError(BaseRequest request, Throwable throwable, boolean fatal) {
                 removeRequestFromQueue(request.getTag());
                 try {
-                    logger.logError(request.getTag(), throwable, fatal);
+                    request.getLogger().logError(request.getTag(), throwable, fatal);
                 } catch (Exception e) {
                     //Eat it!
                 }
@@ -63,6 +63,8 @@ public class HttpRequestManager {
             }
         };
     }
+
+    //===========>
 
     public <T> HttpRequest<T> newHttpRequest() {
         return HttpRequest.create(getInterceptor(), getParser(), getLogger(), new VolleyHttpExecutor<T>(), getExecutorService());
@@ -110,19 +112,19 @@ public class HttpRequestManager {
         this.executorService = executorService;
     }
 
-    private HttpInterceptor getInterceptor() {
+    private BaseHttpInterceptor getInterceptor() {
         return interceptor;
     }
 
-    private void setInterceptor(HttpInterceptor interceptor) {
+    private void setInterceptor(BaseHttpInterceptor interceptor) {
         this.interceptor = interceptor;
     }
 
-    private HttpParser getParser() {
+    private BaseHttpParser getParser() {
         return parser;
     }
 
-    private void setParser(HttpParser parser) {
+    private void setParser(BaseHttpParser parser) {
         this.parser = parser;
     }
 

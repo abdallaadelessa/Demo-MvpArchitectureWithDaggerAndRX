@@ -2,15 +2,12 @@ package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.request
 
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpExecutor;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpInterceptor;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.HttpParser;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpInterceptor;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpParser;
 import com.abdallaadelessa.core.utils.FileUtils;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -23,13 +20,13 @@ public class MultiPartRequest<T> extends BaseRequest<MultiPartRequest<T>, T> {
 
     //=====>
 
-    public static <T> MultiPartRequest<T> create(HttpInterceptor interceptor, HttpParser parser, BaseAppLogger logger, BaseHttpExecutor<T, MultiPartRequest> observableExecutor, ExecutorService executorService) {
+    public static <T> MultiPartRequest<T> create(BaseHttpInterceptor interceptor, BaseHttpParser parser, BaseAppLogger logger, BaseHttpExecutor<T, MultiPartRequest> observableExecutor, ExecutorService executorService) {
         MultiPartRequest<T> multiPartRequest = new MultiPartRequest<>(parser, logger, observableExecutor, executorService);
         multiPartRequest.addInterceptor(interceptor);
         return multiPartRequest;
     }
 
-    public MultiPartRequest(HttpParser parser, BaseAppLogger logger, BaseHttpExecutor observableExecutor, ExecutorService executorService) {
+    public MultiPartRequest(BaseHttpParser parser, BaseAppLogger logger, BaseHttpExecutor observableExecutor, ExecutorService executorService) {
         super(parser, logger, observableExecutor, executorService);
         files = new ArrayList<>();
     }
