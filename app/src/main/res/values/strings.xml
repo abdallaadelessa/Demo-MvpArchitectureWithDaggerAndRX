@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">InstaBugAndroidChallenge</string>
+    <string name="app_name">MvpArchitectureWithDaggerAndRX</string>
     <string name="txt_error">An Error Occurred</string>
     <string name="txt_yes">Yes</string>
     <string name="txt_no">No</string>
