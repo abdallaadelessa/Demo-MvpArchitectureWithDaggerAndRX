@@ -8,6 +8,7 @@ import com.abdallaadelessa.core.presenter.BaseCorePresenter;
 import com.abdallaadelessa.core.utils.AndroidUtils;
 import com.abdallaadelessa.core.view.BaseCoreActivity;
 import com.abdallaadelessa.demo.R;
+import com.abdallaadelessa.demo.presentation.managers.ViewErrorHandler;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,6 +36,11 @@ public class ListAirlinesActivity extends BaseCoreActivity {
             setupToolbar(toolbar, "");
             getSupportFragmentManager().beginTransaction().replace(R.id.content, new ListAirlinesFragment()).commit();
         }
+    }
+
+    @Override
+    public void handleError(Throwable throwable) {
+        ViewErrorHandler.handleError(this,throwable);
     }
 
     //------------->

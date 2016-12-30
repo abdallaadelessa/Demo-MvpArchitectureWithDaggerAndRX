@@ -92,9 +92,7 @@ public abstract class BaseCoreActivity<p extends BaseCorePresenter> extends AppC
 
     @Override
     public void handleError(Throwable throwable) {
-        if (isFinishing()) return;
-        String errorMessage = BaseCoreApp.getInstance().getErrorHandlerComponent().getErrorHandler().getErrorMessage(throwable);
-        UIUtils.showToast(this, errorMessage);
+
     }
 
     @Override

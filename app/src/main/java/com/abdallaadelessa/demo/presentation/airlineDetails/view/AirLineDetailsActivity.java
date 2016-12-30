@@ -14,6 +14,7 @@ import com.abdallaadelessa.core.presenter.BaseCorePresenter;
 import com.abdallaadelessa.core.view.BaseCoreActivity;
 import com.abdallaadelessa.demo.R;
 import com.abdallaadelessa.demo.data.airline.model.AirlineModel;
+import com.abdallaadelessa.demo.presentation.managers.ViewErrorHandler;
 
 /**
  * Created by abdullah on 01/10/16.
@@ -40,6 +41,11 @@ public class AirLineDetailsActivity extends BaseCoreActivity {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.content, AirLinesDetailsFragment.newInstance(getIntent().getExtras()), "AirLinesDetailsFragment").commitAllowingStateLoss();
         }
+    }
+
+    @Override
+    public void handleError(Throwable throwable) {
+        ViewErrorHandler.handleError(this,throwable);
     }
 
     @Override

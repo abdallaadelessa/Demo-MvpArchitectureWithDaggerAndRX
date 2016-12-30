@@ -11,9 +11,6 @@ import com.abdallaadelessa.core.dagger.appModule.DaggerBaseCoreAppComponent;
 import com.abdallaadelessa.core.dagger.cacheModule.BaseCoreCacheComponent;
 import com.abdallaadelessa.core.dagger.cacheModule.BaseCoreCacheModule;
 import com.abdallaadelessa.core.dagger.cacheModule.DaggerBaseCoreCacheComponent;
-import com.abdallaadelessa.core.dagger.errorHandlerModule.BaseCoreErrorHandlerComponent;
-import com.abdallaadelessa.core.dagger.errorHandlerModule.BaseCoreErrorHandlerModule;
-import com.abdallaadelessa.core.dagger.errorHandlerModule.DaggerBaseCoreErrorHandlerComponent;
 import com.abdallaadelessa.core.dagger.eventBusModule.BaseCoreEventBusComponent;
 import com.abdallaadelessa.core.dagger.eventBusModule.BaseCoreEventBusModule;
 import com.abdallaadelessa.core.dagger.eventBusModule.DaggerBaseCoreEventBusComponent;
@@ -32,14 +29,12 @@ public abstract class BaseCoreApp extends Application {
     private static BaseCoreApp mInstance;
     //===>
     private BaseCoreAppModule appModule;
-    private BaseCoreErrorHandlerModule errorHandlerModule;
     private BaseCoreEventBusModule eventBusModule;
     private BaseCoreLoggerModule loggerModule;
     private BaseCoreCacheModule cacheModule;
     private BaseCoreNetworkModule networkModule;
     //===>
     private BaseCoreAppComponent appComponent;
-    private BaseCoreErrorHandlerComponent errorHandlerComponent;
     private BaseCoreEventBusComponent eventBusComponent;
     private BaseCoreLoggerComponent loggerComponent;
     private BaseCoreCacheComponent cacheComponent;
@@ -56,7 +51,6 @@ public abstract class BaseCoreApp extends Application {
 
     private void constructAppModules() {
         appModule = new BaseCoreAppModule();
-        errorHandlerModule = new BaseCoreErrorHandlerModule();
         eventBusModule = new BaseCoreEventBusModule();
         loggerModule = new BaseCoreLoggerModule();
         cacheModule = new BaseCoreCacheModule();
@@ -79,18 +73,6 @@ public abstract class BaseCoreApp extends Application {
                     .build();
         }
         return appComponent;
-    }
-
-    public BaseCoreErrorHandlerComponent getErrorHandlerComponent() {
-        if (errorHandlerComponent == null) {
-            errorHandlerComponent = DaggerBaseCoreErrorHandlerComponent
-                    .builder()
-                    .baseCoreAppModule(appModule)
-                    .baseCoreErrorHandlerModule(errorHandlerModule)
-                    .baseCoreLoggerModule(loggerModule)
-                    .build();
-        }
-        return errorHandlerComponent;
     }
 
     public BaseCoreEventBusComponent getEventBusComponent() {
