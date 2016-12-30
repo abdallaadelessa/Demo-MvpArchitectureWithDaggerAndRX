@@ -120,7 +120,7 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
         return (B) this;
     }
 
-    public B clearInterceptors() {
+    protected B clearInterceptors() {
         getInterceptors().clear();
         return (B) this;
     }

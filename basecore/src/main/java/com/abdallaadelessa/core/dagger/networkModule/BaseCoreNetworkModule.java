@@ -6,6 +6,7 @@ import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpParser;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpRequestManager;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,10 +31,16 @@ public class BaseCoreNetworkModule {
 
     @Singleton
     @Provides
+    public BaseHttpRequestManager provideHttpRequestManager(BaseHttpParser parser, BaseAppLogger logger, ExecutorService executorService) {
+        return  new BaseHttpRequestManager(parser, logger, executorService);
+    }
+
+    @Singleton
+    @Provides
     public BaseHttpParser provideHttpParser(final Gson gson) {
         return new BaseHttpParser() {
             @Override
-            public <T> T parse(String tag, Type type, String json) throws JSONException {
+            public <T> T parse(Type type, String json) throws JSONException {
                 T t = null;
                 if (type == String.class) {
                     t = (T) json;
@@ -57,8 +64,8 @@ public class BaseCoreNetworkModule {
 
     @Singleton
     @Provides
-    public BaseHttpRequestManager provideHttpRequestManager(BaseHttpParser parser, BaseAppLogger logger, ExecutorService executorService) {
-        return  new BaseHttpRequestManager(parser, logger, executorService);
+    public Gson provideGson() {
+        return new GsonBuilder().create();
     }
 
 }

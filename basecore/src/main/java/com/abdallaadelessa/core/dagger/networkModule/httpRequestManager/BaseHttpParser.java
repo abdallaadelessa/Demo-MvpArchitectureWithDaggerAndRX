@@ -9,5 +9,5 @@ import java.lang.reflect.Type;
  */
 
 public interface BaseHttpParser {
-    <T> T parse(String tag, Type type, String response) throws JSONException;
+    <T> T parse(Type type, String response) throws JSONException;
 }

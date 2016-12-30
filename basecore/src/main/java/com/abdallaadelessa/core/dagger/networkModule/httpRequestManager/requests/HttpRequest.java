@@ -20,11 +20,9 @@ public class HttpRequest<T> extends BaseRequest<HttpRequest<T>, T> {
         super(parser, logger, observableExecutor, executorService);
     }
 
-    public static <T> HttpRequest<T> create(BaseHttpInterceptor interceptor, BaseHttpParser parser, BaseAppLogger logger
+    public static <T> HttpRequest<T> create(BaseHttpParser parser, BaseAppLogger logger
             , BaseHttpExecutor<T, HttpRequest> observableExecutor, ExecutorService executorService) {
-        HttpRequest<T> httpRequest = new HttpRequest<>(parser, logger, observableExecutor, executorService);
-        httpRequest.addInterceptor(interceptor);
-        return httpRequest;
+        return new HttpRequest<>(parser, logger, observableExecutor, executorService);
     }
 
     //=====>

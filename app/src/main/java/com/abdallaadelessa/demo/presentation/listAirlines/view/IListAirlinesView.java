@@ -12,12 +12,6 @@ import java.util.List;
  */
 
 public interface  IListAirlinesView extends IBaseView {
-    void showProgress(boolean show);
-
-    void showError(Throwable throwable);
-
-    void showNoDataPlaceHolder();
-
     void setTitle(int title);
 
     void enableMenu(boolean enable);

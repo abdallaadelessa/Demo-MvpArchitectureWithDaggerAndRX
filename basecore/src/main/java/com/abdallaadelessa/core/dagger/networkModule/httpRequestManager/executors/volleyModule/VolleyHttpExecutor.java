@@ -95,7 +95,7 @@ public class VolleyHttpExecutor<M> extends BaseHttpExecutor<M, HttpRequest> {
         }
     }
 
-    public BaseCoreError getBaseCoreError(Throwable throwable) {
+    public BaseCoreError convertErrorToBaseCoreError(Throwable throwable) {
         BaseCoreError baseCoreError = new BaseCoreError(throwable);
         if (isVolleyError(throwable)) {
             if (isTimeoutError(throwable)) {

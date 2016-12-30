@@ -8,8 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.abdallaadelessa.core.app.BaseCoreApp;
 import com.abdallaadelessa.core.presenter.BaseCorePresenter;
 import com.abdallaadelessa.core.utils.ButterKnifeUtils;
+import com.abdallaadelessa.core.utils.UIUtils;
 
 import butterknife.Unbinder;
 
@@ -17,7 +19,7 @@ import butterknife.Unbinder;
  * Created by abdullah on 12/10/16.
  */
 
-public abstract class BaseCoreFragment<p extends BaseCorePresenter> extends Fragment {
+public abstract class BaseCoreFragment<p extends BaseCorePresenter> extends Fragment implements IBaseView {
     private Unbinder unbinder;
     private p presenter;
 
@@ -60,6 +62,26 @@ public abstract class BaseCoreFragment<p extends BaseCorePresenter> extends Frag
 
     public boolean isPresenterAttached() {
         return getPresenter() != null;
+    }
+
+    // --------------->
+
+    @Override
+    public void showProgress(boolean show) {
+        if (getActivity() == null || !(getActivity() instanceof IBaseView)) return;
+        ((IBaseView) getActivity()).showProgress(show);
+    }
+
+    @Override
+    public void handleError(Throwable throwable) {
+        if (getActivity() == null || !(getActivity() instanceof IBaseView)) return;
+        ((IBaseView) getActivity()).handleError(throwable);
+    }
+
+    @Override
+    public void handleNoData() {
+        if (getActivity() == null || !(getActivity() instanceof IBaseView)) return;
+        ((IBaseView) getActivity()).handleNoData();
     }
 
     // --------------->

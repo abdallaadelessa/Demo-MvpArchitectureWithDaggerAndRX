@@ -20,8 +20,8 @@ public class BaseCoreLoggerModule {
 
     @Singleton
     @Provides
-    public BaseAppLogger.IReporter provideILogger() {
-        return new BaseAppLogger.IReporter() {
+    public BaseAppLogger.BaseAppReporter provideAppReporter() {
+        return new BaseAppLogger.BaseAppReporter() {
             @Override
             public void reportError(Throwable throwable) {
                 //Eat it
@@ -36,7 +36,7 @@ public class BaseCoreLoggerModule {
 
     @Singleton
     @Provides
-    public BaseAppLogger provideAppLogger(BaseAppLogger.IReporter iReporter) {
-        return new TimberLoggerImpl(DEFAULT_TAG, ENABLE_LOGS, BaseCoreApp.getAppFolderPath(), iReporter);
+    public BaseAppLogger provideAppLogger(BaseAppLogger.BaseAppReporter baseAppReporter) {
+        return new TimberLoggerImpl(DEFAULT_TAG, ENABLE_LOGS, BaseCoreApp.getAppFolderPath(), baseAppReporter);
     }
 }

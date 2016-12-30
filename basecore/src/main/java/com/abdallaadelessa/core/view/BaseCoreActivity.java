@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import com.abdallaadelessa.core.R;
 import com.abdallaadelessa.core.app.BaseCoreApp;
 import com.abdallaadelessa.core.presenter.BaseCorePresenter;
+import com.abdallaadelessa.core.utils.UIUtils;
 
 import java.util.HashMap;
 
@@ -21,7 +22,7 @@ import java.util.HashMap;
  * Created by abdullah on 12/10/16.
  */
 
-public abstract class BaseCoreActivity<p extends BaseCorePresenter> extends AppCompatActivity {
+public abstract class BaseCoreActivity<p extends BaseCorePresenter> extends AppCompatActivity implements IBaseView {
     private static final int UP_DRAWABLE_ID = R.drawable.ic_white_up_arrow;
     public static final String KEY_RETAINED_MEMORY_CACHE = "RetainedMemoryCache";
     private p presenter;
@@ -80,6 +81,25 @@ public abstract class BaseCoreActivity<p extends BaseCorePresenter> extends AppC
 
     public boolean isPresenterAttached() {
         return getPresenter() != null;
+    }
+
+    // --------------->
+
+    @Override
+    public void showProgress(boolean show) {
+
+    }
+
+    @Override
+    public void handleError(Throwable throwable) {
+        if (isFinishing()) return;
+        String errorMessage = BaseCoreApp.getInstance().getErrorHandlerComponent().getErrorHandler().getErrorMessage(throwable);
+        UIUtils.showToast(this, errorMessage);
+    }
+
+    @Override
+    public void handleNoData() {
+
     }
 
     // --------------->

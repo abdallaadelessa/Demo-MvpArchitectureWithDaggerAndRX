@@ -5,4 +5,9 @@ package com.abdallaadelessa.core.view;
  */
 
 public interface IBaseView {
+    void showProgress(boolean show);
+
+    void handleError(Throwable throwable);
+
+    void handleNoData();
 }

@@ -20,10 +20,8 @@ public class MultiPartRequest<T> extends BaseRequest<MultiPartRequest<T>, T> {
 
     //=====>
 
-    public static <T> MultiPartRequest<T> create(BaseHttpInterceptor interceptor, BaseHttpParser parser, BaseAppLogger logger, BaseHttpExecutor<T, MultiPartRequest> observableExecutor, ExecutorService executorService) {
-        MultiPartRequest<T> multiPartRequest = new MultiPartRequest<>(parser, logger, observableExecutor, executorService);
-        multiPartRequest.addInterceptor(interceptor);
-        return multiPartRequest;
+    public static <T> MultiPartRequest<T> create(BaseHttpParser parser, BaseAppLogger logger, BaseHttpExecutor<T, MultiPartRequest> observableExecutor, ExecutorService executorService) {
+        return new MultiPartRequest<>(parser, logger, observableExecutor, executorService);
     }
 
     public MultiPartRequest(BaseHttpParser parser, BaseAppLogger logger, BaseHttpExecutor observableExecutor, ExecutorService executorService) {

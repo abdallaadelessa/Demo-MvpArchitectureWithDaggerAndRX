@@ -10,8 +10,10 @@ import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule.MultiPartExecutor;
 import com.abdallaadelessa.core.utils.ValidationUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
@@ -23,9 +25,9 @@ import javax.inject.Inject;
 
 public class BaseHttpRequestManager {
     private Map<String, BaseRequest> requestsByTagMap;
+    private List<BaseHttpInterceptor> interceptors;
     private BaseAppLogger logger;
     private ExecutorService executorService;
-    private BaseHttpInterceptor interceptor;
     private BaseHttpParser parser;
 
     //===========> Constructor
@@ -34,8 +36,9 @@ public class BaseHttpRequestManager {
         this.parser = parser;
         this.logger = logger;
         this.executorService = executorService;
-        requestsByTagMap = Collections.synchronizedMap(new HashMap<String, BaseRequest>());
-        this.interceptor = initHttpRequestManagerInterceptor();
+        this.requestsByTagMap = Collections.synchronizedMap(new HashMap<String, BaseRequest>());
+        this.interceptors = new ArrayList<>();
+        this.interceptors.add(initHttpRequestManagerInterceptor());
     }
 
     protected BaseHttpInterceptor initHttpRequestManagerInterceptor() {
@@ -80,11 +83,15 @@ public class BaseHttpRequestManager {
     //===========>
 
     public final <T> HttpRequest<T> newHttpRequest() {
-        return HttpRequest.create(getInterceptor(), getParser(), getLogger(), (BaseHttpExecutor<T, HttpRequest>) createNewHttpExecutorInstance(), getExecutorService());
+        HttpRequest<T> tHttpRequest = HttpRequest.create(getParser(), getLogger(), (BaseHttpExecutor<T, HttpRequest>) createNewHttpExecutorInstance(), getExecutorService());
+        tHttpRequest.getInterceptors().addAll(getInterceptors());
+        return tHttpRequest;
     }
 
     public final <T> MultiPartRequest<T> newMultiPartRequest() {
-        return MultiPartRequest.create(getInterceptor(), getParser(), getLogger(), (BaseHttpExecutor<T, MultiPartRequest>) createNewMultiPartExecutorInstance(), getExecutorService());
+        MultiPartRequest<T> multiPartRequest = MultiPartRequest.create(getParser(), getLogger(), (BaseHttpExecutor<T, MultiPartRequest>) createNewMultiPartExecutorInstance(), getExecutorService());
+        multiPartRequest.getInterceptors().addAll(getInterceptors());
+        return multiPartRequest;
     }
 
     public BaseRequest getRequestByTag(String tag) {
@@ -117,8 +124,8 @@ public class BaseHttpRequestManager {
         return executorService;
     }
 
-    protected BaseHttpInterceptor getInterceptor() {
-        return interceptor;
+    protected List<BaseHttpInterceptor> getInterceptors() {
+        return interceptors;
     }
 
     protected BaseHttpParser getParser() {
@@ -137,6 +144,10 @@ public class BaseHttpRequestManager {
 
     public void setLogger(BaseAppLogger logger) {
         this.logger = logger;
+    }
+
+    public void addInterceptor(BaseHttpInterceptor interceptor) {
+        this.interceptors.add(interceptor);
     }
 
     //===========>

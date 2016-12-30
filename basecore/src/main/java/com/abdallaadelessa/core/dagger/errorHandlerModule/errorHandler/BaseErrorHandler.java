@@ -1,10 +1,13 @@
 package com.abdallaadelessa.core.dagger.errorHandlerModule.errorHandler;
 
+import android.app.Activity;
 import android.content.Context;
 
+import com.abdallaadelessa.core.app.BaseCoreApp;
 import com.abdallaadelessa.core.model.BaseCoreError;
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
 import com.abdallaadelessa.core.R;
+import com.abdallaadelessa.core.utils.UIUtils;
 
 import java.lang.ref.WeakReference;
 
@@ -21,21 +24,28 @@ public abstract class BaseErrorHandler {
         this.appLogger = appLogger;
     }
 
-    public String getErrorMessage(Throwable error) {
-        if(contextWeakReference == null || contextWeakReference.get() == null) return null;
-        String errorMsg = contextWeakReference.get().getString(R.string.txt_unknown_error_occured);
-        try {
-            if(isBaseCoreError(error)) {
-                errorMsg = error.getMessage();
-            }
-        }
-        catch(Exception e) {
-            appLogger.logError(e, true);
-        }
-        return errorMsg;
+    public BaseAppLogger getAppLogger() {
+        return appLogger;
     }
 
-    public boolean isBaseCoreError(Throwable error) {
-        return error instanceof BaseCoreError;
+    public String getErrorMessage(Throwable error) {
+        if (contextWeakReference == null || contextWeakReference.get() == null) return null;
+        String errorMsg = contextWeakReference.get().getString(R.string.txt_unknown_error_occured);
+        try {
+            if (error instanceof BaseCoreError) {
+                if (((BaseCoreError) error).getCode().equalsIgnoreCase(BaseCoreError.CODE_TIMEOUT_ERROR)) {
+                    errorMsg = contextWeakReference.get().getString(R.string.txt_timeout);
+                } else if (((BaseCoreError) error).getCode().equalsIgnoreCase(BaseCoreError.CODE_NETWORK_ERROR)) {
+                    errorMsg = contextWeakReference.get().getString(R.string.txt_no_internet_connection);
+                } else if (((BaseCoreError) error).getCode().equalsIgnoreCase(BaseCoreError.CODE_SERVER_ERROR)) {
+                    errorMsg = contextWeakReference.get().getString(R.string.txt_server_error);
+                } else if (((BaseCoreError) error).getCode().equalsIgnoreCase(BaseCoreError.CODE_BAD_REQUEST_ERROR)) {
+                    errorMsg = contextWeakReference.get().getString(R.string.txt_server_error);
+                }
+            }
+        } catch (Exception e) {
+            getAppLogger().logError(e, false);
+        }
+        return errorMsg;
     }
 }

@@ -38,10 +38,4 @@ public class BaseCoreAppModule {
     public ExecutorService provideAppExecutorService() {
         return Executors.newFixedThreadPool(10);
     }
-
-    @Singleton
-    @Provides
-    public Gson provideGson() {
-        return new GsonBuilder().create();
-    }
 }

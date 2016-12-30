@@ -5,7 +5,6 @@ import android.view.View;
 import com.abdallaadelessa.core.app.BaseCoreApp;
 import com.abdallaadelessa.core.presenter.BaseCorePresenter;
 import com.abdallaadelessa.demo.R;
-import com.abdallaadelessa.demo.app.MyApplication;
 import com.abdallaadelessa.demo.data.airline.model.AirlineModel;
 import com.abdallaadelessa.demo.data.airline.model.FavouriteAirLineStateChanged;
 import com.abdallaadelessa.demo.domain.airline.useCases.FavouriteAirlinesUseCase;
@@ -63,7 +62,7 @@ public class ListAirlinesPresenter extends BaseCorePresenter<IListAirlinesView> 
     private void showData(List<AirlineModel> airlineModels) {
         if (!isViewAttached()) return;
         if (airlineModels == null || airlineModels.isEmpty()) {
-            getView().showNoDataPlaceHolder();
+            getView().handleNoData();
         } else {
             getView().loadData(airlineModels);
         }
@@ -95,7 +94,7 @@ public class ListAirlinesPresenter extends BaseCorePresenter<IListAirlinesView> 
             public void call(Throwable throwable) {
                 if (!isViewAttached()) return;
                 getView().showProgress(false);
-                getView().showError(throwable);
+                getView().handleError(throwable);
             }
         });
         addSubscription(subscription);
@@ -119,7 +118,7 @@ public class ListAirlinesPresenter extends BaseCorePresenter<IListAirlinesView> 
                     public void call(Throwable throwable) {
                         if (!isViewAttached()) return;
                         if (!silent) getView().showProgress(false);
-                        getView().showError(throwable);
+                        getView().handleError(throwable);
                     }
                 });
         addSubscription(subscription);

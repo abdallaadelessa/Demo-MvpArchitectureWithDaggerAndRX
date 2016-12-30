@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.abdallaadelessa.core.dagger.appModule.BaseCoreAppModule;
 import com.abdallaadelessa.core.dagger.errorHandlerModule.errorHandler.BaseErrorHandler;
-import com.abdallaadelessa.core.dagger.errorHandlerModule.errorHandler.CustomErrorHandlerImpl;
 import com.abdallaadelessa.core.dagger.loggerModule.BaseCoreLoggerModule;
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
 
@@ -23,6 +22,11 @@ public class BaseCoreErrorHandlerModule {
     @Singleton
     @Provides
     public BaseErrorHandler provideErrorHandler(Context context, BaseAppLogger appLogger) {
-        return new CustomErrorHandlerImpl(context, appLogger);
+        return new BaseErrorHandler(context, appLogger) {
+            @Override
+            public String getErrorMessage(Throwable error) {
+                return super.getErrorMessage(error);
+            }
+        };
     }
 }

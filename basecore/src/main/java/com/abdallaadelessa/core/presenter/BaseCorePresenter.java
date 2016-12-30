@@ -57,4 +57,8 @@ public abstract class BaseCorePresenter<V> {
 
     }
 
+    public void handleError(Throwable throwable) {
+
+    }
+
 }

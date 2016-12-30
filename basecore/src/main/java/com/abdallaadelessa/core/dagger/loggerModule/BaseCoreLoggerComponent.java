@@ -13,4 +13,6 @@ import dagger.Component;
 @Component(modules = {BaseCoreLoggerModule.class})
 public interface BaseCoreLoggerComponent {
     BaseAppLogger getLogger();
+
+    BaseAppLogger.BaseAppReporter getReporter();
 }

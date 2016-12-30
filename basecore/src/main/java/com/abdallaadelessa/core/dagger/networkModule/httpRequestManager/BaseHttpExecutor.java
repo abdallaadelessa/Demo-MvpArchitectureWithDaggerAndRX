@@ -8,7 +8,6 @@ import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests
 import com.abdallaadelessa.core.model.BaseCoreError;
 import com.abdallaadelessa.core.utils.RxUtils;
 import com.abdallaadelessa.core.utils.ValidationUtils;
-import com.android.volley.error.NetworkError;
 
 import java.net.SocketException;
 import java.util.List;
@@ -66,7 +65,7 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
 
     //================>
 
-    public BaseCoreError getBaseCoreError(Throwable throwable) {
+    public BaseCoreError convertErrorToBaseCoreError(Throwable throwable) {
         BaseCoreError baseCoreError;
         if (throwable instanceof SocketException) {
             baseCoreError = new BaseCoreError(BaseCoreError.CODE_NETWORK_ERROR, throwable);
@@ -114,7 +113,7 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
             return;
         }
         try {
-            final Throwable error = interceptError(getBaseCoreError(e), request, fatal);
+            final Throwable error = interceptError(convertErrorToBaseCoreError(e), request, fatal);
             subscriber.onError(error);
         } catch (Throwable ee) {
             subscriber.onError(ee);
@@ -164,7 +163,7 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
 
     private M parse(String json, R r) throws Exception {
         json = interceptResponse(json, r);
-        return r.getParser().parse(r.getTag(), r.getType(), json);
+        return r.getParser().parse(r.getType(), json);
     }
 
     //================>
