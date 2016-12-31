@@ -27,7 +27,6 @@ import rx.schedulers.Schedulers;
  * Created by abdulla on 8/12/15.
  */
 public class VolleyExecutor<M> extends BaseHttpExecutor<M, HttpRequest<M>> {
-
     private volatile RequestTickle requestTickle;
 
     public VolleyExecutor() {
@@ -36,6 +35,7 @@ public class VolleyExecutor<M> extends BaseHttpExecutor<M, HttpRequest<M>> {
 
     //=====================>
 
+    @Override
     public Observable<M> buildObservable(final HttpRequest httpRequest) {
         return Observable.create(new Observable.OnSubscribe<M>() {
             @Override
@@ -80,6 +80,7 @@ public class VolleyExecutor<M> extends BaseHttpExecutor<M, HttpRequest<M>> {
         }
     }
 
+    @Override
     public BaseCoreError convertErrorToBaseCoreError(Throwable throwable) {
         BaseCoreError baseCoreError = new BaseCoreError(throwable);
         if (isVolleyError(throwable)) {

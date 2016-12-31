@@ -23,8 +23,11 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class MultiPartExecutor<M> extends BaseHttpExecutor<M, MultiPartRequest<M>> {
-    private Call call;
+    private volatile Call call;
 
+    //=====================>
+
+    @Override
     public Observable<M> buildObservable(final MultiPartRequest multiPartRequest) {
         return Observable.create(new Observable.OnSubscribe<M>() {
             @Override
@@ -77,5 +80,7 @@ public class MultiPartExecutor<M> extends BaseHttpExecutor<M, MultiPartRequest<M
             call.cancel();
         }
     }
+
+    //=====================>
 
 }

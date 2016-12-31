@@ -27,6 +27,8 @@ import rx.schedulers.Schedulers;
 public class FileDownloadExecutor extends OkHttpExecutor<FileDownloadModel> {
     private static final int DOWNLOAD_CHUNK_SIZE = 8024;
 
+    //=====================>
+
     @Override
     public Observable<FileDownloadModel> buildObservable(final HttpRequest httpRequest) {
         return Observable.create(new Observable.OnSubscribe<FileDownloadModel>() {
@@ -71,6 +73,8 @@ public class FileDownloadExecutor extends OkHttpExecutor<FileDownloadModel> {
             }
         }).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io());
     }
+
+    //=====================>
 
     private boolean checkIfShouldCacheResponse(Subscriber<? super FileDownloadModel> subscriber, HttpRequest httpRequest) {
         String downloadPath = httpRequest.getDownloadPath();

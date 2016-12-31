@@ -92,6 +92,7 @@ public class OkHttpExecutor<M> extends BaseHttpExecutor<M, HttpRequest<M>> {
     }
 
     //=====================>
+
     private static final Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
         @Override
         public Response intercept(Chain chain) throws IOException {
