@@ -1,9 +1,10 @@
-package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule;
+package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors;
 
 import android.text.TextUtils;
 
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpExecutor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.MultiPartRequest;
+import com.abdallaadelessa.core.dagger.networkModule.subModules.okhttpModule.DaggerOkHttpComponent;
 
 import java.io.File;
 import java.util.List;
@@ -60,7 +61,7 @@ public class MultiPartExecutor<M> extends BaseHttpExecutor<M, MultiPartRequest<M
                     // Send Request
                     RequestBody requestBody = multipartBodyBuilder.build();
                     Request request = new Request.Builder().url(multiPartRequest.getUrlWithQueryParams()).post(requestBody).build();
-                    OkHttpClient client = new OkHttpClient().newBuilder().writeTimeout(multiPartRequest.getTimeout(), TimeUnit.MILLISECONDS)
+                    OkHttpClient client = DaggerOkHttpComponent.create().getOkHttpClientBuilder().writeTimeout(multiPartRequest.getTimeout(), TimeUnit.MILLISECONDS)
                             .readTimeout(multiPartRequest.getTimeout(), TimeUnit.MILLISECONDS).build();
                     call = client.newCall(request);
                     Response response = call.execute();

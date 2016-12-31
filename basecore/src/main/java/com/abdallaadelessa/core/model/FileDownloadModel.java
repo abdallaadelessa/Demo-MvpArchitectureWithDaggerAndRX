@@ -1,4 +1,4 @@
-package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule.fileDownload;
+package com.abdallaadelessa.core.model;
 
 /**
  * Created by abdullah on 12/31/16.

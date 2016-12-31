@@ -1,10 +1,10 @@
-package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.volleyModule;
+package com.abdallaadelessa.core.dagger.networkModule.subModules.volleyModule;
 
 import android.content.Context;
 
 import com.abdallaadelessa.core.app.BaseCoreApp;
 import com.abdallaadelessa.core.dagger.appModule.BaseCoreAppModule;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule.OkHttpModule;
+import com.abdallaadelessa.core.dagger.networkModule.subModules.okhttpModule.OkHttpModule;
 import com.android.volley.RequestQueue;
 import com.android.volley.RequestTickle;
 import com.android.volley.VolleyLog;
@@ -41,6 +41,7 @@ public class VolleyNetworkModule {
         return VolleyTickle.newRequestTickle(context, okHttpStack);
     }
 
+    @Singleton
     @Provides
     public SimpleImageLoader provideSimpleImageLoader(Context context) {
         DiskLruBasedCache.ImageCacheParams cacheParams = new DiskLruBasedCache.ImageCacheParams(context, "CacheDirectory");

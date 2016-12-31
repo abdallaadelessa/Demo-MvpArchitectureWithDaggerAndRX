@@ -1,7 +1,8 @@
-package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.volleyModule;
+package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors;
 
 
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpExecutor;
+import com.abdallaadelessa.core.dagger.networkModule.subModules.volleyModule.DaggerVolleyNetworkComponent;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.BaseRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpRequest;
 import com.abdallaadelessa.core.model.BaseCoreError;

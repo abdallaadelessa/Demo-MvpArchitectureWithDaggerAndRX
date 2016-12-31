@@ -1,17 +1,15 @@
-package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule;
+package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors;
 
-import com.abdallaadelessa.core.app.BaseCoreApp;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpExecutor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpMethod;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpRequest;
+import com.abdallaadelessa.core.dagger.networkModule.subModules.okhttpModule.DaggerOkHttpComponent;
 import com.abdallaadelessa.core.model.BaseCoreError;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Cache;
 import okhttp3.Call;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
@@ -61,9 +59,8 @@ public class OkHttpExecutor<M> extends BaseHttpExecutor<M, HttpRequest<M>> {
                         }
                     }
                     //-----------------> Execute
-                    OkHttpClient client = new OkHttpClient().newBuilder().writeTimeout(httpRequest.getTimeout(), TimeUnit.MILLISECONDS)
-                            .readTimeout(httpRequest.getTimeout(), TimeUnit.MILLISECONDS)
-                            .cache(new Cache(new File(BaseCoreApp.getAppDownloadsPath()), 1024 * 1024 * 10)).build();
+                    OkHttpClient client = DaggerOkHttpComponent.create().getOkHttpClientBuilder().writeTimeout(httpRequest.getTimeout(), TimeUnit.MILLISECONDS)
+                            .readTimeout(httpRequest.getTimeout(), TimeUnit.MILLISECONDS).build();
                     if (httpRequest.isShouldCacheResponse()) {
                         client.networkInterceptors().add(REWRITE_CACHE_CONTROL_INTERCEPTOR);
                     }

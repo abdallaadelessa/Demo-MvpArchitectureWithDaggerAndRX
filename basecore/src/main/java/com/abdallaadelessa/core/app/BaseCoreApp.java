@@ -20,8 +20,6 @@ import com.abdallaadelessa.core.dagger.loggerModule.DaggerBaseCoreLoggerComponen
 import com.abdallaadelessa.core.dagger.networkModule.BaseCoreNetworkComponent;
 import com.abdallaadelessa.core.dagger.networkModule.BaseCoreNetworkModule;
 import com.abdallaadelessa.core.dagger.networkModule.DaggerBaseCoreNetworkComponent;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule.OkHttpModule;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.volleyModule.VolleyNetworkModule;
 
 import java.io.File;
 

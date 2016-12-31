@@ -1,4 +1,4 @@
-package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule;
+package com.abdallaadelessa.core.dagger.networkModule.subModules.okhttpModule;
 
 import javax.inject.Singleton;
 
@@ -11,5 +11,5 @@ import okhttp3.OkHttpClient;
 @Singleton
 @Component(modules = OkHttpModule.class)
 public interface OkHttpComponent {
-    OkHttpClient getOkHttpClient();
+    OkHttpClient.Builder getOkHttpClientBuilder();
 }

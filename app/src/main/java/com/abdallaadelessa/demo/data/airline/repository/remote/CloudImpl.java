@@ -1,7 +1,7 @@
 package com.abdallaadelessa.demo.data.airline.repository.remote;
 
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpRequestManager;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule.OkHttpExecutor;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.OkHttpExecutor;
 import com.abdallaadelessa.demo.app.MyApplication;
 import com.abdallaadelessa.demo.data.airline.model.AirlineModel;
 import com.google.common.reflect.TypeToken;

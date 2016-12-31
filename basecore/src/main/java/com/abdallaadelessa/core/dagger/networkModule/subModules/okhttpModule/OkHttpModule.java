@@ -1,11 +1,13 @@
-package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule;
+package com.abdallaadelessa.core.dagger.networkModule.subModules.okhttpModule;
 
+import com.abdallaadelessa.core.app.BaseCoreApp;
 import com.android.volley.toolbox.HttpStack;
 
-import javax.inject.Singleton;
+import java.io.File;
 
 import dagger.Module;
 import dagger.Provides;
+import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 
 /**
@@ -19,9 +21,9 @@ public class OkHttpModule {
         return new OkHttpStack(okHttpClient);
     }
 
-    @Singleton
+
     @Provides
-    public OkHttpClient provideOkHttpClient() {
-        return new OkHttpClient().newBuilder().build();
+    public OkHttpClient.Builder provideOkHttpClient() {
+        return new OkHttpClient().newBuilder().cache(new Cache(new File(BaseCoreApp.getAppDownloadsPath()), 1024 * 1024 * 10));
     }
 }

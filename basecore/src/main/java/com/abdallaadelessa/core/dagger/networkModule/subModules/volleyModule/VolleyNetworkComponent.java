@@ -1,4 +1,4 @@
-package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.volleyModule;
+package com.abdallaadelessa.core.dagger.networkModule.subModules.volleyModule;
 
 import com.android.volley.RequestTickle;
 

@@ -1,4 +1,4 @@
-package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule;
+package com.abdallaadelessa.core.dagger.networkModule.subModules.okhttpModule;
 
 
 import com.android.volley.toolbox.HurlStack;

@@ -1,13 +1,13 @@
-package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule.fileDownload;
+package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors;
 
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule.OkHttpExecutor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpRequest;
+import com.abdallaadelessa.core.dagger.networkModule.subModules.okhttpModule.DaggerOkHttpComponent;
+import com.abdallaadelessa.core.model.FileDownloadModel;
 import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -42,7 +42,7 @@ public class FileDownloadExecutor extends OkHttpExecutor<FileDownloadModel> {
                     }
                     String urlWithQueryParams = httpRequest.getUrlWithQueryParams();
                     Request request = new Request.Builder().url(urlWithQueryParams).build();
-                    OkHttpClient okHttpClient = new OkHttpClient().newBuilder().writeTimeout(httpRequest.getTimeout(), TimeUnit.MILLISECONDS)
+                    OkHttpClient okHttpClient = DaggerOkHttpComponent.create().getOkHttpClientBuilder().writeTimeout(httpRequest.getTimeout(), TimeUnit.MILLISECONDS)
                             .readTimeout(httpRequest.getTimeout(), TimeUnit.MILLISECONDS).build();
                     call = okHttpClient.newCall(request);
                     Response response = call.execute();

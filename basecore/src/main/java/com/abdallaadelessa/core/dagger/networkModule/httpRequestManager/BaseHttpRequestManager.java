@@ -1,13 +1,13 @@
 package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager;
 
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule.fileDownload.FileDownloadExecutor;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule.fileDownload.FileDownloadModel;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.volleyModule.VolleyExecutor;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.FileDownloadExecutor;
+import com.abdallaadelessa.core.model.FileDownloadModel;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.VolleyExecutor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.BaseRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.MultiPartRequest;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule.MultiPartExecutor;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.MultiPartExecutor;
 import com.abdallaadelessa.core.utils.ValidationUtils;
 
 import java.util.ArrayList;
