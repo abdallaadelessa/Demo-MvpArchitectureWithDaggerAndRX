@@ -1,8 +1,8 @@
 package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests;
 
+import com.abdallaadelessa.core.app.BaseCoreApp;
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpExecutor;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpInterceptor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpParser;
 import com.abdallaadelessa.core.utils.ValidationUtils;
 
@@ -15,17 +15,23 @@ import java.util.concurrent.ExecutorService;
 
 public class HttpRequest<T> extends BaseRequest<HttpRequest<T>, T> {
     private String jsonBody;
-
-    private HttpRequest(BaseHttpParser parser, BaseAppLogger logger, BaseHttpExecutor<T, HttpRequest> observableExecutor, ExecutorService executorService) {
-        super(parser, logger, observableExecutor, executorService);
-    }
+    private String downloadPath;
 
     public static <T> HttpRequest<T> create(BaseHttpParser parser, BaseAppLogger logger
-            , BaseHttpExecutor<T, HttpRequest> observableExecutor, ExecutorService executorService) {
+            , BaseHttpExecutor<T, HttpRequest<T>> observableExecutor, ExecutorService executorService) {
         return new HttpRequest<>(parser, logger, observableExecutor, executorService);
     }
 
+    private HttpRequest(BaseHttpParser parser, BaseAppLogger logger, BaseHttpExecutor<T, HttpRequest<T>> observableExecutor, ExecutorService executorService) {
+        super(parser, logger, observableExecutor, executorService);
+    }
+
     //=====>
+
+    public HttpRequest<T> setDownloadPath(String downloadPath) {
+        this.downloadPath = downloadPath;
+        return this;
+    }
 
     private HttpRequest<T> setJsonBody(String jsonBody) {
         this.jsonBody = jsonBody;
@@ -52,12 +58,16 @@ public class HttpRequest<T> extends BaseRequest<HttpRequest<T>, T> {
         return jsonBody;
     }
 
+    public String getDownloadPath() {
+        return downloadPath;
+    }
+
     public boolean hasJsonBody() {
         return !ValidationUtils.isStringEmpty(getJsonBody());
     }
 
     public byte[] bodyToBytes() {
-        if (!hasJsonBody()) {
+        if (hasJsonBody()) {
             byte[] bodyBytes = new byte[0];
             try {
                 if (!ValidationUtils.isStringEmpty(getJsonBody())) {

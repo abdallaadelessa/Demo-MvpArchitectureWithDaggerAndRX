@@ -1,9 +1,10 @@
 package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager;
 
-import android.support.annotation.NonNull;
-
+import com.abdallaadelessa.core.app.BaseCoreApp;
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule.OkHttpExecutor;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule.fileDownload.FileDownloadExecutor;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule.fileDownload.FileDownloadModel;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.volleyModule.VolleyHttpExecutor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.BaseRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.MultiPartRequest;
@@ -70,28 +71,23 @@ public class BaseHttpRequestManager {
         };
     }
 
-    @NonNull
-    protected <T> BaseHttpExecutor<T, HttpRequest> createNewHttpExecutorInstance() {
-        return new OkHttpExecutor<>();
-    }
-
-    @NonNull
-    protected <T> BaseHttpExecutor<T, MultiPartRequest> createNewMultiPartExecutorInstance() {
-        return new MultiPartExecutor<>();
-    }
-
     //===========>
 
-    public final <T> HttpRequest<T> newHttpRequest() {
-        HttpRequest<T> tHttpRequest = HttpRequest.create(getParser(), getLogger(), (BaseHttpExecutor<T, HttpRequest>) createNewHttpExecutorInstance(), getExecutorService());
+    public <T> HttpRequest<T> newHttpRequest() {
+        HttpRequest<T> tHttpRequest = HttpRequest.create(getParser(), getLogger(), new VolleyHttpExecutor<T>(), getExecutorService());
         tHttpRequest.getInterceptors().addAll(getInterceptors());
         return tHttpRequest;
     }
 
-    public final <T> MultiPartRequest<T> newMultiPartRequest() {
-        MultiPartRequest<T> multiPartRequest = MultiPartRequest.create(getParser(), getLogger(), (BaseHttpExecutor<T, MultiPartRequest>) createNewMultiPartExecutorInstance(), getExecutorService());
+    public <T> MultiPartRequest<T> newMultiPartRequest() {
+        MultiPartRequest<T> multiPartRequest = MultiPartRequest.create(getParser(), getLogger(), new MultiPartExecutor<T>(), getExecutorService());
         multiPartRequest.getInterceptors().addAll(getInterceptors());
         return multiPartRequest;
+    }
+
+    public HttpRequest<FileDownloadModel> newFileRequest() {
+        HttpRequest<FileDownloadModel> request = newHttpRequest();
+        return request.setObservableExecutor(new FileDownloadExecutor());
     }
 
     public BaseRequest getRequestByTag(String tag) {

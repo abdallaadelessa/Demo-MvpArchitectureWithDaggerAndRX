@@ -26,9 +26,9 @@ import rx.schedulers.Schedulers;
 /**
  * Created by abdulla on 8/12/15.
  */
-public class VolleyHttpExecutor<M> extends BaseHttpExecutor<M, HttpRequest> {
+public class VolleyHttpExecutor<M> extends BaseHttpExecutor<M, HttpRequest<M>> {
 
-    private RequestTickle requestTickle;
+    private volatile RequestTickle requestTickle;
 
     public VolleyHttpExecutor() {
         this.requestTickle = DaggerVolleyNetworkComponent.create().getRequestTickle();
@@ -64,7 +64,8 @@ public class VolleyHttpExecutor<M> extends BaseHttpExecutor<M, HttpRequest> {
                     requestTickle.add(stringRequest);
                     NetworkResponse networkResponse = requestTickle.start();
                     String response = new String(networkResponse.data, BaseRequest.UTF_8);
-                    onSuccess(subscriber, httpRequest, response);
+                    onNext(subscriber, httpRequest, response);
+                    onCompleted(subscriber,httpRequest);
                 } catch (Exception e) {
                     onError(subscriber, httpRequest, e, false);
                 }
@@ -76,22 +77,6 @@ public class VolleyHttpExecutor<M> extends BaseHttpExecutor<M, HttpRequest> {
     protected void cancelExecutor() {
         if (requestTickle != null) {
             requestTickle.cancel();
-        }
-    }
-
-    //=====================>
-
-    private int getMethod(HttpRequest httpRequest) {
-        switch (httpRequest.getMethod()) {
-            default:
-            case GET:
-                return Request.Method.GET;
-            case POST:
-                return Request.Method.POST;
-            case PUT:
-                return Request.Method.PUT;
-            case DELETE:
-                return Request.Method.DELETE;
         }
     }
 
@@ -109,6 +94,22 @@ public class VolleyHttpExecutor<M> extends BaseHttpExecutor<M, HttpRequest> {
             }
         }
         return baseCoreError;
+    }
+
+    //=====================> Helpers
+
+    private int getMethod(HttpRequest httpRequest) {
+        switch (httpRequest.getMethod()) {
+            default:
+            case GET:
+                return Request.Method.GET;
+            case POST:
+                return Request.Method.POST;
+            case PUT:
+                return Request.Method.PUT;
+            case DELETE:
+                return Request.Method.DELETE;
+        }
     }
 
     private boolean isVolleyError(Throwable error) {

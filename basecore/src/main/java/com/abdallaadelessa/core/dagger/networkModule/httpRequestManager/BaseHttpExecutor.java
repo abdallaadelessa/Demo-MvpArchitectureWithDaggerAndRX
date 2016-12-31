@@ -15,6 +15,7 @@ import java.util.List;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action0;
+import rx.functions.Action1;
 import rx.functions.Func1;
 
 /**
@@ -36,7 +37,7 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
                     return buildObservable(r).doOnUnsubscribe(new Action0() {
                         @Override
                         public void call() {
-                            forceCancelRequestOnUnSubscribe(r);
+                            doOnUnSubscribe(r);
                         }
                     });
                 } catch (Exception e) {
@@ -50,6 +51,8 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
 
     protected abstract Observable<M> buildObservable(R request);
 
+    protected abstract void cancelExecutor();
+
     //================>
 
     public void cancel() {
@@ -60,8 +63,6 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
     public boolean isCanceled() {
         return isCanceled;
     }
-
-    protected abstract void cancelExecutor();
 
     //================>
 
@@ -77,7 +78,7 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
 
     //================>
 
-    protected void onSuccess(final Subscriber subscriber, final R request, final String response) {
+    protected void onNext(final Subscriber subscriber, final R request, final String response) {
         if (isCanceled()) {
             RxUtils.unSubscribeIfNotNull(subscriber);
             return;
@@ -91,7 +92,6 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
                         @Override
                         public void run() {
                             subscriber.onNext(m);
-                            subscriber.onCompleted();
                         }
                     });
                 } catch (final Exception e) {
@@ -120,6 +120,18 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
         }
     }
 
+    protected void onCompleted(final Subscriber subscriber, final R request) {
+        if (isCanceled()) {
+            RxUtils.unSubscribeIfNotNull(subscriber);
+            return;
+        }
+        try {
+            subscriber.onCompleted();
+        } catch (Throwable ee) {
+            subscriber.onError(ee);
+        }
+    }
+
     //================>
 
     private void cancelRequestByHttpRequestManager(R request) {
@@ -127,13 +139,13 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
     }
 
     private void forceCancelIfRunning(R r) {
-        if (r.isCancelIfWasRunning() && !ValidationUtils.isStringEmpty(r.getTag())) {
+        if (r.isForceCancelIfWasRunning() && !ValidationUtils.isStringEmpty(r.getTag())) {
             cancelRequestByHttpRequestManager(r);
         }
     }
 
     private void forceCancelRequestOnUnSubscribe(R r) {
-        if (r.isCancelOnUnSubscribe() && !ValidationUtils.isStringEmpty(r.getTag())) {
+        if (r.isForceCancelOnUnSubscribe() && !ValidationUtils.isStringEmpty(r.getTag())) {
             cancelRequestByHttpRequestManager(r);
         }
     }
@@ -164,6 +176,14 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
     private M parse(String json, R r) throws Exception {
         json = interceptResponse(json, r);
         return r.getParser().parse(r.getType(), json);
+    }
+
+    private void doOnUnSubscribe(R r) {
+        forceCancelRequestOnUnSubscribe(r);
+        r.clearInterceptors();
+        r.setParser(null);
+        r.setExecutorService(null);
+        r.setObservableExecutor(null);
     }
 
     //================>

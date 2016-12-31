@@ -1,22 +1,24 @@
 package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule;
 
+import com.abdallaadelessa.core.app.BaseCoreApp;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpExecutor;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.BaseRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpMethod;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpRequest;
+import com.abdallaadelessa.core.model.BaseCoreError;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Cache;
 import okhttp3.Call;
-import okhttp3.FormBody;
+import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okio.BufferedSink;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -26,8 +28,10 @@ import rx.schedulers.Schedulers;
  * Created by abdullah on 12/28/16.
  */
 
-public class OkHttpExecutor<M> extends BaseHttpExecutor<M, HttpRequest> {
-    private Call call;
+public class OkHttpExecutor<M> extends BaseHttpExecutor<M, HttpRequest<M>> {
+    private static final int CACHE_EXPIRY_TIME_IN_SECONDS = 120;
+    protected volatile Call call;
+
     //=====================>
 
     @Override
@@ -58,11 +62,16 @@ public class OkHttpExecutor<M> extends BaseHttpExecutor<M, HttpRequest> {
                     }
                     //-----------------> Execute
                     OkHttpClient client = new OkHttpClient().newBuilder().writeTimeout(httpRequest.getTimeout(), TimeUnit.MILLISECONDS)
-                            .readTimeout(httpRequest.getTimeout(), TimeUnit.MILLISECONDS).build();
+                            .readTimeout(httpRequest.getTimeout(), TimeUnit.MILLISECONDS)
+                            .cache(new Cache(new File(BaseCoreApp.getAppDownloadsPath()), 1024 * 1024 * 10)).build();
+                    if (httpRequest.isShouldCacheResponse()) {
+                        client.networkInterceptors().add(REWRITE_CACHE_CONTROL_INTERCEPTOR);
+                    }
                     call = client.newCall(builder.build());
                     Response response = call.execute();
                     String responseStr = response.body().string();
-                    onSuccess(subscriber, httpRequest, responseStr);
+                    onNext(subscriber, httpRequest, responseStr);
+                    onCompleted(subscriber, httpRequest);
                 } catch (Exception e) {
                     onError(subscriber, httpRequest, e, false);
                 }
@@ -77,5 +86,19 @@ public class OkHttpExecutor<M> extends BaseHttpExecutor<M, HttpRequest> {
         }
     }
 
+    @Override
+    public BaseCoreError convertErrorToBaseCoreError(Throwable throwable) {
+        return super.convertErrorToBaseCoreError(throwable);
+    }
+
     //=====================>
+    private static final Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            Response originalResponse = chain.proceed(chain.request());
+            return originalResponse.newBuilder()
+                    .header("Cache-Control", String.format("max-age=%d, only-if-cached, max-stale=%d", CACHE_EXPIRY_TIME_IN_SECONDS, 0))
+                    .build();
+        }
+    };
 }

@@ -31,7 +31,7 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
     //=>
     protected BaseHttpParser parser;
     protected BaseAppLogger logger;
-    protected BaseHttpExecutor<T, BaseRequest> observableExecutor;
+    protected BaseHttpExecutor<T, B> observableExecutor;
     protected List<BaseHttpInterceptor> interceptors;
     protected ExecutorService executorService;
     //=>
@@ -49,8 +49,8 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
     protected Map<String, String> formParams;
     //=>
     protected boolean shouldCacheResponse;
-    protected boolean cancelIfWasRunning;
-    protected boolean cancelOnUnSubscribe;
+    protected boolean forceCancelIfWasRunning;
+    protected boolean forceCancelOnUnSubscribe;
 
     //=====>
 
@@ -66,8 +66,8 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
         setContentType(CONTENT_TYPE_FORM);
         type = String.class;
         shouldCacheResponse = false;
-        cancelIfWasRunning = true;
-        cancelOnUnSubscribe = true;
+        forceCancelIfWasRunning = true;
+        forceCancelOnUnSubscribe = true;
     }
 
     public BaseRequest(BaseHttpParser parser, BaseAppLogger logger, BaseHttpExecutor observableExecutor, ExecutorService executorService) {
@@ -120,7 +120,7 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
         return (B) this;
     }
 
-    protected B clearInterceptors() {
+    public B clearInterceptors() {
         getInterceptors().clear();
         return (B) this;
     }
@@ -137,7 +137,7 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
         return (B) this;
     }
 
-    public B setObservableExecutor(BaseHttpExecutor<T, BaseRequest> observableExecutor) {
+    public B setObservableExecutor(BaseHttpExecutor<T, B> observableExecutor) {
         this.observableExecutor = observableExecutor;
         return (B) this;
     }
@@ -202,13 +202,13 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
         return (B) this;
     }
 
-    public B setCancelIfWasRunning(boolean cancelIfWasRunning) {
-        this.cancelIfWasRunning = cancelIfWasRunning;
+    public B setForceCancelIfWasRunning(boolean forceCancelIfWasRunning) {
+        this.forceCancelIfWasRunning = forceCancelIfWasRunning;
         return (B) this;
     }
 
-    public B setCancelOnUnSubscribe(boolean cancelOnUnSubscribe) {
-        this.cancelOnUnSubscribe = cancelOnUnSubscribe;
+    public B setForceCancelOnUnSubscribe(boolean forceCancelOnUnSubscribe) {
+        this.forceCancelOnUnSubscribe = forceCancelOnUnSubscribe;
         return (B) this;
     }
 
@@ -223,7 +223,7 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
         return logger;
     }
 
-    public BaseHttpExecutor<T, BaseRequest> getObservableExecutor() {
+    public BaseHttpExecutor<T, B> getObservableExecutor() {
         return observableExecutor;
     }
 
@@ -283,12 +283,12 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
         return shouldCacheResponse;
     }
 
-    public boolean isCancelIfWasRunning() {
-        return cancelIfWasRunning;
+    public boolean isForceCancelIfWasRunning() {
+        return forceCancelIfWasRunning;
     }
 
-    public boolean isCancelOnUnSubscribe() {
-        return cancelOnUnSubscribe;
+    public boolean isForceCancelOnUnSubscribe() {
+        return forceCancelOnUnSubscribe;
     }
 
     //=====>
@@ -303,7 +303,7 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
 
     public final Observable<T> toObservable() {
         build();
-        return getObservableExecutor().toObservable(this);
+        return getObservableExecutor().toObservable((B) this);
     }
 
     //=====>

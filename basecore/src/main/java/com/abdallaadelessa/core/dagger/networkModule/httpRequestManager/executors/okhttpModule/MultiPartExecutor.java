@@ -4,10 +4,8 @@ import android.text.TextUtils;
 
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpExecutor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.MultiPartRequest;
-import com.android.volley.error.NetworkError;
 
 import java.io.File;
-import java.net.SocketException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -24,7 +22,7 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class MultiPartExecutor<M> extends BaseHttpExecutor<M, MultiPartRequest> {
+public class MultiPartExecutor<M> extends BaseHttpExecutor<M, MultiPartRequest<M>> {
     private Call call;
 
     public Observable<M> buildObservable(final MultiPartRequest multiPartRequest) {
@@ -64,7 +62,8 @@ public class MultiPartExecutor<M> extends BaseHttpExecutor<M, MultiPartRequest> 
                     call = client.newCall(request);
                     Response response = call.execute();
                     String responseStr = response.body().string();
-                    onSuccess(subscriber, multiPartRequest, responseStr);
+                    onNext(subscriber, multiPartRequest, responseStr);
+                    onCompleted(subscriber,multiPartRequest);
                 } catch (Throwable e) {
                     onError(subscriber, multiPartRequest, e, false);
                 }

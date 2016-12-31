@@ -20,11 +20,11 @@ public class MultiPartRequest<T> extends BaseRequest<MultiPartRequest<T>, T> {
 
     //=====>
 
-    public static <T> MultiPartRequest<T> create(BaseHttpParser parser, BaseAppLogger logger, BaseHttpExecutor<T, MultiPartRequest> observableExecutor, ExecutorService executorService) {
+    public static <T> MultiPartRequest<T> create(BaseHttpParser parser, BaseAppLogger logger, BaseHttpExecutor<T, MultiPartRequest<T>> observableExecutor, ExecutorService executorService) {
         return new MultiPartRequest<>(parser, logger, observableExecutor, executorService);
     }
 
-    public MultiPartRequest(BaseHttpParser parser, BaseAppLogger logger, BaseHttpExecutor observableExecutor, ExecutorService executorService) {
+    public MultiPartRequest(BaseHttpParser parser, BaseAppLogger logger, BaseHttpExecutor<T, MultiPartRequest<T>> observableExecutor, ExecutorService executorService) {
         super(parser, logger, observableExecutor, executorService);
         timeout = TIMEOUT_LONG_IN_MILLIS;
         files = new ArrayList<>();

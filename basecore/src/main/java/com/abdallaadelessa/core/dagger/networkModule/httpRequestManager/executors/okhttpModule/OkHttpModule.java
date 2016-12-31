@@ -13,7 +13,7 @@ import okhttp3.OkHttpClient;
  */
 @Module
 public class OkHttpModule {
-    @Singleton
+
     @Provides
     public HttpStack provideHttpStack(OkHttpClient okHttpClient) {
         return new OkHttpStack(okHttpClient);

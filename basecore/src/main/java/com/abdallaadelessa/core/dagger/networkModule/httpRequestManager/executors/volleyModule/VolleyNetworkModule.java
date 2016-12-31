@@ -36,7 +36,6 @@ public class VolleyNetworkModule {
         return Volley.newRequestQueue(context, okHttpStack);
     }
 
-    @Singleton
     @Provides
     public RequestTickle provideRequestTickle(Context context, HttpStack okHttpStack) {
         return VolleyTickle.newRequestTickle(context, okHttpStack);
