@@ -26,11 +26,11 @@ import rx.schedulers.Schedulers;
 /**
  * Created by abdulla on 8/12/15.
  */
-public class VolleyHttpExecutor<M> extends BaseHttpExecutor<M, HttpRequest<M>> {
+public class VolleyExecutor<M> extends BaseHttpExecutor<M, HttpRequest<M>> {
 
     private volatile RequestTickle requestTickle;
 
-    public VolleyHttpExecutor() {
+    public VolleyExecutor() {
         this.requestTickle = DaggerVolleyNetworkComponent.create().getRequestTickle();
     }
 

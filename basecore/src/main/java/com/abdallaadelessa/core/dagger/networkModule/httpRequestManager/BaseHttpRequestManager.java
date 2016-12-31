@@ -1,10 +1,9 @@
 package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager;
 
-import com.abdallaadelessa.core.app.BaseCoreApp;
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule.fileDownload.FileDownloadExecutor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.okhttpModule.fileDownload.FileDownloadModel;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.volleyModule.VolleyHttpExecutor;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.volleyModule.VolleyExecutor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.BaseRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.HttpRequest;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.MultiPartRequest;
@@ -74,7 +73,7 @@ public class BaseHttpRequestManager {
     //===========>
 
     public <T> HttpRequest<T> newHttpRequest() {
-        HttpRequest<T> tHttpRequest = HttpRequest.create(getParser(), getLogger(), new VolleyHttpExecutor<T>(), getExecutorService());
+        HttpRequest<T> tHttpRequest = HttpRequest.create(getParser(), getLogger(), new VolleyExecutor<T>(), getExecutorService());
         tHttpRequest.getInterceptors().addAll(getInterceptors());
         return tHttpRequest;
     }
