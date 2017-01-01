@@ -17,13 +17,18 @@ import okhttp3.OkHttpClient;
 public class OkHttpModule {
 
     @Provides
-    public HttpStack provideHttpStack(OkHttpClient okHttpClient) {
-        return new OkHttpStack(okHttpClient);
+    public OkHttpClient.Builder provideOkHttpClientBuilder() {
+        return new OkHttpClient().newBuilder().cache(new Cache(new File(BaseCoreApp.getAppDownloadsPath()), 1024 * 1024 * 10));
     }
 
 
     @Provides
-    public OkHttpClient.Builder provideOkHttpClient() {
-        return new OkHttpClient().newBuilder().cache(new Cache(new File(BaseCoreApp.getAppDownloadsPath()), 1024 * 1024 * 10));
+    public OkHttpClient provideOkHttpClient(OkHttpClient.Builder builder) {
+        return builder.build();
+    }
+
+    @Provides
+    public HttpStack provideHttpStack(OkHttpClient okHttpClient) {
+        return new OkHttpStack(okHttpClient);
     }
 }

@@ -2,13 +2,11 @@ package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.request
 
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpExecutor;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpInterceptor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.BaseHttpParser;
 import com.abdallaadelessa.core.utils.FileUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 
 /**
  * Created by abdullah on 12/27/16.
@@ -20,12 +18,12 @@ public class MultiPartRequest<T> extends BaseRequest<MultiPartRequest<T>, T> {
 
     //=====>
 
-    public static <T> MultiPartRequest<T> create(BaseHttpParser parser, BaseAppLogger logger, BaseHttpExecutor<T, MultiPartRequest<T>> observableExecutor, ExecutorService executorService) {
-        return new MultiPartRequest<>(parser, logger, observableExecutor, executorService);
+    public static <T> MultiPartRequest<T> create(BaseAppLogger logger, BaseHttpParser parser, BaseHttpExecutor<T, MultiPartRequest<T>> observableExecutor) {
+        return new MultiPartRequest<>(logger, parser, observableExecutor);
     }
 
-    public MultiPartRequest(BaseHttpParser parser, BaseAppLogger logger, BaseHttpExecutor<T, MultiPartRequest<T>> observableExecutor, ExecutorService executorService) {
-        super(parser, logger, observableExecutor, executorService);
+    public MultiPartRequest(BaseAppLogger logger, BaseHttpParser parser, BaseHttpExecutor<T, MultiPartRequest<T>> observableExecutor) {
+        super(logger, parser, observableExecutor);
         timeout = TIMEOUT_LONG_IN_MILLIS;
         files = new ArrayList<>();
     }

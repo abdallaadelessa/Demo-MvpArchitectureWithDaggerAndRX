@@ -23,7 +23,6 @@ import rx.functions.Func1;
  */
 
 public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
-    private final Handler handler = new Handler(Looper.getMainLooper());
     private boolean isCanceled;
 
     //================>
@@ -83,27 +82,12 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
             RxUtils.unSubscribeIfNotNull(subscriber);
             return;
         }
-        request.getExecutorService().execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final M m = parse(response, request);
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            subscriber.onNext(m);
-                        }
-                    });
-                } catch (final Exception e) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            onError(subscriber, request, e, false);
-                        }
-                    });
-                }
-            }
-        });
+        try {
+            final M m = parse(response, request);
+            subscriber.onNext(m);
+        } catch (final Exception e) {
+            onError(subscriber, request, e, false);
+        }
 
     }
 
@@ -182,7 +166,6 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
         forceCancelRequestOnUnSubscribe(r);
         r.clearInterceptors();
         r.setParser(null);
-        r.setExecutorService(null);
         r.setObservableExecutor(null);
     }
 

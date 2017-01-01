@@ -1,7 +1,7 @@
 package com.abdallaadelessa.core.dagger.networkModule.httpRequestManager;
 
 import com.abdallaadelessa.core.dagger.loggerModule.logger.BaseAppLogger;
-import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.FileDownloadExecutor;
+import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.FileExecutor;
 import com.abdallaadelessa.core.model.FileDownloadModel;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.executors.VolleyExecutor;
 import com.abdallaadelessa.core.dagger.networkModule.httpRequestManager.requests.BaseRequest;
@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 
@@ -27,21 +26,19 @@ public class BaseHttpRequestManager {
     private Map<String, BaseRequest> requestsByTagMap;
     private List<BaseHttpInterceptor> interceptors;
     private BaseAppLogger logger;
-    private ExecutorService executorService;
     private BaseHttpParser parser;
 
     //===========> Constructor
     @Inject
-    public BaseHttpRequestManager(BaseHttpParser parser, BaseAppLogger logger, ExecutorService executorService) {
+    public BaseHttpRequestManager(BaseAppLogger logger, BaseHttpParser parser) {
         this.parser = parser;
         this.logger = logger;
-        this.executorService = executorService;
         this.requestsByTagMap = Collections.synchronizedMap(new HashMap<String, BaseRequest>());
         this.interceptors = new ArrayList<>();
         this.interceptors.add(initHttpRequestManagerInterceptor());
     }
 
-    protected BaseHttpInterceptor initHttpRequestManagerInterceptor() {
+    protected final BaseHttpInterceptor initHttpRequestManagerInterceptor() {
         return new BaseHttpInterceptor() {
             @Override
             public BaseRequest interceptRequest(BaseRequest request) throws Exception {
@@ -73,20 +70,20 @@ public class BaseHttpRequestManager {
     //===========>
 
     public <T> HttpRequest<T> newHttpRequest() {
-        HttpRequest<T> tHttpRequest = HttpRequest.create(getParser(), getLogger(), new VolleyExecutor<T>(), getExecutorService());
+        HttpRequest<T> tHttpRequest = HttpRequest.create(getLogger(), getParser(), new VolleyExecutor<T>());
         tHttpRequest.getInterceptors().addAll(getInterceptors());
         return tHttpRequest;
     }
 
     public <T> MultiPartRequest<T> newMultiPartRequest() {
-        MultiPartRequest<T> multiPartRequest = MultiPartRequest.create(getParser(), getLogger(), new MultiPartExecutor<T>(), getExecutorService());
+        MultiPartRequest<T> multiPartRequest = MultiPartRequest.create(getLogger(), getParser(), new MultiPartExecutor<T>());
         multiPartRequest.getInterceptors().addAll(getInterceptors());
         return multiPartRequest;
     }
 
     public HttpRequest<FileDownloadModel> newFileRequest() {
         HttpRequest<FileDownloadModel> request = newHttpRequest();
-        return request.setObservableExecutor(new FileDownloadExecutor());
+        return request.setObservableExecutor(new FileExecutor());
     }
 
     public BaseRequest getRequestByTag(String tag) {
@@ -115,10 +112,6 @@ public class BaseHttpRequestManager {
         return logger;
     }
 
-    protected ExecutorService getExecutorService() {
-        return executorService;
-    }
-
     protected List<BaseHttpInterceptor> getInterceptors() {
         return interceptors;
     }
@@ -131,10 +124,6 @@ public class BaseHttpRequestManager {
 
     public void setParser(BaseHttpParser parser) {
         this.parser = parser;
-    }
-
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
     }
 
     public void setLogger(BaseAppLogger logger) {

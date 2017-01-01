@@ -33,7 +33,6 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
     protected BaseAppLogger logger;
     protected BaseHttpExecutor<T, B> observableExecutor;
     protected List<BaseHttpInterceptor> interceptors;
-    protected ExecutorService executorService;
     //=>
     protected String tag;
     protected String url;
@@ -70,12 +69,11 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
         forceCancelOnUnSubscribe = true;
     }
 
-    public BaseRequest(BaseHttpParser parser, BaseAppLogger logger, BaseHttpExecutor observableExecutor, ExecutorService executorService) {
+    public BaseRequest(BaseAppLogger logger, BaseHttpParser parser, BaseHttpExecutor observableExecutor) {
         this();
         this.parser = parser;
         this.logger = logger;
         this.observableExecutor = observableExecutor;
-        this.executorService = executorService;
     }
 
     //=====> Custom
@@ -144,11 +142,6 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
 
     public B setInterceptors(List<BaseHttpInterceptor> interceptors) {
         this.interceptors = interceptors;
-        return (B) this;
-    }
-
-    public B setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
         return (B) this;
     }
 
@@ -229,10 +222,6 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
 
     public List<BaseHttpInterceptor> getInterceptors() {
         return interceptors;
-    }
-
-    public ExecutorService getExecutorService() {
-        return executorService;
     }
 
     public String getTag() {

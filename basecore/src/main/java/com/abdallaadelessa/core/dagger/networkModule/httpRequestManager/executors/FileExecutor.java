@@ -24,7 +24,7 @@ import rx.schedulers.Schedulers;
  * Created by abdullah on 12/31/16.
  */
 
-public class FileDownloadExecutor extends OkHttpExecutor<FileDownloadModel> {
+public class FileExecutor extends OkHttpExecutor<FileDownloadModel> {
     private static final int DOWNLOAD_CHUNK_SIZE = 8024;
 
     //=====================>

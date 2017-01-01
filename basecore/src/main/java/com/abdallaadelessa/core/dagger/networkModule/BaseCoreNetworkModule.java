@@ -14,7 +14,6 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.lang.reflect.Type;
-import java.util.concurrent.ExecutorService;
 
 import javax.inject.Singleton;
 
@@ -31,8 +30,8 @@ public class BaseCoreNetworkModule {
 
     @Singleton
     @Provides
-    public BaseHttpRequestManager provideHttpRequestManager(BaseHttpParser parser, BaseAppLogger logger, ExecutorService executorService) {
-        return  new BaseHttpRequestManager(parser, logger, executorService);
+    public BaseHttpRequestManager provideHttpRequestManager(BaseAppLogger logger, BaseHttpParser parser) {
+        return  new BaseHttpRequestManager(logger, parser);
     }
 
     @Singleton
