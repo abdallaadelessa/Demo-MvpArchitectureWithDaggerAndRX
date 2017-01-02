@@ -24,11 +24,12 @@ import rx.functions.Func1;
 
 public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
     private boolean isCanceled;
+    private Observable<M> observable;
 
     //================>
 
     public final Observable<M> toObservable(R request) {
-        return getRequest(request).flatMap(new Func1<R, Observable<M>>() {
+        observable = getRequest(request).flatMap(new Func1<R, Observable<M>>() {
             @Override
             public Observable<M> call(final R r) {
                 try {
@@ -43,7 +44,8 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
                     return Observable.error(interceptError(e, r, false));
                 }
             }
-        });
+        }).share();
+        return observable;
     }
 
     //================>
@@ -118,19 +120,15 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
 
     //================>
 
-    private void cancelRequestByHttpRequestManager(R request) {
-        BaseCoreApp.getInstance().getNetworkComponent().getHttpRequestManager().cancelRequestByTag(request.getTag());
-    }
-
     private void forceCancelIfRunning(R r) {
         if (r.isForceCancelIfWasRunning() && !ValidationUtils.isStringEmpty(r.getTag())) {
-            cancelRequestByHttpRequestManager(r);
+            BaseCoreApp.getInstance().getNetworkComponent().getHttpRequestManager().cancelRequestsByTag(r.getTag());
         }
     }
 
     private void forceCancelRequestOnUnSubscribe(R r) {
         if (r.isForceCancelOnUnSubscribe() && !ValidationUtils.isStringEmpty(r.getTag())) {
-            cancelRequestByHttpRequestManager(r);
+            BaseCoreApp.getInstance().getNetworkComponent().getHttpRequestManager().cancelRequestById(r.getId());
         }
     }
 
