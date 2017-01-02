@@ -34,6 +34,7 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
     protected BaseHttpExecutor<T, B> observableExecutor;
     protected List<BaseHttpInterceptor> interceptors;
     //=>
+    private String id;
     protected String tag;
     protected String url;
     protected String urlWithQueryParams;
@@ -224,6 +225,10 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
         return interceptors;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public String getTag() {
         return tag;
     }
@@ -284,6 +289,7 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
 
     protected void build() {
         try {
+            id = String.valueOf(System.currentTimeMillis());
             urlWithQueryParams = StringUtils.addQueryParams(url, queryParams, UTF_8);
         } catch (Exception e) {
             urlWithQueryParams = url;
@@ -296,6 +302,7 @@ public abstract class BaseRequest<B extends BaseRequest, T> {
     }
 
     //=====>
+
 
     @Override
     public String toString() {

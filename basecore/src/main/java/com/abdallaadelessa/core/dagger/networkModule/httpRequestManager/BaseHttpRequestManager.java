@@ -23,7 +23,7 @@ import javax.inject.Inject;
  */
 
 public class BaseHttpRequestManager {
-    private Map<String, BaseRequest> requestsByTagMap;
+    private Map<String, BaseRequest> requestsByIdMap;
     private List<BaseHttpInterceptor> interceptors;
     private BaseAppLogger logger;
     private BaseHttpParser parser;
@@ -33,7 +33,7 @@ public class BaseHttpRequestManager {
     public BaseHttpRequestManager(BaseAppLogger logger, BaseHttpParser parser) {
         this.parser = parser;
         this.logger = logger;
-        this.requestsByTagMap = Collections.synchronizedMap(new HashMap<String, BaseRequest>());
+        this.requestsByIdMap = Collections.synchronizedMap(new HashMap<String, BaseRequest>());
         this.interceptors = new ArrayList<>();
         this.interceptors.add(initHttpRequestManagerInterceptor());
     }
@@ -49,14 +49,14 @@ public class BaseHttpRequestManager {
 
             @Override
             public String interceptResponse(BaseRequest request, String response) throws Exception {
-                removeRequestFromQueue(request.getTag());
+                removeRequestFromQueue(request);
                 request.getLogger().log(request.getTag(), response);
                 return super.interceptResponse(request, response);
             }
 
             @Override
             public Throwable interceptError(BaseRequest request, Throwable throwable, boolean fatal) {
-                removeRequestFromQueue(request.getTag());
+                removeRequestFromQueue(request);
                 try {
                     request.getLogger().logError(request.getTag(), throwable, fatal);
                 } catch (Exception e) {
@@ -86,23 +86,47 @@ public class BaseHttpRequestManager {
         return request.setObservableExecutor(new FileExecutor());
     }
 
-    public BaseRequest getRequestByTag(String tag) {
-        return requestsByTagMap.get(tag);
+    //===========>
+
+    public BaseRequest getRequestById(String id) {
+        return requestsByIdMap.get(id);
     }
 
-    public boolean cancelRequestByTag(String tag) {
-        BaseRequest requestByTag = getRequestByTag(tag);
-        if (requestByTag != null) {
-            requestByTag.getObservableExecutor().cancel();
-            removeRequestFromQueue(tag);
+    public boolean cancelRequestById(String id) {
+        BaseRequest request = getRequestById(id);
+        if (request != null) {
+            request.getObservableExecutor().cancel();
+            removeRequestFromQueue(request);
+            return true;
+        }
+        return false;
+    }
+
+    public List<BaseRequest> getRequestsByTag(String tag) {
+        List<BaseRequest> requests = new ArrayList<>();
+        for (BaseRequest request : requestsByIdMap.values()) {
+            if (request.getTag() != null && request.getTag().equals(tag)) {
+                requests.add(request);
+            }
+        }
+        return requests;
+    }
+
+    public boolean cancelRequestsByTag(String tag) {
+        List<BaseRequest> requests = getRequestsByTag(tag);
+        if (requests != null) {
+            for (BaseRequest request : requests) {
+                request.getObservableExecutor().cancel();
+                removeRequestFromQueue(request);
+            }
             return true;
         }
         return false;
     }
 
     public void cancelAll() {
-        for (String tag : requestsByTagMap.keySet()) {
-            cancelRequestByTag(tag);
+        for (BaseRequest request : requestsByIdMap.values()) {
+            cancelRequestById(request.getId());
         }
     }
 
@@ -137,13 +161,15 @@ public class BaseHttpRequestManager {
     //===========>
 
     private void addRequestToQueue(BaseRequest request) {
-        if (ValidationUtils.isStringEmpty(request.getTag())) return;
-        requestsByTagMap.put(request.getTag(), request);
+        String id = request.getId();
+        if (ValidationUtils.isStringEmpty(id)) return;
+        requestsByIdMap.put(id, request);
     }
 
-    private void removeRequestFromQueue(String tag) {
-        if (ValidationUtils.isStringEmpty(tag)) return;
-        requestsByTagMap.remove(tag);
+    private void removeRequestFromQueue(BaseRequest request) {
+        String id = request.getId();
+        if (ValidationUtils.isStringEmpty(id)) return;
+        requestsByIdMap.remove(id);
     }
 
     //===========>
