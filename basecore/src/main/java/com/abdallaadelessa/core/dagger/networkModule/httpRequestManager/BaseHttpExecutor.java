@@ -48,6 +48,10 @@ public abstract class BaseHttpExecutor<M, R extends BaseRequest> {
         return observable;
     }
 
+    public Observable<M> getLastObservable() {
+        return observable;
+    }
+
     //================>
 
     protected abstract Observable<M> buildObservable(R request);
