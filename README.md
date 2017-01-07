@@ -27,3 +27,6 @@ which contains reusable dagger modules
 <br>&emsp;-BaseCorePresenter
 <br>&emsp;-BaseCoreFragment
 <br>&emsp;-BaseCoreRecyclerAdapter
+
+
+![clean_architecture_android](https://cloud.githubusercontent.com/assets/13536749/21738684/a4bd427a-d492-11e6-93ae-63f43af11562.png)
